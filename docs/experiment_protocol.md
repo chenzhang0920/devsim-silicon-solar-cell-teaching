@@ -128,9 +128,9 @@ readings when the instrument workflow supports them.
 Never overwrite the only copy of an instrument export. Store raw files under `data/raw/`
 and standardized experimental tables derived from them under `data/processed/`.
 
-### 7.1 Generic two-column export
+### 7.1 Generic illuminated two-column export
 
-For a CSV containing voltage and current columns, run a command such as:
+For a CSV containing one illuminated voltage/current sweep, run a command such as:
 
 ```bash
 python scripts/prepare_data.py data/raw/my_light_iv.csv --area 4.0 --current-unit mA --out data/processed/measured_iv.csv --plot
@@ -150,6 +150,10 @@ V,J
 
 `V` is in V and `J` is in A/cm².
 
+This converter produces one processed illuminated J–V table for the light-only workflow.
+It does not create the dark-I–V, repeated-short-circuit, or open-circuit summaries required
+by the joint workflow.
+
 ### 7.2 Native Keithley 2636B exports
 
 The bundled course example uses filenames matching:
@@ -161,20 +165,27 @@ light - ishort - 3.csv
 light - voc - 3.csv
 ```
 
-Other sample numbers use the same pattern. Place the unmodified exports in
-`data/raw/keithley/`, then run:
+Other sample numbers use the same pattern. Keep each new measurement session in its own
+raw directory so one area and polarity transform cannot be applied accidentally to another
+group's data. Use a unique numeric sample ID in all four filenames; for example, group 01
+could use `data/raw/group01/` and sample `101`. Then run:
 
 ```bash
-python scripts/prepare_keithley.py --area 4.0
+python scripts/prepare_keithley.py --data data/raw/group01 --area 4.0
+python scripts/run_calibration.py --joint --sample 101
 ```
 
-For the bundled historical setup, the converter defaults are `--voltage-sign -1` and
+The processed files still go to `data/processed/` by default, where the unique sample ID
+keeps them separate. Use `--prune` only when the selected `--data` directory is the complete
+intended measurement bundle and you deliberately want stale converter-owned outputs
+removed. For the bundled historical setup, the converter defaults are `--voltage-sign -1` and
 `--current-sign 1`. These values describe that wiring only; verify and override them for a
 new setup. Files labeled `voc` must also remain within the documented zero-current
 tolerance (default maximum |I| = 10 nA); change that threshold only to match a known
 instrument compliance/noise specification. The converter recognizes both English
 (`Index`, `Voltage`, `Current`) and Chinese-locale Keithley column labels, and requires
-header units `(V)` and `(A)`. Use the generic converter for other units. It locates the
+header units `(V)` and `(A)`. Use the generic converter only for a standalone illuminated
+sweep in other units. The Keithley converter locates the
 native data columns, converts `I/A` to `J`, and writes
 sample-specific files plus `ishort_summary.csv` and `voc_summary.csv`. Existing files and
 summary rows for other samples are preserved by default, which makes a partial student

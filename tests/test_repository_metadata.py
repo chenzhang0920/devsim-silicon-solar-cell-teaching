@@ -39,6 +39,9 @@ def test_ci_uses_the_canonical_environment_and_both_test_groups():
     assert "  - defaults\n" not in environment
     assert "  - mkl" not in environment
     assert "pytest-cov" not in environment
+    for upper_bound in ("lmfit>=1.2,<2.0", "pandas>=1.4.0,<4.0",
+                        "jupyterlab>=4.0,<5.0", "pytest>=7.4,<10.0"):
+        assert upper_bound in environment
 
 
 def test_fit_and_plot_commands_have_distinct_responsibilities():
@@ -97,7 +100,7 @@ def test_repository_text_and_binary_rules_cover_portable_entry_points():
     assert "*.sh text eol=lf" in attributes
     assert "*.ipynb text eol=lf" in attributes
     assert "*.png binary" in attributes
-    assert "data/raw/keithley/*.csv -text -whitespace" in attributes
+    assert "data/raw/**/*.csv -text -whitespace" in attributes
     assert "end_of_line = lf" in editorconfig
     assert ".pytest_cache/" in gitignore
     assert ".venv/" in gitignore

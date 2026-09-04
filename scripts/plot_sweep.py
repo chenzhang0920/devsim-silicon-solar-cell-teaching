@@ -13,7 +13,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from config import MODEL_PARAMS
+from config import MODEL_PARAMS, MODELED_INPUT_POWER_W_CM2
 from model import terminal_iv
 from model.analysis import solar_metrics
 from model.style import C_BLUE, C_ORANGE, C_GRAY
@@ -75,7 +75,8 @@ def main() -> None:
         params[args.param] = float(v)
         V, J = terminal_iv(params=params, v_junc=metric_voltages)
 
-        m = solar_metrics(V, J, pin=params["photon_flux"] * 0.1)
+        modeled_pin = MODELED_INPUT_POWER_W_CM2 * params["photon_flux"]
+        m = solar_metrics(V, J, pin=modeled_pin)
         if not np.isfinite(m["Voc"]):
             raise RuntimeError(
                 f"At {args.param}={v:.3e}, the 0.72 V sweep still does not cross Voc; extend the sweep")

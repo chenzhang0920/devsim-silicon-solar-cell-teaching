@@ -25,4 +25,4 @@ LICENSE text eol=lf
 
 # Preserve native instrument exports byte-for-byte, including BOM, CRLF, and
 # vendor-generated trailing fields.
-data/raw/keithley/*.csv -text -whitespace
+data/raw/**/*.csv -text -whitespace

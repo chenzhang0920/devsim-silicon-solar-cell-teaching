@@ -13,6 +13,13 @@ def test_check_slides_reports_missing_html(monkeypatch, tmp_path):
     assert build._check_slides() == [str(missing)]
 
 
+def test_check_slides_reports_empty_html(monkeypatch, tmp_path):
+    empty = tmp_path / "empty.html"
+    empty.write_bytes(b"")
+    monkeypatch.setattr(build, "SLIDES", empty)
+    assert build._check_slides() == [str(empty)]
+
+
 def test_check_mode_exits_nonzero_when_assets_missing(monkeypatch, tmp_path):
     slides = tmp_path / "slides.html"
     slides.write_text('<img src="../results/missing.png">', encoding="utf-8")
@@ -33,6 +40,18 @@ def test_check_slides_rejects_stale_undeclared_asset(monkeypatch, tmp_path):
     monkeypatch.setattr(build, "SLIDES", slides)
     monkeypatch.setattr(build, "PROJECT_ROOT", Path(tmp_path))
     assert build._check_slides() == ["undeclared:stale.png"]
+
+
+def test_check_slides_rejects_an_empty_declared_asset(monkeypatch, tmp_path):
+    slides = tmp_path / "slides.html"
+    slides.write_text('<img src="../results/iv_plot.png">', encoding="utf-8")
+    results = tmp_path / "results"
+    results.mkdir()
+    (results / "iv_plot.png").write_bytes(b"")
+    monkeypatch.setattr(build, "SLIDES", slides)
+    monkeypatch.setattr(build, "PROJECT_ROOT", Path(tmp_path))
+
+    assert build._check_slides() == ["missing:iv_plot.png"]
 
 
 def test_check_slides_reports_missing_local_asset(monkeypatch, tmp_path):

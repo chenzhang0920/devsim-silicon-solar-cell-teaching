@@ -37,17 +37,17 @@ dependencies:
   - scipy>=1.11,<2.0.0
 
   # Parameter identification
-  - lmfit>=1.2         # bounded nonlinear least-squares fitting and uncertainty reports
+  - lmfit>=1.2,<2.0    # bounded nonlinear least-squares fitting and uncertainty reports
 
   # Data handling
-  - pandas>=1.4.0
+  - pandas>=1.4.0,<4.0
 
   # Visualization and notebook execution
   - matplotlib>=3.7,<4.0.0
-  - jupyterlab>=4.0     # teaching notebook (notebooks/tutorial.ipynb)
+  - jupyterlab>=4.0,<5.0  # teaching notebook (notebooks/tutorial.ipynb)
 
   # Development and testing
-  - pytest>=7.4
+  - pytest>=7.4,<10.0
 
   # pip-only package
   - pip

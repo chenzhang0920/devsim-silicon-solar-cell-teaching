@@ -43,7 +43,11 @@ def _parse_unit_arg(s: str, quantity: str) -> float:
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Convert raw I–V data to data/processed/measured_iv.csv")
+        description=(
+            "Convert one generic illuminated I–V sweep to a standardized "
+            "light J–V table"
+        )
+    )
     ap.add_argument("input", help="Raw CSV path")
     ap.add_argument("--area", type=float, required=True,
                     help="Illuminated cell area (cm^2); required to convert current to density")

@@ -23,4 +23,6 @@ def test_run_all_script_declares_supported_profiles():
     assert "--ClearMetadataPreprocessor.clear_notebook_metadata=False" in text
     assert "--only joint" in text
     assert "--only demo-data" in text
+    assert "full profile intentionally does not convert raw experimental files" in text
+    assert "Full always" in text and "joint --sample ID" in text
     assert text.index('profile="${1:-help}"') < text.index('PYTHON_BIN="${PYTHON_BIN:-}"')

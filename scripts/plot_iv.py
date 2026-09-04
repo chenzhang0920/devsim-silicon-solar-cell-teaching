@@ -35,9 +35,8 @@ def load_reference(
     if path is None:
         return None
     p = _project_path(path)
-    if not p.exists():
-        print(f"[NOTE] Comparison data not found: {p}; skipping overlay")
-        return None
+    if not p.is_file():
+        raise SystemExit(f"Comparison data file not found: {p}")
     df = pd.read_csv(p)
     V = df["V"].to_numpy(dtype=float)
     J_mA = df["J"].to_numpy(dtype=float) * 1e3   # A/cm^2 -> mA/cm^2

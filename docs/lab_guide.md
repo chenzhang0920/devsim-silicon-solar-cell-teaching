@@ -189,9 +189,19 @@ python scripts/prepare_keithley.py --area 4.0
 python scripts/run_calibration.py --joint --sample 3
 ```
 
-Then apply the same data checks and calibration logic to your group's measurements when
-required by the course. Use the bundled files only as a checked example; do not submit them
-as measurements made by your group.
+Cell #3 is an instructor-provided **reference exercise**, not the assessed measurement from
+your group. When your own experiment is assigned, keep its raw files in a separate group
+directory, use a unique numeric sample ID, convert it with that session's area and polarity,
+and calibrate that sample. For example:
+
+```bash
+python scripts/prepare_keithley.py --data data/raw/group01 --area 4.0
+python scripts/run_calibration.py --joint --sample 101
+```
+
+In this example the four required native filenames end in `- 101.csv`. Replace the area,
+signs, group directory, and sample number with your recorded values. Do not overwrite the
+bundled Cell #3 files, and do not submit them as measurements made by your group.
 
 The joint objective uses four observable blocks:
 
@@ -225,13 +235,16 @@ the weighted mean squared discrepancy across active blocks: 1 matches the stated
 average, while 4 corresponds to a twice-scale weighted RMS mismatch. It is a transparent
 teaching diagnostic, not a statistical reduced chi-square.
 
-For a generic two-column measurement, convert raw I–V to processed J–V explicitly:
+For a generic two-column **illuminated I–V sweep**, convert raw I–V to processed light J–V
+explicitly:
 
 ```bash
 python scripts/prepare_data.py data/raw/my_light_iv.csv --area 4.0 --current-unit mA --out data/processed/measured_iv.csv --plot
 ```
 
-Use the real area and units from your experiment. After checking the wiring and raw
+This generic converter supports the light-only workflow; it does not create dark-I–V,
+short-circuit-summary, or open-circuit-summary inputs for a joint fit. Use the real area
+and units from your experiment. After checking the wiring and raw
 convention, use `--voltage-sign -1` and/or `--current-sign -1` only for axes that need
 reversal. If the joint observables were not collected and the instructor
 authorizes a light-only fit, run:
@@ -247,7 +260,7 @@ Treat that reduced fit as less informative than the canonical joint workflow.
 - a data-provenance table containing the required experimental metadata;
 - the raw filenames and processed filenames used, without editing the raw files;
 - the observable, fit, and metrics outputs for the assigned dataset, using the canonical
-  Cell #3 joint workflow when those measurements are available;
+  joint workflow on your own sample when those measurements are available;
 - a table of varied and fixed parameters, bounds, fitted values, units, and uncertainties;
 - the exact calibration command and any deliberate `config.py` changes.
 

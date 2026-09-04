@@ -13,7 +13,7 @@ usage() {
 Usage: bash scripts/run_all.sh <profile> [options]
 
 Profiles:
-  full, all       Rebuild every result, then execute and save the tutorial notebook.
+  full, all       Rebuild every checked course result, then execute the tutorial notebook.
   quick           Rebuild only the fast forward-model and figure steps.
   simulation      Run the core simulation and device-physics figures.
   calibration     Run calibration and optimization diagnostics.
@@ -23,6 +23,11 @@ Profiles:
   notebook        Execute notebooks/tutorial.ipynb and embed its outputs.
   check           Validate every local and generated asset used by the slide deck.
   keithley        Convert Keithley CSV files; existing other-sample outputs are preserved.
+
+The full profile intentionally does not convert raw experimental files because
+illuminated area and wiring polarity are experiment-specific. Convert new raw
+data first with the keithley profile or scripts/prepare_data.py. Full always
+rebuilds the canonical Cell #3 example; use joint --sample ID for another cell.
 
 The model parameters are always read from config.py. Select another Python
 interpreter with, for example:

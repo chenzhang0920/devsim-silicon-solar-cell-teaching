@@ -48,6 +48,11 @@ STEPS = [
 _NAME_TO_STEP = {s[0]: s for s in STEPS}
 
 
+def _is_nonempty_file(path: Path) -> bool:
+    """Return whether an expected build product exists and contains data."""
+    return path.is_file() and path.stat().st_size > 0
+
+
 def _resolve_steps(only, skip, skip_slow):
     """Select requested build steps and reject unknown names."""
     if only is not None:
@@ -86,9 +91,12 @@ def _run_step(name, script, args, products) -> bool:
     if r.returncode != 0:
         print(f"  [FAIL] Failed (exit {r.returncode}, {dt:.0f}s)")
         return False
-    missing = [product for product in products if not (PROJECT_ROOT / product).is_file()]
+    missing = [
+        product for product in products
+        if not _is_nonempty_file(PROJECT_ROOT / product)
+    ]
     if missing:
-        print(f"  [FAIL] Command succeeded but did not create: {missing}")
+        print(f"  [FAIL] Command succeeded but did not create non-empty files: {missing}")
         return False
     print(f"  [OK] Completed ({dt:.0f}s)")
     return True
@@ -96,8 +104,8 @@ def _run_step(name, script, args, products) -> bool:
 
 def _check_slides() -> list[str]:
     """Return missing or undeclared local assets referenced by the slide deck."""
-    if not SLIDES.exists():
-        print(f"Slide deck not found: {SLIDES}")
+    if not _is_nonempty_file(SLIDES):
+        print(f"Slide deck not found or empty: {SLIDES}")
         return [str(SLIDES)]
     text = SLIDES.read_text(encoding="utf-8")
     refs = sorted(set(re.findall(r'src="\.\./results/([^"]+)"', text)))
@@ -116,12 +124,12 @@ def _check_slides() -> list[str]:
           f"{len(local_refs)} local files) --")
     problems = []
     for ref in local_refs:
-        exists = (SLIDES.parent / ref).is_file()
+        exists = _is_nonempty_file(SLIDES.parent / ref)
         if not exists:
             problems.append(f"missing:{ref}")
         print(f"  {'[OK]' if exists else '[MISSING]'}  {ref}")
     for ref in refs:
-        exists = (PROJECT_ROOT / "results" / ref).exists()
+        exists = _is_nonempty_file(PROJECT_ROOT / "results" / ref)
         is_declared = ref in declared
         if not exists:
             problems.append(f"missing:{ref}")
@@ -178,7 +186,7 @@ def main() -> None:
     print("\n-- Build artifacts --")
     missing_produced = []
     for p in produced:
-        ok = (PROJECT_ROOT / p).exists()
+        ok = _is_nonempty_file(PROJECT_ROOT / p)
         if not ok:
             missing_produced.append(p)
         print(f"  {'[OK]' if ok else '[MISSING]'}  {p}")

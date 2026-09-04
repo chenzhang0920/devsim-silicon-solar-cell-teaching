@@ -24,8 +24,10 @@ for a different wiring arrangement. A `*-voc-*` file is accepted only when every
 current remains within `--zero-current-tolerance` (10 nA by default), preventing a mislabeled
 sweep from entering the Voc summary. English and Chinese-locale `Index`, `Voltage`, and
 `Current` column labels are supported, with required header units `(V)` and `(A)`. Use
-`prepare_data.py` for exports in mV, mA, or another format. It writes standardized J–V
-tables and summary observables to `data/processed/`, including `*_ishort_sample*.csv`,
+`prepare_data.py` only for a standalone illuminated I–V sweep in mV, mA, or another
+generic format; that script does not construct the additional joint-fit summaries. The
+Keithley converter writes standardized J–V tables and summary observables to
+`data/processed/`, including `*_ishort_sample*.csv`,
 `ishort_summary.csv`, and `voc_summary.csv`. It preserves existing sample files and merges
 summary rows for other samples by default. When this directory contains the complete
 intended bundle, add `--prune` to validate the required measurement set and remove older

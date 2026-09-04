@@ -43,15 +43,16 @@ def test_notebook_is_streamlined_unique_and_ordered():
         "device_data = profiles",
         "eq_bands = band_edges",
         "voltage, current_density = terminal_iv",
+        "## 9. External quantum efficiency (EQE)",
+        "simulate_eqe(eqe_params",
         "lifetimes = np.geomspace",
-        "## 10.",
+        "## 11.",
         "parse_keithley",
         "fit_with_trace(",
-        "## 12.",
+        "## 13.",
         "joint_result = fit_joint",
         "joint_comparison_figure",
         "identifiability_figure",
-        "simulate_eqe(eqe_params",
         "Model scope and limitations",
         "## 16.",
     ]
@@ -152,14 +153,29 @@ def test_code_cells_are_english_only_and_execute_without_errors():
     code_text = "\n".join("".join(cell.get("source", [])) for cell in code_cells)
     assert re.search(r"[\u4e00-\u9fff]", code_text) is None
 
-    assert all(cell.get("execution_count") is not None for cell in code_cells)
+    assert [cell.get("execution_count") for cell in code_cells] == list(
+        range(1, len(code_cells) + 1)
+    )
     errors = [
         output
         for cell in code_cells
         for output in cell.get("outputs", [])
         if output.get("output_type") == "error"
     ]
+    stderr = [
+        output
+        for cell in code_cells
+        for output in cell.get("outputs", [])
+        if output.get("output_type") == "stream" and output.get("name") == "stderr"
+    ]
     assert errors == []
+    assert stderr == []
+
+
+def test_newton_teaching_demo_never_reports_false_convergence():
+    _, code = _sources()
+    assert "Newton iteration did not converge" in code
+    assert "if final_residual >= tol * initial_residual" in code
 
 
 def test_notebook_has_no_stale_widget_metadata_or_external_preview_images():

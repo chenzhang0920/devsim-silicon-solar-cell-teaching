@@ -110,6 +110,14 @@ Cell #3 joint calibration, and the executed Notebook. Use
 conversion, and Notebook workflows. On Windows PowerShell, the underlying Python scripts
 can be run directly in the activated environment.
 
+Raw experimental conversion is deliberately **not** part of `full`: illuminated area,
+wiring polarity, and sample identity must be confirmed for each measurement session.
+After replacing raw files, run `prepare_keithley.py` or `prepare_data.py` with the recorded
+experimental settings before calibrating; otherwise existing processed tables will still
+be used. The `full` profile always rebuilds the checked Cell #3 course example. For a new
+sample, run `bash scripts/run_all.sh joint --sample <ID>` (or the corresponding Python
+calibration command) after conversion.
+
 ## 🔬 Model and conventions
 
 Light enters at `x = 0`, through the front contact and p<sup>+</sup> emitter. The
@@ -178,8 +186,9 @@ When replacing the examples with a new experiment:
 1. keep the original export unchanged under `data/raw/`;
 2. record sample, illuminated area, temperature, source condition, wiring, instrument
    settings, sweep direction, units, and polarity;
-3. convert the data with `prepare_data.py` or `prepare_keithley.py`, using the measured
-   area rather than an example value;
+3. convert a generic illuminated I–V sweep with `prepare_data.py`, or a complete native
+   Keithley measurement bundle with `prepare_keithley.py`, using the measured area rather
+   than an example value;
 4. inspect the processed curve for units, ordering, short-circuit coverage, and a
    physically consistent zero crossing;
 5. keep the exact inputs, configuration, fitted metadata, residuals, and figures together.
@@ -266,13 +275,13 @@ Captions state whether an item is simulated, synthetic, or measured.
 </p>
 
 <p align="center">
-  <img src="results/joint_observables.png" alt="Cell 3 historical measurements compared with the joint-calibrated model" width="820">
-  <br><sub><strong>Joint calibration.</strong> Historical Cell #3 observations test one parameter set in several ways; systematic mismatch reveals model limits.</sub>
+  <img src="results/eqe.png" alt="Modeled external quantum efficiency and absorption limit versus wavelength" width="820">
+  <br><sub><strong>Spectral response.</strong> Modeled EQE is interpreted relative to the optical absorption limit.</sub>
 </p>
 
 <p align="center">
-  <img src="results/eqe.png" alt="Modeled external quantum efficiency and absorption limit versus wavelength" width="820">
-  <br><sub><strong>Spectral response.</strong> Modeled EQE is interpreted relative to the optical absorption limit.</sub>
+  <img src="results/joint_observables.png" alt="Cell 3 historical measurements compared with the joint-calibrated model" width="820">
+  <br><sub><strong>Joint calibration.</strong> Historical Cell #3 observations test one parameter set in several ways; systematic mismatch reveals model limits.</sub>
 </p>
 
 <p align="center">

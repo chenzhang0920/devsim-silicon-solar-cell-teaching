@@ -27,12 +27,20 @@ def _project_path(path: str | Path) -> Path:
 
 
 def _verify_hash(path: str | Path, expected: str | None) -> None:
-    """Reject silent reuse of fit metadata with a changed input file."""
-    if not expected:
-        return
+    """Require and verify the SHA-256 recorded for one calibration input."""
+    valid_hex = isinstance(expected, str) and len(expected) == 64 and all(
+        character in "0123456789abcdefABCDEF" for character in expected
+    )
+    if not valid_hex:
+        raise SystemExit(
+            "Fit metadata contain a missing or invalid calibration-input SHA-256; "
+            "rerun scripts/run_calibration.py before plotting saved parameters."
+        )
     source = _project_path(path)
+    if not source.is_file():
+        raise SystemExit(f"Recorded calibration input is missing: {source}")
     actual = hashlib.sha256(source.read_bytes()).hexdigest()
-    if actual != expected:
+    if actual != expected.lower():
         raise SystemExit(
             f"Calibration input changed since the fit: {source}. "
             "Rerun scripts/run_calibration.py before plotting saved parameters."
@@ -102,6 +110,11 @@ def main() -> None:
             "Saved parameters have no fit_metadata.json, so their dataset is unknown; "
             "rerun scripts/run_calibration.py or provide the matching metadata file.")
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if metadata.get("schema_version") != 1:
+        raise SystemExit(
+            f"Unsupported fit-metadata schema in {metadata_path}; "
+            "rerun scripts/run_calibration.py"
+        )
     fitted = load_params_json(args.params)
     print(f"[NOTE] Using saved fitted parameters: {args.params}")
     if "model_params" not in metadata:
@@ -137,7 +150,12 @@ def main() -> None:
                 "rerun scripts/run_calibration.py"
             )
         data = load_joint_data(sample, paths_override=recorded_paths)
-        expected_hashes = metadata.get("dataset_sha256", {})
+        expected_hashes = metadata.get("dataset_sha256")
+        if not isinstance(expected_hashes, dict):
+            raise SystemExit(
+                "Joint fit metadata do not contain calibration-input SHA-256 values; "
+                "rerun scripts/run_calibration.py"
+            )
         for name, path in data.paths.items():
             _verify_hash(path, expected_hashes.get(name))
         print(f"[NOTE] Recreating the complete Cell #{sample} joint-observable figure")
@@ -154,7 +172,10 @@ def main() -> None:
         if not data_path:
             raise SystemExit("fit_metadata.json has no data_file; provide --data explicitly.")
         if args.data:
-            print(f"[WARNING] Overriding the fit-metadata dataset with: {data_path}")
+            print(
+                f"[WARNING] Overriding the fit-metadata dataset with: {data_path}; "
+                "the original fit-input hash does not apply to this file"
+            )
         else:
             print(f"[NOTE] Read the data file from fit metadata: {data_path}")
             _verify_hash(data_path, metadata.get("data_sha256"))
