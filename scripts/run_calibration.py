@@ -1,8 +1,8 @@
 """Fit the forward model and save calibration diagnostics.
 
-The default command keeps the beginner-friendly single light-J-V smoke test.
+The default command keeps the beginner-friendly single illuminated-J-V smoke test.
 Use ``--joint --sample 3`` for the measured-cell exercise: that objective uses
-the light and dark J-V sweeps plus independent light short-circuit and Voc
+the illuminated and dark J-V sweeps plus independent illuminated short-circuit and Voc
 measurements, with documented weights from ``config.py``.
 """
 from __future__ import annotations
@@ -115,11 +115,17 @@ def _parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="Calibrate the silicon solar-cell model")
     ap.add_argument(
         "data", nargs="?",
-        help="Single light-J-V CSV. Omit it for the configured synthetic smoke test.",
+        help=(
+            "Single illuminated-J-V CSV. Omit it for the configured synthetic "
+            "smoke test."
+        ),
     )
     ap.add_argument(
         "--joint", action="store_true",
-        help="Fit one measured cell using light/dark J-V, light Jsc and light Voc.",
+        help=(
+            "Fit one measured cell using illuminated/dark J-V, illuminated Jsc, "
+            "and illuminated Voc."
+        ),
     )
     ap.add_argument(
         "--sample",
@@ -284,14 +290,14 @@ def main(argv: list[str] | None = None) -> None:
         print(f"Saved joint diagnostics to {RESULTS_DIR / 'joint_metrics.json'}")
         print(f"Saved joint comparison figure to {joint_path}")
         print("\n-- Joint-observable checks --")
-        print(f"  light J-V RMSE: {metrics['light_iv_rmse_A_cm2'] * 1e3:.3f} mA/cm^2")
+        print(f"  illuminated J-V RMSE: {metrics['light_iv_rmse_A_cm2'] * 1e3:.3f} mA/cm^2")
         print(f"  dark J-V RMSE : {metrics['dark_iv_rmse_A_cm2'] * 1e3:.3f} mA/cm^2")
         print(
-            f"  light Jsc     : {metrics['light_ishort_measured_A_cm2'] * 1e3:.3f} "
+            f"  illuminated Jsc: {metrics['light_ishort_measured_A_cm2'] * 1e3:.3f} "
             f"measured vs {metrics['light_ishort_simulated_A_cm2'] * 1e3:.3f} mA/cm^2"
         )
         print(
-            f"  light Voc     : {metrics['light_voc_measured_V']:.4f} "
+            f"  illuminated Voc: {metrics['light_voc_measured_V']:.4f} "
             f"measured vs {metrics['light_voc_simulated_V']:.4f} V"
         )
         print(

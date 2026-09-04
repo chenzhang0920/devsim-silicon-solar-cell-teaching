@@ -206,12 +206,20 @@ def main() -> None:
         print("  Efficiency omitted: it requires an independently measured incident irradiance.")
     else:
         print("\n-- Joint-observable checks --")
-        print(f"  light J-V RMSE: {metrics['light_iv_rmse_A_cm2'] * 1e3:.3f} mA/cm^2")
+        print(
+            f"  illuminated J-V RMSE: "
+            f"{metrics['light_iv_rmse_A_cm2'] * 1e3:.3f} mA/cm^2"
+        )
         print(f"  dark J-V RMSE : {metrics['dark_iv_rmse_A_cm2'] * 1e3:.3f} mA/cm^2")
-        print(f"  light Jsc     : {metrics['light_ishort_measured_A_cm2'] * 1e3:.3f} measured vs "
-              f"{metrics['light_ishort_simulated_A_cm2'] * 1e3:.3f} mA/cm^2")
-        print(f"  light Voc     : {metrics['light_voc_measured_V']:.4f} measured vs "
-              f"{metrics['light_voc_simulated_V']:.4f} V")
+        print(
+            f"  illuminated Jsc: "
+            f"{metrics['light_ishort_measured_A_cm2'] * 1e3:.3f} measured vs "
+            f"{metrics['light_ishort_simulated_A_cm2'] * 1e3:.3f} mA/cm^2"
+        )
+        print(
+            f"  illuminated Voc: {metrics['light_voc_measured_V']:.4f} measured vs "
+            f"{metrics['light_voc_simulated_V']:.4f} V"
+        )
         objective = metadata.get("joint_objective", {})
         score = objective.get("normalized_block_score")
         threshold = objective.get("quality_warning_threshold")

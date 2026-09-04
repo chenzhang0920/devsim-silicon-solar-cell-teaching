@@ -489,7 +489,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
       <li>Near-IR loss probes weak absorption and base/rear collection</li>
       <li>J<sub>sc</sub> = q∫EQE(λ)Φ(λ)dλ</li>
     </ul>
-    <div class="takeaway"><strong>Cross-check:</strong> integrate the modeled EQE and compare its J<sub>sc</sub> with the full-spectrum J–V result.</div>
+    <div class="takeaway"><strong>Cross-check:</strong> integrate the modeled EQE and compare its J<sub>sc</sub> with the all-bin J–V result.</div>
     <div class="caution"><strong>Data boundary:</strong> no measured EQE is bundled or required. Add an overlay only when a real spectral measurement is available.</div>
   </div>
 </section>
@@ -526,7 +526,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
   <img class="fig" src="../results/joint_observables.png" alt="Historical Cell 3 illuminated and dark J–V measurements compared with the joint model and independent short-circuit and open-circuit checks">
   <div class="side">
     <ul>
-      <li>Joint objective: light J–V + dark J–V + independent J<sub>sc</sub> and V<sub>oc</sub></li>
+      <li>Joint objective: illuminated J–V + dark J–V + independent J<sub>sc</sub> and V<sub>oc</sub></li>
       <li>Dark J–V mainly cross-checks the model; lifetime and SRV stay fixed</li>
       <li>Residual pattern and block score expose systematic disagreement</li>
     </ul>

@@ -303,12 +303,14 @@ def load_joint_data(
                 f"The {label} ishort mean voltage must satisfy |V_mean_V| <= 0.03 V")
     if short["J_mean_A_cm2"] <= 0:
         raise ValueError(
-            "The light ishort mean current must be positive under the generation-positive convention")
+            "The illuminated short-circuit mean current must be positive under "
+            "the generation-positive convention"
+        )
     if float(voc_row["V_at_I0_V"]) <= 0:
-        raise ValueError("The measured light Voc must be positive")
+        raise ValueError("The measured illuminated Voc must be positive")
     if not light_v[0] <= float(voc_row["V_at_I0_V"]) <= light_v[-1]:
         raise ValueError(
-            "The independent light Voc must lie inside the illuminated J-V voltage range"
+            "The independent illuminated Voc must lie inside the illuminated J-V voltage range"
         )
 
     weights_cfg = cfg.get("weights", {})
@@ -369,10 +371,10 @@ def joint_residual(pars: lmfit.Parameters, data: JointData,
                    mode: str | None = None) -> np.ndarray:
     """Evaluate weighted residuals for one cell's multiple measurements.
 
-    Each light/dark J-V curve contributes one RMS-normalized block using the
-    configured model-data discrepancy fraction. The independent light-`ishort`
-    and light-Voc observations each contribute one residual using their stated
-    discrepancy scales. Block weights are applied only after those scalings.
+    Each illuminated/dark J-V curve contributes one RMS-normalized block using
+    the configured model-data discrepancy fraction. The independent illuminated
+    short-circuit and Voc observations each contribute one residual using their
+    stated discrepancy scales. Block weights are applied only after those scalings.
     """
     base = dict(MODEL_PARAMS)
     base.update(pars.valuesdict())

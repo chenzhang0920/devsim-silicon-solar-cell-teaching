@@ -2,7 +2,10 @@
 
 This directory contains unmodified CSV exports from the Keithley 2636B used in
 the teaching calibration example. The files intentionally retain the instrument
-names and metadata so students can see the original format. The current bundle
+names and metadata so students can see the original format. Some exports retain
+instrument labels generated under a Chinese-language locale; these remain
+unchanged as part of the raw provenance, while all maintained teaching text and
+processed tables use English. The current bundle
 contains dark/light I-V, illuminated open-circuit voltage, dark zero-current-voltage,
 and short-circuit (`ishort`) measurements for Cell #3 and Cell #4. Raw filenames retain
 the instrument's `voc` label, but the dark reading is an offset diagnostic, not photovoltaic
@@ -22,8 +25,9 @@ The converter reads this directory by default using the historical setup's expli
 polarity transform, `--voltage-sign -1 --current-sign 1`. Verify and override those values
 for a different wiring arrangement. A `*-voc-*` file is accepted only when every recorded
 current remains within `--zero-current-tolerance` (10 nA by default), preventing a mislabeled
-sweep from entering the Voc summary. English and Chinese-locale `Index`, `Voltage`, and
-`Current` column labels are supported, with required header units `(V)` and `(A)`. Use
+sweep from entering the Voc summary. English labels and labels generated under a
+Chinese-language locale are supported for `Index`, `Voltage`, and `Current`, with
+required header units `(V)` and `(A)`. Use
 `prepare_data.py` only for a standalone illuminated I–V sweep in mV, mA, or another
 generic format; that script does not construct the additional joint-fit summaries. The
 Keithley converter writes standardized J–V tables and summary observables to

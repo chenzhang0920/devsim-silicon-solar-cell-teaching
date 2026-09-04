@@ -80,10 +80,10 @@ def main() -> None:
     jsc_from_eqe = Q * p.photon_flux * np.sum(
         eqe * np.array([bin_photon_flux(i) for i in range(len(lam))]))
     _, j_all = run_simulation(params=dict(vars(p)), voltages=np.array([0.0]))
-    jsc_full = float(j_all[0])
-    mismatch = abs(jsc_from_eqe - jsc_full) / max(abs(jsc_full), 1e-30)
+    jsc_all_bins = float(j_all[0])
+    mismatch = abs(jsc_from_eqe - jsc_all_bins) / max(abs(jsc_all_bins), 1e-30)
     print(f"\nEQE-integrated Jsc = {jsc_from_eqe*1e3:.2f} mA/cm^2; "
-          f"full-spectrum simulation = {jsc_full*1e3:.2f} mA/cm^2; difference = {mismatch:.1%}")
+          f"all-bin simulation = {jsc_all_bins*1e3:.2f} mA/cm^2; difference = {mismatch:.1%}")
 
     fig, ax = plt.subplots(figsize=(10.2, 5.8))
     ax.axvspan(float(lam.min()), 500, color=C_ORANGE, alpha=0.06)
@@ -106,7 +106,7 @@ def main() -> None:
             color=C_BLUE, fontsize=12, ha="center")
     ax.text(0.50, 0.02,
             f"EQE-integrated $J_{{sc}}$ = {jsc_from_eqe*1e3:.2f} mA/cm² "
-            f"(full-spectrum {jsc_full*1e3:.2f})",
+            f"(all-bin model {jsc_all_bins*1e3:.2f})",
             transform=ax.transAxes, ha="center", va="bottom", fontsize=11.5, color=C_GRAY)
     ax.grid(True)
     ax.legend(

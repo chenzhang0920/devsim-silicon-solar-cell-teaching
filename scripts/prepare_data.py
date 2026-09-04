@@ -45,7 +45,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(
         description=(
             "Convert one generic illuminated I–V sweep to a standardized "
-            "light J–V table"
+            "illuminated J–V table"
         )
     )
     ap.add_argument("input", help="Raw CSV path")

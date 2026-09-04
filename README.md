@@ -130,7 +130,7 @@ light  →  front contact | p⁺ emitter | p–n junction | n-type base | rear c
 
 The terminal convention is
 `V = V_front(p) − V_back(n)`. Illuminated current density is positive when the cell
-delivers current, so the light J–V curve begins with positive short-circuit current and
+delivers current, so the illuminated J–V curve begins with positive short-circuit current and
 crosses zero at open circuit. Dark forward current is negative under the same convention.
 
 The forward model includes:

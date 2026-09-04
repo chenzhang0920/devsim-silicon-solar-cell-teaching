@@ -11,23 +11,108 @@ from scripts.prepare_keithley import parse_keithley
 
 ROOT = Path(__file__).resolve().parents[1]
 CJK = re.compile(r"[\u3400-\u9fff]")
+RAW_DATA_ROOT = ROOT / "data" / "raw"
+RAW_EXPORT_SUFFIXES = {".csv", ".dat", ".tsv", ".txt"}
 SOURCE_DIRS = (ROOT / "model", ROOT / "calibration", ROOT / "scripts", ROOT / "tests")
+TEACHING_TEXT_SUFFIXES = {
+    "",
+    ".cff",
+    ".css",
+    ".csv",
+    ".html",
+    ".ini",
+    ".js",
+    ".json",
+    ".md",
+    ".py",
+    ".sh",
+    ".txt",
+    ".yaml",
+    ".yml",
+}
 
 
-def test_python_source_contains_no_literal_cjk_text():
+def test_executable_source_contains_no_literal_cjk_text():
     files = [ROOT / "config.py", ROOT / "environment.yml", ROOT / "pytest.ini"]
-    files.extend(path for directory in SOURCE_DIRS for path in directory.glob("*.py"))
-    offenders = [str(path.relative_to(ROOT)) for path in files if CJK.search(path.read_text(encoding="utf-8"))]
-    assert not offenders, f"Translate executable Python text to English: {offenders}"
+    files.extend(path for directory in SOURCE_DIRS for path in directory.rglob("*.py"))
+    files.extend((ROOT / "scripts").rglob("*.sh"))
+    offenders = [
+        str(path.relative_to(ROOT))
+        for path in files
+        if CJK.search(path.read_text(encoding="utf-8"))
+    ]
+    assert not offenders, f"Translate executable source text to English: {offenders}"
 
 
-def test_tutorial_code_cells_contain_no_literal_cjk_text():
+def test_repository_maintained_text_contains_no_literal_cjk_text():
+    roots = (
+        ROOT / "README.md",
+        ROOT / "CONTRIBUTING.md",
+        ROOT / "CITATION.cff",
+        ROOT / "LICENSE",
+        ROOT / "LICENSE-CONTENT.md",
+        ROOT / ".github",
+        ROOT / "docs",
+        ROOT / "data",
+        ROOT / "results",
+    )
+    files = []
+    for root in roots:
+        candidates = (root,) if root.is_file() else root.rglob("*")
+        for path in candidates:
+            if not path.is_file() or path.suffix.lower() not in TEACHING_TEXT_SUFFIXES:
+                continue
+            is_raw_data = RAW_DATA_ROOT in path.parents and (
+                path.suffix.casefold() in RAW_EXPORT_SUFFIXES
+            )
+            if is_raw_data:
+                continue
+            files.append(path)
+    offenders = [
+        str(path.relative_to(ROOT))
+        for path in files
+        if CJK.search(path.read_text(encoding="utf-8"))
+    ]
+    assert not offenders, f"Translate maintained teaching text to English: {offenders}"
+
+
+def _visible_output_text(output: dict) -> str:
+    parts = []
+    for key in ("text", "ename", "evalue", "traceback"):
+        value = output.get(key, "")
+        parts.append("".join(value) if isinstance(value, list) else str(value))
+    data = output.get("data", {})
+    visible_mime_types = {
+        mime_type
+        for mime_type in data
+        if mime_type.startswith("text/")
+        or mime_type in {
+            "application/javascript",
+            "application/json",
+            "image/svg+xml",
+        }
+    }
+    for mime_type in visible_mime_types:
+        value = data[mime_type]
+        parts.append(
+            json.dumps(value, ensure_ascii=False)
+            if isinstance(value, (dict, list))
+            else str(value)
+        )
+    return "\n".join(parts)
+
+
+def test_tutorial_sources_and_text_outputs_contain_no_literal_cjk_text():
     notebook = json.loads((ROOT / "notebooks" / "tutorial.ipynb").read_text(encoding="utf-8"))
     offenders = []
     for index, cell in enumerate(notebook["cells"]):
-        if cell.get("cell_type") == "code" and CJK.search("".join(cell.get("source", []))):
+        visible_text = "".join(cell.get("source", []))
+        visible_text += "\n".join(
+            _visible_output_text(output) for output in cell.get("outputs", [])
+        )
+        if CJK.search(visible_text):
             offenders.append(index)
-    assert not offenders, f"Translate tutorial code cells to English: {offenders}"
+    assert not offenders, f"Translate tutorial cells and text outputs to English: {offenders}"
 
 
 def test_localized_keithley_headers_remain_supported(tmp_path):

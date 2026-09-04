@@ -90,7 +90,7 @@ def comparison_figure(
 
 
 def joint_comparison_figure(data, fitted_params: dict) -> plt.Figure:
-    """Plot the light and dark J-V data used by a joint calibration.
+    """Plot the illuminated and dark J-V data used by a joint calibration.
 
     The independent short-circuit and Voc observations are shown as markers,
     making it clear which measurements constrain which part of the model.
@@ -109,9 +109,9 @@ def joint_comparison_figure(data, fitted_params: dict) -> plt.Figure:
     fig, axes = plt.subplots(1, 2, figsize=(11.8, 5.2), sharey=False,
                              constrained_layout=True)
     ax = axes[0]
-    ax.plot(v_light, j_light * 1e3, color=C_BLUE, label="joint model")
+    ax.plot(v_light, j_light * 1e3, color=C_BLUE, label="calibrated model")
     ax.scatter(light_v, light_j * 1e3, color=C_ORANGE, s=30,
-               label="light data", zorder=3)
+               label="illuminated data", zorder=3)
     ax.scatter([data.light_ishort["V_mean_V"]],
                [data.light_ishort["J_mean_A_cm2"] * 1e3],
                color=C_GREEN, marker="D", s=45, label="$J_{sc}$ check", zorder=4)
@@ -308,8 +308,15 @@ def identifiability_figure(
     ax1.set_yticklabels(labels)
     ax1.set_xscale("log")
     ax1.set_xlim(x_min, x_max)
-    ax1.set_xlabel("Relative uncertainty  σ / |fitted value|", fontsize=16)
-    ax1.set_title("Relative parameter uncertainty", fontsize=18)
+    if quality_note:
+        ax1.set_xlabel(
+            r"Relative local covariance scale  $\sqrt{\mathrm{diag}(C)}/|\hat{p}|$",
+            fontsize=16,
+        )
+        ax1.set_title("Relative local covariance scale", fontsize=18)
+    else:
+        ax1.set_xlabel("Relative uncertainty  σ / |fitted value|", fontsize=16)
+        ax1.set_title("Relative parameter uncertainty", fontsize=18)
     ax1.tick_params(labelsize=15)
     ax1.grid(True, axis="x")
     for n, y, r in zip(names, ypos, rels):
@@ -375,7 +382,12 @@ def identifiability_summary(params: lmfit.Parameters,
 
         # Keep terminal summaries ASCII so they render reliably in Windows
         # PowerShell/CMD as well as UTF-8 terminals.
-        lines.append(f"{n}: stderr/abs(value) = {rel:.2%} -> {verdict}")
+        ratio_label = (
+            "sqrt(diag(cov))/abs(fitted value)"
+            if not quality_adequate
+            else "stderr/abs(value)"
+        )
+        lines.append(f"{n}: {ratio_label} = {rel:.2%} -> {verdict}")
 
     if corr is not None:
         strong = [(names[i], names[j], corr[i, j])

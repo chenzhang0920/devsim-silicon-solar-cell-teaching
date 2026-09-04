@@ -42,9 +42,10 @@ only when that change is deliberate.
 
 - Preserve the p+-on-n orientation and the terminal-current sign convention
   unless the change explicitly teaches another architecture.
-- Use English for source code, identifiers, terminal messages, and comments.
-- Student-facing explanatory prose may remain bilingual where it improves the
-  lesson.
+- Use English for source code, identifiers, terminal messages, comments, and
+  all repository-maintained teaching content.
+- Treat immutable instrument exports and escaped localized-header test fixtures
+  as data-compatibility exceptions, not as teaching prose to translate.
 - Keep caches, local environments, and disposable `_audit*` results out of commits.
 - Add or update a focused test for behavior changes.
 

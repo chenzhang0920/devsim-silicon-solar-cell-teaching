@@ -372,7 +372,7 @@ def _add_generation(p: SolarCellParams) -> None:
 
 
 def _full_flux(p: SolarCellParams) -> float:
-    """Return full-spectrum or selected-bin photon flux in cm⁻² s⁻¹."""
+    """Return all-bin or selected-bin photon flux in cm⁻² s⁻¹."""
     if _WAVELENGTH_INDEX is None:
         return float(p.photon_flux * spectrum.total_photon_flux())
     return float(p.photon_flux * spectrum.bin_photon_flux(_WAVELENGTH_INDEX))

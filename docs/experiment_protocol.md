@@ -183,14 +183,14 @@ removed. For the bundled historical setup, the converter defaults are `--voltage
 new setup. Files labeled `voc` must also remain within the documented zero-current
 tolerance (default maximum |I| = 10 nA); change that threshold only to match a known
 instrument compliance/noise specification. The converter recognizes both English
-(`Index`, `Voltage`, `Current`) and Chinese-locale Keithley column labels, and requires
-header units `(V)` and `(A)`. Use the generic converter only for a standalone illuminated
+(`Index`, `Voltage`, `Current`) and Keithley labels generated under a Chinese-language
+locale, and requires header units `(V)` and `(A)`. Use the generic converter only for a standalone illuminated
 sweep in other units. The Keithley converter locates the
 native data columns, converts `I/A` to `J`, and writes
 sample-specific files plus `ishort_summary.csv` and `voc_summary.csv`. Existing files and
 summary rows for other samples are preserved by default, which makes a partial student
 conversion safe. If the input directory is a complete measurement bundle, add `--prune`
-to validate that each sample has light/dark J-V plus light Voc/short-circuit measurements
+to validate that each sample has illuminated/dark J-V plus illuminated Voc/short-circuit measurements
 and remove older converter-owned outputs with no matching raw export; unrelated processed
 files are always preserved. Measurement-like filename typos are rejected, while unrelated
 CSV files are listed in a warning rather than silently treated as measurements.

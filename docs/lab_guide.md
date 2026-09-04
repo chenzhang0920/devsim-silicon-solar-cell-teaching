@@ -235,7 +235,7 @@ the weighted mean squared discrepancy across active blocks: 1 matches the stated
 average, while 4 corresponds to a twice-scale weighted RMS mismatch. It is a transparent
 teaching diagnostic, not a statistical reduced chi-square.
 
-For a generic two-column **illuminated I–V sweep**, convert raw I–V to processed light J–V
+For a generic two-column **illuminated I–V sweep**, convert raw I–V to processed illuminated J–V
 explicitly:
 
 ```bash

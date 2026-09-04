@@ -23,6 +23,8 @@ _OWNED_OUTPUT_RE = re.compile(
     re.IGNORECASE,
 )
 _HEADER_ALIASES = {
+    # Native exports may use localized labels; keep aliases escaped so source and
+    # user-facing messages remain English while raw files stay immutable.
     "index": ("\u7d22\u5f15", "index"),
     "voltage": ("\u7535\u538b", "voltage"),
     "current": ("\u7535\u6d41", "current"),
@@ -57,7 +59,8 @@ def parse_keithley(path: str | Path) -> tuple[np.ndarray, np.ndarray]:
         hi = next(i for i, row in enumerate(rows) if row and contains_alias(row[0], "index"))
     except StopIteration as exc:
         raise ValueError(
-            f"{path} has no Keithley header containing an Index/\u7d22\u5f15 field"
+            f"{path} has no Keithley header containing an Index field "
+            "(English or localized Keithley export)"
         ) from exc
     header = [h.strip() for h in rows[hi]]
     data = [r for r in rows[hi + 1:] if r and r[0].strip()
@@ -309,7 +312,8 @@ def main() -> None:
             missing = sorted(_REQUIRED_PRUNE_MEASUREMENTS - available)
             if missing:
                 raise SystemExit(
-                    f"--prune requires light/dark IV plus light Voc/ishort for sample {sample}; "
+                    f"--prune requires illuminated/dark I-V plus illuminated Voc/short-circuit "
+                    f"measurements for sample {sample}; "
                     f"missing {missing}"
                 )
 
@@ -332,10 +336,10 @@ def main() -> None:
             })
             if cond == "light" and voltage_at_i0 <= 0:
                 raise SystemExit(
-                    f"{f.name} gives non-positive light Voc after sign conversion; "
+                    f"{f.name} gives non-positive illuminated Voc after sign conversion; "
                     "check --voltage-sign and the measurement mode"
                 )
-            quantity = "light Voc" if cond.lower() == "light" \
+            quantity = "illuminated Voc" if cond.lower() == "light" \
                 else "dark zero-current offset"
             print(f"  {f.name:24s} -> {quantity} = {voltage_at_i0:.4f} V")
             continue
