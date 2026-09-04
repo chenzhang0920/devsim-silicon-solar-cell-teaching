@@ -1,8 +1,8 @@
 # Silicon Solar Cell Modeling — Student Lab Guide
 
 This project introduces semiconductor-device simulation through a one-dimensional,
-front-illuminated **p⁺-on-n silicon solar cell**. It is designed for second-year
-undergraduates and contributes **10% of the course grade**. The project is marked out of
+front-illuminated **p⁺-on-n silicon solar cell**. It is designed for undergraduate
+students and contributes **10% of the course grade**. The project is marked out of
 100 using the public rubric in [`grading.md`](grading.md).
 
 Complete the five tasks in order. The central question is:

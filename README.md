@@ -32,7 +32,7 @@ flowchart LR
     F --> G[Residuals<br/>and identifiability]
 ```
 
-> **Scope:** this is a transparent teaching model for second-year students. It is not
+> **Scope:** this is a transparent teaching model for undergraduate students. It is not
 > an industrial process deck or a claim of fabrication-grade parameter extraction.
 
 ## 🎓 Course information
