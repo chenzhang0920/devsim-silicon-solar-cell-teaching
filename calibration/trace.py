@@ -78,8 +78,8 @@ def _plot_param_trajectory(ax, trace, names, k=None):
         "series_resistance": "series resistance",
         "electron_lifetime": "electron lifetime",
         "hole_lifetime": "hole lifetime",
-        "front_srv": "front SRV",
-        "back_srv": "back SRV",
+        "front_srv": "effective front loss",
+        "back_srv": "effective rear loss",
     }
     for n in names:
         vals = np.asarray([t["params"][n] for t in trace], dtype=float)
@@ -137,14 +137,14 @@ def plot_optimization_trace(names, trace, v_meas, j_meas):
         edgecolors="white",
         linewidths=0.35,
         zorder=3,
-        label="reference data",
+        label="synthetic reference",
     )
     ax.axhline(0, color="#888888", lw=0.8)
     ax.set_xlim(float(v_meas.min()) - 0.01, float(v_meas.max()) + 0.01)
     ax.set_ylim(-8.0, max(32.0, 1.08 * float(j_meas.max() * 1e3)))
     ax.set_xlabel("Voltage (V)")
     ax.set_ylabel("Current density (mA/cm²)")
-    ax.set_title("J–V approaches the reference")
+    ax.set_title("J–V approaches the synthetic reference")
     ax.legend(fontsize=13, frameon=False)
     ax.grid(alpha=0.3)
 
@@ -157,7 +157,8 @@ def plot_optimization_trace(names, trace, v_meas, j_meas):
 
     _plot_param_trajectory(axes[2], trace, names)
 
-    fig.tight_layout()
+    fig.suptitle("Synthetic calibration demonstration", fontsize=17, fontweight="bold")
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
     return fig
 
 
@@ -196,7 +197,7 @@ def _draw_trace_frame(k, ax1, ax2, ax3, trace, names, v_meas, j_meas,
     ax1.plot(v_meas, snap["j_sim"] * 1e3, color=C_BLUE, lw=2.0, label="model")
     ax1.scatter(
         v_meas, j_meas * 1e3, s=18, color=C_ORANGE, zorder=3,
-        label="reference data",
+        label="synthetic reference",
     )
     ax1.axhline(0, color="#888888", lw=0.8)
     ax1.set_xlim(*x_lim); ax1.set_ylim(*j_lim)

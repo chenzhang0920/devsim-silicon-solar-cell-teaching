@@ -20,7 +20,7 @@ def _project_path(path: str | Path) -> Path:
 
 
 def make_iv(seed: int, noise_frac: float, v_stop: float | None = None,
-            v_step: float = 0.025):
+            v_step: float = 0.02):
     """Return a deterministic noisy J-V sample from the configured model."""
     if v_stop is None:
         v_stop = SIMULATION["voltages"]["stop"]
@@ -30,7 +30,11 @@ def make_iv(seed: int, noise_frac: float, v_stop: float | None = None,
         raise ValueError("v_stop must be finite and > 0")
     if not np.isfinite(v_step) or v_step <= 0:
         raise ValueError("v_step must be finite and > 0")
-    n_points = int(round(v_stop / v_step)) + 1
+    intervals_float = v_stop / v_step
+    intervals = int(round(intervals_float))
+    if not np.isclose(intervals_float, intervals, rtol=0.0, atol=1e-9):
+        raise ValueError("v_stop must be an integer multiple of v_step")
+    n_points = intervals + 1
     if n_points < 3:
         raise ValueError("v_stop and v_step must define at least three voltage points")
     V_sim, J_sim = terminal_iv(params=MODEL_PARAMS)

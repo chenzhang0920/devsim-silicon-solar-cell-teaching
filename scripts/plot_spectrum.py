@@ -21,7 +21,7 @@ Q = 1.602176634e-19
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Spectrum, absorption coefficient, and ideal EQE")
+    ap = argparse.ArgumentParser(description="Spectrum, absorption coefficient, and absorption limit")
     ap.add_argument("--out", default="results/spectrum.png", help="Output PNG path")
     args = ap.parse_args()
 

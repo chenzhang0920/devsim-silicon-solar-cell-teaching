@@ -32,9 +32,9 @@ PARAM_RANGES = {
 
 PARAM_LABELS = {
     "electron_lifetime": "electron lifetime $\\tau_n$ (s)",
-    "hole_lifetime": "hole lifetime $\\tau_p$ (s)",
-    "front_srv": "front SRV (cm/s)",
-    "back_srv": "back SRV (cm/s)",
+    "hole_lifetime": "region-wide hole lifetime $\\tau_p$ (s)",
+    "front_srv": "effective front loss velocity (cm/s)",
+    "back_srv": "effective rear loss velocity (cm/s)",
     "emitter_doping": "p⁺ emitter doping N_A (cm⁻³)",
     "base_doping": "n-base doping N_D (cm⁻³)",
     "thickness": "thickness (µm)",

@@ -3,14 +3,52 @@
   "sample": "3",
   "light_iv_points": 13,
   "dark_iv_points": 15,
-  "light_iv_rmse_A_cm2": 0.004184823286057714,
-  "dark_iv_rmse_A_cm2": 0.0016769920633419777,
+  "light_iv_rmse_A_cm2": 0.0021869984060834758,
+  "dark_iv_rmse_A_cm2": 0.0016444638098091788,
   "light_ishort_measured_A_cm2": 0.0404593996703624,
-  "light_ishort_simulated_A_cm2": 0.045421087484814576,
-  "light_ishort_error_A_cm2": 0.004961687814452179,
+  "light_ishort_simulated_A_cm2": 0.04044009082316742,
+  "light_ishort_error_A_cm2": -1.9308847194976497e-05,
   "light_voc_measured_V": 0.643770933151245,
-  "light_voc_simulated_V": 0.6272896972458994,
-  "light_voc_error_V": -0.01648123590534556,
+  "light_voc_simulated_V": 0.624285361828536,
+  "light_voc_error_V": -0.019485571322709005,
   "dark_zero_current_offset_V": 0.2284016609191895,
-  "dark_ishort_diagnostic_A_cm2": 0.0001025159531127
+  "dark_ishort_diagnostic_A_cm2": 0.0001025159531127,
+  "joint_objective": {
+    "definition": "self_consistent_terminal_prediction",
+    "normalized_block_score": 4.379999304512584,
+    "active_weight_sum": 2.1,
+    "quality_warning_threshold": 4.0,
+    "quality_gate_passed": false,
+    "blocks": {
+      "light_iv": {
+        "weight": 1.0,
+        "residual_count": 13,
+        "normalized_rms": 2.142333633484776,
+        "weighted_squared_contribution": 4.589593397160082,
+        "objective_share": 0.4989774000791844
+      },
+      "dark_iv": {
+        "weight": 0.35,
+        "residual_count": 15,
+        "normalized_rms": 3.20192500827178,
+        "weighted_squared_contribution": 3.5883133155086826,
+        "objective_share": 0.3901189264281987
+      },
+      "light_ishort": {
+        "weight": 0.5,
+        "residual_count": 1,
+        "normalized_rms": 0.03853764819113093,
+        "weighted_squared_contribution": 0.0007425751640516885,
+        "objective_share": 8.073225505142967e-05
+      },
+      "light_voc": {
+        "weight": 0.25,
+        "residual_count": 1,
+        "normalized_rms": 2.0192565479835483,
+        "weighted_squared_contribution": 1.019349251643609,
+        "objective_share": 0.11082294123756546
+      }
+    },
+    "interpretation": "Weighted mean squared self-consistent terminal discrepancy across active observable blocks; not a statistical reduced chi-square"
+  }
 }

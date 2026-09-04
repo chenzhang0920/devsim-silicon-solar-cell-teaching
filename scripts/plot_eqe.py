@@ -100,7 +100,7 @@ def main() -> None:
     ax.set_ylabel("EQE")
     ax.set_ylim(0, 1.05)
     ax.set_title("Modeled EQE: absorption versus carrier collection")
-    ax.text(0.11, 0.13, "front-surface\ncollection loss", transform=ax.transAxes,
+    ax.text(0.11, 0.13, "front-region / emitter\ncollection loss", transform=ax.transAxes,
             color=C_ORANGE, fontsize=12, ha="center")
     ax.text(0.90, 0.13, "weak absorption\nnear the band edge", transform=ax.transAxes,
             color=C_BLUE, fontsize=12, ha="center")

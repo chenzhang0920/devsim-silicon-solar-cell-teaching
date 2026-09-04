@@ -31,6 +31,7 @@ from calibration.fit import (
     evaluate_joint,
     fit_from_csv,
     fit_joint,
+    joint_block_diagnostics,
     joint_block_score,
     load_iv_csv,
     load_joint_data,
@@ -44,6 +45,30 @@ from calibration.report import (
 )
 
 RESULTS_DIR = PROJECT_ROOT / "results"
+
+
+def _clear_mode_outputs(joint: bool) -> None:
+    """Remove the previous mode-specific products before publishing a new fit."""
+    names = (
+        (
+            "joint_fitted_params.json",
+            "joint_fit_metadata.json",
+            "joint_metrics.json",
+            "joint_observables.png",
+            "joint_identifiability.png",
+        )
+        if joint
+        else (
+            "fitted_params.json",
+            "fit_metadata.json",
+            "fit_plot.png",
+            "identifiability.png",
+        )
+    )
+    for name in names:
+        path = RESULTS_DIR / name
+        if path.is_file():
+            path.unlink()
 
 
 def _project_path(path: str | Path) -> Path:
@@ -109,6 +134,25 @@ def _print_optimizer_summary(result: lmfit.MinimizerResult) -> None:
         uncertainty = "n/a" if not parameter.vary or parameter.stderr is None \
             or not np.isfinite(parameter.stderr) else f"{parameter.stderr:.5g}"
         print(f"  {name:<22}{parameter.value:>14.6g}{uncertainty:>16}{status:>10}")
+
+
+def _print_joint_blocks(blocks: dict[str, dict]) -> None:
+    """Print how each observable contributes to the joint objective."""
+    labels = {
+        "light_iv": "illuminated J-V",
+        "dark_iv": "dark J-V",
+        "light_ishort": "independent Jsc",
+        "light_voc": "independent Voc",
+    }
+    print("\n-- Joint objective by observable --")
+    print(f"  {'block':<18}{'weight':>9}{'RMS / scale':>15}{'share':>10}")
+    for name, values in blocks.items():
+        rms = values["normalized_rms"]
+        rms_text = "inactive" if rms is None else f"{rms:.3f}"
+        print(
+            f"  {labels[name]:<18}{values['weight']:>9.2f}"
+            f"{rms_text:>15}{values['objective_share']:>9.1%}"
+        )
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -220,6 +264,7 @@ def main(argv: list[str] | None = None) -> None:
         data = load_joint_data(args.sample)
         result = fit_joint(data)
         block_score = joint_block_score(result.chisqr, data)
+        block_diagnostics = joint_block_diagnostics(result.residual, data)
         quality_limit = float(CALIBRATION["joint"].get(
             "quality_warning_block_score", 4.0
         ))
@@ -234,14 +279,17 @@ def main(argv: list[str] | None = None) -> None:
             "ishort_sigma_floor_A_cm2": data.ishort_sigma_floor,
             "voc_sigma_V": data.voc_sigma,
             "joint_objective": {
+                "definition": "self_consistent_terminal_prediction",
                 "normalized_block_score": block_score,
                 "active_weight_sum": sum(
                     weight for weight in data.weights.values() if weight > 0
                 ),
                 "quality_warning_threshold": quality_limit,
+                "quality_gate_passed": bool(block_score <= quality_limit),
+                "blocks": block_diagnostics,
                 "interpretation": (
-                    "Weighted mean squared discrepancy across active observable blocks; "
-                    "not a statistical reduced chi-square"
+                    "Weighted mean squared self-consistent terminal discrepancy across "
+                    "active observable blocks; not a statistical reduced chi-square"
                 ),
             },
             "covariance_scaling": (
@@ -256,11 +304,14 @@ def main(argv: list[str] | None = None) -> None:
         extra = None
         mode = "single"
         block_score = None
+        block_diagnostics = None
         quality_limit = None
 
     _print_optimizer_summary(result)
     if not bool(getattr(result, "success", False)):
         raise RuntimeError(f"Calibration failed: {getattr(result, 'message', 'unknown error')}")
+    # Avoid presenting new JSON beside stale figures if a later reporting step fails.
+    _clear_mode_outputs(joint=data is not None)
     stem = "joint" if data is not None else ""
     covar, var_names = _save_common(
         result, data_path, mode, extra, stem=stem)
@@ -278,12 +329,16 @@ def main(argv: list[str] | None = None) -> None:
         print(f"Saved fit comparison figure to {fig_path}")
     else:
         metrics = evaluate_joint(result.params, data)
-        metrics_payload = {"schema_version": 1, **metrics}
+        metrics_payload = {
+            "schema_version": 1,
+            **metrics,
+            "joint_objective": extra["joint_objective"],
+        }
         (RESULTS_DIR / "joint_metrics.json").write_text(
             json.dumps(metrics_payload, indent=2, allow_nan=False) + "\n",
             encoding="utf-8",
         )
-        joint_fig = joint_comparison_figure(data, full)
+        joint_fig = joint_comparison_figure(data, full, block_diagnostics)
         joint_path = RESULTS_DIR / "joint_observables.png"
         joint_fig.savefig(joint_path, dpi=150)
         plt.close(joint_fig)
@@ -301,9 +356,10 @@ def main(argv: list[str] | None = None) -> None:
             f"measured vs {metrics['light_voc_simulated_V']:.4f} V"
         )
         print(
-            f"  block score   : {block_score:.3f} "
-            "(1 = stated scales; 4 = twice-scale weighted RMS)"
+            f"  block score   : {block_score:.3f} (weighted mean-square)"
         )
+        print(f"  weighted RMS  : {np.sqrt(block_score):.3f} × stated scale")
+        _print_joint_blocks(block_diagnostics)
         if np.isfinite(block_score) and block_score > quality_limit:
             print(
                 "  [WARNING] The normalized block score exceeds the stated teaching "

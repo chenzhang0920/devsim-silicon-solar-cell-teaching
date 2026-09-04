@@ -32,9 +32,10 @@
       "step": 0.02
     },
     "light_ramp_steps": 8,
+    "bias_max_step": 0.05,
     "dead_layer": 2e-05,
     "mesh": {
-      "top": 1e-06,
+      "top": 2e-07,
       "junction": 2e-07,
       "bulk": 0.0001,
       "surface": 1e-06
@@ -96,10 +97,10 @@
   },
   "optimizer_diagnostics": {
     "success": true,
-    "message": "`ftol` termination condition is satisfied.",
-    "nfev": 29,
-    "sum_squared_scaled_residuals": 589.6818874460942,
-    "lmfit_redchi_internal": 21.060067408789077,
+    "message": "`xtol` termination condition is satisfied.",
+    "nfev": 35,
+    "sum_squared_scaled_residuals": 9.197998539476426,
+    "lmfit_redchi_internal": 0.3284999478384438,
     "interpretation": "Internal optimizer diagnostics, not a statistical goodness-of-fit test. For joint mode use joint_objective.normalized_block_score."
   },
   "covariance_scaling": "Unscaled local Jacobian covariance using the stated discrepancy scales",
@@ -110,12 +111,12 @@
     ],
     "matrix": [
       [
-        0.0003897596351442052,
-        0.00013999651451254716
+        0.00047218228031889204,
+        0.0010027593242611691
       ],
       [
-        0.00013999651451254713,
-        0.003324986086835363
+        0.0010027593242611691,
+        0.1993057192542461
       ]
     ]
   },
@@ -136,10 +137,42 @@
   "ishort_sigma_floor_A_cm2": 0.0005,
   "voc_sigma_V": 0.01,
   "joint_objective": {
-    "normalized_block_score": 280.80089878385434,
+    "definition": "self_consistent_terminal_prediction",
+    "normalized_block_score": 4.379999304512584,
     "active_weight_sum": 2.1,
     "quality_warning_threshold": 4.0,
-    "interpretation": "Weighted mean squared discrepancy across active observable blocks; not a statistical reduced chi-square"
+    "quality_gate_passed": false,
+    "blocks": {
+      "light_iv": {
+        "weight": 1.0,
+        "residual_count": 13,
+        "normalized_rms": 2.142333633484776,
+        "weighted_squared_contribution": 4.589593397160082,
+        "objective_share": 0.4989774000791844
+      },
+      "dark_iv": {
+        "weight": 0.35,
+        "residual_count": 15,
+        "normalized_rms": 3.20192500827178,
+        "weighted_squared_contribution": 3.5883133155086826,
+        "objective_share": 0.3901189264281987
+      },
+      "light_ishort": {
+        "weight": 0.5,
+        "residual_count": 1,
+        "normalized_rms": 0.03853764819113093,
+        "weighted_squared_contribution": 0.0007425751640516885,
+        "objective_share": 8.073225505142967e-05
+      },
+      "light_voc": {
+        "weight": 0.25,
+        "residual_count": 1,
+        "normalized_rms": 2.0192565479835483,
+        "weighted_squared_contribution": 1.019349251643609,
+        "objective_share": 0.11082294123756546
+      }
+    },
+    "interpretation": "Weighted mean squared self-consistent terminal discrepancy across active observable blocks; not a statistical reduced chi-square"
   },
   "dataset_sha256": {
     "light_iv": "395a0895ac51a0b8860b07ab0dd38da7c1d128292cb0c0f7f39206148f7c71f7",

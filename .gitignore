@@ -30,3 +30,4 @@ Thumbs.db
 # links to it. Ignore only disposable local audit artifacts.
 results/_audit*
 results/*.tmp
+results/prepared_data_preview.png

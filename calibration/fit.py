@@ -367,59 +367,93 @@ def _voc_current_sigma(data: JointData) -> float:
     return max(abs(slope) * data.voc_sigma, j_floor, 1e-4)
 
 
+def _joint_terminal_curve(
+    params: dict,
+    measured_voltage: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Solve a smooth terminal curve and verify that it covers the observations."""
+    measured_voltage = np.asarray(measured_voltage, dtype=float)
+    v_max = max(0.85, float(np.max(measured_voltage)) + 0.10)
+    v_term, j_term = terminal_iv(params, n=100, v_max=v_max)
+    if (
+        v_term.size < 2
+        or float(np.min(measured_voltage)) < float(v_term[0])
+        or float(np.max(measured_voltage)) > float(v_term[-1])
+    ):
+        raise RuntimeError(
+            "The self-consistent terminal curve does not cover the measured "
+            "voltage range; extend the junction-voltage range"
+        )
+    return v_term, j_term
+
+
 def joint_residual(pars: lmfit.Parameters, data: JointData,
                    mode: str | None = None) -> np.ndarray:
-    """Evaluate weighted residuals for one cell's multiple measurements.
+    """Evaluate self-consistent weighted residuals for multiple measurements.
 
     Each illuminated/dark J-V curve contributes one RMS-normalized block using
     the configured model-data discrepancy fraction. The independent illuminated
     short-circuit and Voc observations each contribute one residual using their
-    stated discrepancy scales. Block weights are applied only after those scalings.
+    stated discrepancy scales. One illuminated terminal curve supplies all three
+    illuminated blocks, so every residual is a prediction at fixed terminal voltage.
+    Block weights are applied only after nondimensionalization.
     """
     base = dict(MODEL_PARAMS)
     base.update(pars.valuesdict())
     residuals: list[np.ndarray] = []
     mode = mode or RESIDUAL_MODE
 
-    def add_iv(name: str, params: dict, voltage: np.ndarray, current: np.ndarray) -> None:
+    light_needed = any(data.weights[name] > 0 for name in (
+        "light_iv", "light_ishort", "light_voc"
+    ))
+    light_curve = None
+    if light_needed:
+        light_targets = []
+        if data.weights["light_iv"]:
+            light_targets.append(data.light_v)
+        if data.weights["light_ishort"]:
+            light_targets.append(np.array([data.light_ishort["V_mean_V"]]))
+        if data.weights["light_voc"]:
+            light_targets.append(np.array([data.light_voc]))
+        light_voltage_targets = np.concatenate(light_targets)
+        light_curve = _joint_terminal_curve(base, light_voltage_targets)
+
+    def add_iv(
+        name: str,
+        curve: tuple[np.ndarray, np.ndarray],
+        voltage: np.ndarray,
+        current: np.ndarray,
+    ) -> None:
         weight = data.weights[name]
         if weight == 0:
             return
-        simulated = run_simulation_terminal(params=params, voltages=voltage, j_meas=current)
-        # ``residual_vector`` first supplies the selected current scale.  The
-        # explicit fractional discrepancy then makes that scale comparable to
-        # the Jsc and Voc uncertainty floors.  Dividing by sqrt(N) makes each
-        # curve a block-level RMS contribution rather than weighting it merely
-        # because it contains more sampled voltages.
+        simulated = np.interp(voltage, curve[0], curve[1])
         scaled = residual_vector(simulated, current, mode) / data.iv_sigma_fraction
         residuals.append(np.sqrt(weight / current.size) * scaled)
 
-    add_iv("light_iv", base, data.light_v, data.light_j)
-    dark_params = dict(base)
-    dark_params["photon_flux"] = 0.0
-    add_iv("dark_iv", dark_params, data.dark_v, data.dark_j)
+    if data.weights["light_iv"]:
+        add_iv("light_iv", light_curve, data.light_v, data.light_j)
+    if data.weights["dark_iv"]:
+        dark_params = dict(base)
+        dark_params["photon_flux"] = 0.0
+        dark_curve = _joint_terminal_curve(dark_params, data.dark_v)
+        add_iv("dark_iv", dark_curve, data.dark_v, data.dark_j)
 
     weight = data.weights["light_ishort"]
     if weight:
         j_mean = data.light_ishort["J_mean_A_cm2"]
         sigma = max(abs(data.light_ishort["J_std_A_cm2"]), data.ishort_sigma_floor)
-        simulated = run_simulation_terminal(
-            params=base,
-            voltages=np.array([data.light_ishort["V_mean_V"]]),
-            j_meas=np.array([j_mean]),
-        )[0]
+        simulated = np.interp(
+            data.light_ishort["V_mean_V"], light_curve[0], light_curve[1]
+        )
         residuals.append(np.array([np.sqrt(weight) * (simulated - j_mean) / sigma]))
 
     weight = data.weights["light_voc"]
     if weight:
-        # A measured Voc is an I=0 condition. Evaluating the model current at
-        # that voltage is equivalent to a local Voc anchor and avoids a costly
-        # dense terminal-J-V solve at every optimizer iteration.
-        simulated = run_simulation_terminal(
-            params=base,
-            voltages=np.array([data.light_voc]),
-            j_meas=np.array([0.0]),
-        )[0]
+        # A measured Voc is a zero-current condition. Use the self-consistent
+        # terminal current at that voltage and translate the stated voltage
+        # discrepancy scale through the measured local J-V slope.
+        simulated = np.interp(data.light_voc, light_curve[0], light_curve[1])
         residuals.append(np.array([
             np.sqrt(weight) * simulated / _voc_current_sigma(data)
         ]))
@@ -466,18 +500,68 @@ def joint_block_score(chisqr: float, data: JointData) -> float:
     return value / active_weight
 
 
+def joint_block_diagnostics(residual_values, data: JointData) -> dict[str, dict]:
+    """Decompose a joint residual into projector-ready block diagnostics.
+
+    ``normalized_rms`` is expressed in multiples of each block's stated
+    discrepancy scale. ``objective_share`` reports the fraction of the summed
+    squared objective contributed by that block.
+    """
+    values = np.asarray(residual_values, dtype=float)
+    if values.ndim != 1 or not np.all(np.isfinite(values)):
+        raise ValueError("residual_values must be a one-dimensional finite array")
+    sizes = {
+        "light_iv": int(data.light_v.size),
+        "dark_iv": int(data.dark_v.size),
+        "light_ishort": 1,
+        "light_voc": 1,
+    }
+    rows: dict[str, dict] = {}
+    offset = 0
+    total = float(np.sum(values**2))
+    for name in ("light_iv", "dark_iv", "light_ishort", "light_voc"):
+        weight = float(data.weights[name])
+        if weight > 0:
+            count = sizes[name]
+            segment = values[offset:offset + count]
+            if segment.size != count:
+                raise ValueError("residual_values does not match the active joint blocks")
+            contribution = float(np.sum(segment**2))
+            normalized_rms = float(np.sqrt(contribution / weight))
+            offset += count
+        else:
+            count = 0
+            contribution = 0.0
+            normalized_rms = None
+        rows[name] = {
+            "weight": weight,
+            "residual_count": count,
+            "normalized_rms": normalized_rms,
+            "weighted_squared_contribution": contribution,
+            "objective_share": 0.0 if total == 0 else contribution / total,
+        }
+    if offset != values.size:
+        raise ValueError("residual_values contains entries beyond the active joint blocks")
+    return rows
+
+
 def evaluate_joint(params: lmfit.Parameters | dict, data: JointData) -> dict:
     """Return per-observable fit diagnostics for a completed joint fit."""
     base = dict(MODEL_PARAMS)
     values = params.valuesdict() if isinstance(params, lmfit.Parameters) else params
     base.update(values)
-    # Compare against the *self-consistent terminal current*, not the implicit
-    # equation residual used during optimization.  The latter is efficient but
-    # is not itself a predicted J-V curve when the model/data mismatch is large.
     v_term, j_term = terminal_iv(
         base, n=max(320, 20 * data.light_v.size),
         v_max=max(0.85, float(data.light_v.max()) + 0.10),
     )
+    if (
+        v_term.size < 2
+        or data.light_v.min() < v_term[0]
+        or data.light_v.max() > v_term[-1]
+    ):
+        raise RuntimeError(
+            "The illuminated terminal curve does not cover the measured voltage range"
+        )
     light_sim = np.interp(data.light_v, v_term, j_term)
     dark_params = dict(base)
     dark_params["photon_flux"] = 0.0
@@ -485,6 +569,14 @@ def evaluate_joint(params: lmfit.Parameters | dict, data: JointData) -> dict:
         dark_params, n=max(320, 20 * data.dark_v.size),
         v_max=max(0.85, float(data.dark_v.max()) + 0.10),
     )
+    if (
+        v_dark.size < 2
+        or data.dark_v.min() < v_dark[0]
+        or data.dark_v.max() > v_dark[-1]
+    ):
+        raise RuntimeError(
+            "The dark terminal curve does not cover the measured voltage range"
+        )
     dark_sim = np.interp(data.dark_v, v_dark, j_dark)
     short_j = data.light_ishort["J_mean_A_cm2"]
     short_sim = float(np.interp(data.light_ishort["V_mean_V"], v_term, j_term))

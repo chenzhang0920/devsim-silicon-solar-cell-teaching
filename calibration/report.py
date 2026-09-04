@@ -89,7 +89,11 @@ def comparison_figure(
     return fig, compare
 
 
-def joint_comparison_figure(data, fitted_params: dict) -> plt.Figure:
+def joint_comparison_figure(
+    data,
+    fitted_params: dict,
+    block_diagnostics: dict[str, dict] | None = None,
+) -> plt.Figure:
     """Plot the illuminated and dark J-V data used by a joint calibration.
 
     The independent short-circuit and Voc observations are shown as markers,
@@ -101,15 +105,48 @@ def joint_comparison_figure(data, fitted_params: dict) -> plt.Figure:
     light_j = np.asarray(data.light_j, dtype=float)
     dark_v = np.asarray(data.dark_v, dtype=float)
     dark_j = np.asarray(data.dark_j, dtype=float)
-    v_light, j_light = terminal_iv(fitted_params, n=260, v_max=0.84)
+    light_targets = np.concatenate((
+        light_v,
+        np.array([data.light_ishort["V_mean_V"], data.light_voc], dtype=float),
+    ))
+    light_v_max = max(0.85, float(light_targets.max()) + 0.10)
+    dark_v_max = max(0.85, float(dark_v.max()) + 0.10)
+    v_light, j_light = terminal_iv(
+        fitted_params,
+        n=max(260, 20 * light_v.size),
+        v_max=light_v_max,
+    )
     dark_params = dict(fitted_params)
     dark_params["photon_flux"] = 0.0
-    v_dark, j_dark = terminal_iv(dark_params, n=260, v_max=0.84)
+    v_dark, j_dark = terminal_iv(
+        dark_params,
+        n=max(260, 20 * dark_v.size),
+        v_max=dark_v_max,
+    )
+    if (
+        v_light.size < 2
+        or light_targets.min() < v_light[0]
+        or light_targets.max() > v_light[-1]
+    ):
+        raise RuntimeError(
+            "The illuminated reporting curve does not cover all observed voltages"
+        )
+    if (
+        v_dark.size < 2
+        or dark_v.min() < v_dark[0]
+        or dark_v.max() > v_dark[-1]
+    ):
+        raise RuntimeError("The dark reporting curve does not cover the observed voltages")
 
-    fig, axes = plt.subplots(1, 2, figsize=(11.8, 5.2), sharey=False,
-                             constrained_layout=True)
+    ncols = 3 if block_diagnostics else 2
+    width_ratios = (1.3, 1.3, 0.9) if block_diagnostics else (1.0, 1.0)
+    fig, axes = plt.subplots(
+        1, ncols, figsize=(15.2, 5.2) if block_diagnostics else (11.8, 5.2),
+        sharey=False, constrained_layout=True,
+        gridspec_kw={"width_ratios": width_ratios},
+    )
     ax = axes[0]
-    ax.plot(v_light, j_light * 1e3, color=C_BLUE, label="calibrated model")
+    ax.plot(v_light, j_light * 1e3, color=C_BLUE, label="best-fit teaching model")
     ax.scatter(light_v, light_j * 1e3, color=C_ORANGE, s=30,
                label="illuminated data", zorder=3)
     ax.scatter([data.light_ishort["V_mean_V"]],
@@ -149,6 +186,31 @@ def joint_comparison_figure(data, fitted_params: dict) -> plt.Figure:
             transform=ax.transAxes, fontsize=14.5, va="top",
             bbox=dict(boxstyle="round,pad=0.35", fc="white", ec="#cccccc", lw=0.8),
         )
+    if block_diagnostics:
+        ax = axes[2]
+        order = ("light_iv", "dark_iv", "light_ishort", "light_voc")
+        labels = {
+            "light_iv": "Light J–V",
+            "dark_iv": "Dark J–V",
+            "light_ishort": "Jsc anchor",
+            "light_voc": "Voc anchor",
+        }
+        active = [name for name in order if block_diagnostics[name]["normalized_rms"] is not None]
+        rms = np.array([block_diagnostics[name]["normalized_rms"] for name in active])
+        shares = np.array([block_diagnostics[name]["objective_share"] for name in active])
+        positions = np.arange(len(active))[::-1]
+        colors = [C_ORANGE if value > 2.0 else C_BLUE for value in rms]
+        ax.barh(positions, rms, color=colors, alpha=0.88)
+        ax.axvline(1.0, color=C_GRAY, ls="--", lw=1.2)
+        ax.axvline(2.0, color=C_ORANGE, ls=":", lw=1.2)
+        ax.set_yticks(positions, [labels[name] for name in active])
+        ax.set_xlabel("RMS / stated scale", fontsize=15)
+        ax.set_title("Residual by block", fontsize=18)
+        ax.set_xlim(0.0, max(4.2, 1.48 * float(rms.max())))
+        for y, value, share in zip(positions, rms, shares):
+            ax.text(value + 0.06, y, f"{value:.2f}  ({share:.0%})",
+                    va="center", fontsize=13.5)
+        ax.grid(True, axis="x")
     for axis in axes:
         axis.tick_params(labelsize=15)
         axis.grid(True)
@@ -289,9 +351,10 @@ def identifiability_figure(
     x_min = min(0.1, max(1e-4, float(finite_rels.min()) / 2)) \
         if finite_rels.size else 1e-3
     x_max = max(2.0, float(finite_rels.max()) * 1.35) if finite_rels.size else 2.0
-    ax1.axvspan(x_min, 0.3, color=C_GREEN, alpha=0.07, zorder=0)
-    ax1.axvspan(0.3, 1.0, color=C_YELLOW, alpha=0.08, zorder=0)
-    ax1.axvspan(1.0, x_max, color=C_ORANGE, alpha=0.06, zorder=0)
+    if not quality_note:
+        ax1.axvspan(x_min, 0.3, color=C_GREEN, alpha=0.07, zorder=0)
+        ax1.axvspan(0.3, 1.0, color=C_YELLOW, alpha=0.08, zorder=0)
+        ax1.axvspan(1.0, x_max, color=C_ORANGE, alpha=0.06, zorder=0)
     ax1.barh(ypos, rels, color=colors, zorder=2)
     ax1.axvline(0.3, color="#888888", ls="--", lw=0.8)
     ax1.axvline(1.0, color="#888888", ls=":", lw=0.8)
@@ -301,8 +364,8 @@ def identifiability_figure(
         "series_resistance": "Series R",
         "electron_lifetime": "Electron lifetime",
         "hole_lifetime": "Hole lifetime",
-        "front_srv": "Front SRV",
-        "back_srv": "Back SRV",
+        "front_srv": "Effective front loss",
+        "back_srv": "Effective rear loss",
     }
     labels = [display_names.get(n, n.replace("_", " ")) for n in names]
     ax1.set_yticklabels(labels)

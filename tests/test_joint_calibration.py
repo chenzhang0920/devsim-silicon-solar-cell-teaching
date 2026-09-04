@@ -8,6 +8,7 @@ import pytest
 from calibration.fit import (
     JointData,
     fit_joint,
+    joint_block_diagnostics,
     joint_block_score,
     joint_residual,
     load_joint_data,
@@ -82,6 +83,30 @@ def test_joint_loader_accepts_recorded_path_override():
     assert data.paths["light_iv"].endswith("light_iv_sample3.csv")
 
 
+def test_joint_report_extends_curves_to_cover_new_sample_voltage(monkeypatch):
+    import matplotlib.pyplot as plt
+    import calibration.report as report
+
+    data = load_joint_data(3)
+    data.light_v = np.array([0.0, 0.90])
+    data.light_j = np.array([0.04, -0.01])
+    data.light_voc = 0.85
+    data.dark_v = np.array([0.0, 0.92])
+    data.dark_j = np.array([0.0, -0.02])
+    calls = []
+
+    def fake_terminal_iv(params, n, v_max):
+        calls.append(v_max)
+        return np.linspace(-0.05, v_max, n), np.linspace(0.04, -0.02, n)
+
+    monkeypatch.setattr(report, "terminal_iv", fake_terminal_iv)
+    figure = report.joint_comparison_figure(data, fitted_params={})
+    plt.close(figure)
+
+    assert calls[0] >= 1.0 - 1e-12
+    assert calls[1] >= 1.02 - 1e-12
+
+
 def test_joint_residual_includes_iv_short_and_voc_blocks(monkeypatch):
     import importlib
     fit_module = importlib.import_module("calibration.fit")
@@ -89,24 +114,23 @@ def test_joint_residual_includes_iv_short_and_voc_blocks(monkeypatch):
     data = load_joint_data(3)
     calls = []
 
-    def fake_terminal(params, voltages, j_meas):
-        calls.append((dict(params), np.asarray(voltages).copy(), np.asarray(j_meas).copy()))
-        # Returning the target makes all residuals exactly zero, while still
-        # allowing this test to inspect which data blocks were requested.
-        return np.asarray(j_meas, dtype=float)
+    def fake_terminal_curve(params, n, v_max):
+        calls.append((dict(params), n, v_max))
+        voltage = np.linspace(-0.05, v_max, n)
+        if params["photon_flux"] == 0:
+            current = -0.02 * voltage
+        else:
+            current = 0.05 * (data.light_voc - voltage)
+        return voltage, current
 
-    monkeypatch.setattr(fit_module, "run_simulation_terminal", fake_terminal)
+    monkeypatch.setattr(fit_module, "terminal_iv", fake_terminal_curve)
     values = joint_residual(make_params(), data)
 
     assert values.shape == (data.light_v.size + data.dark_v.size + 2,)
-    assert np.allclose(values, 0.0)
-    assert len(calls) == 4
-    assert calls[0][1].shape == data.light_v.shape
-    assert calls[1][1].shape == data.dark_v.shape
+    assert np.all(np.isfinite(values))
+    assert len(calls) == 2
+    assert calls[0][0]["photon_flux"] > 0
     assert calls[1][0]["photon_flux"] == pytest.approx(0.0)
-    assert calls[2][1].tolist() == [pytest.approx(data.light_ishort["V_mean_V"])]
-    assert calls[3][1].tolist() == [pytest.approx(data.light_voc)]
-    assert calls[3][2].tolist() == [0.0]
 
 
 def test_joint_residual_can_disable_observable_blocks(monkeypatch):
@@ -115,13 +139,16 @@ def test_joint_residual_can_disable_observable_blocks(monkeypatch):
 
     data = load_joint_data(3)
     data.weights.update({"dark_iv": 0.0, "light_ishort": 0.0, "light_voc": 0.0})
-    monkeypatch.setattr(
-        fit_module,
-        "run_simulation_terminal",
-        lambda params, voltages, j_meas: np.asarray(j_meas, dtype=float),
-    )
+    calls = []
+
+    def fake_terminal_curve(params, n, v_max):
+        calls.append(dict(params))
+        return data.light_v, data.light_j
+
+    monkeypatch.setattr(fit_module, "terminal_iv", fake_terminal_curve)
     values = joint_residual(make_params(), data)
     assert values.shape == (data.light_v.size,)
+    assert len(calls) == 1
 
 
 def test_each_iv_curve_is_normalized_as_one_rms_block(monkeypatch):
@@ -132,15 +159,39 @@ def test_each_iv_curve_is_normalized_as_one_rms_block(monkeypatch):
     data.weights.update({"light_iv": 1.0, "dark_iv": 0.0,
                          "light_ishort": 0.0, "light_voc": 0.0})
 
-    def fixed_fractional_error(params, voltages, j_meas):
-        del params, voltages
-        current = np.asarray(j_meas, dtype=float)
+    def fixed_fractional_error(params, n, v_max):
+        del params, n, v_max
+        current = np.asarray(data.light_j, dtype=float)
         scale = np.max(np.abs(current))
-        return current + data.iv_sigma_fraction * scale
+        return data.light_v, current + data.iv_sigma_fraction * scale
 
-    monkeypatch.setattr(fit_module, "run_simulation_terminal", fixed_fractional_error)
+    monkeypatch.setattr(fit_module, "terminal_iv", fixed_fractional_error)
     values = joint_residual(make_params(), data, mode="absolute")
     assert np.sum(values**2) == pytest.approx(1.0)
+
+
+def test_joint_block_diagnostics_decomposes_weighted_residual():
+    data = load_joint_data(3)
+    sizes = [data.light_v.size, data.dark_v.size, 1, 1]
+    residual = np.concatenate([
+        np.full(size, np.sqrt(data.weights[name] / size) * value)
+        for name, size, value in zip(
+            ("light_iv", "dark_iv", "light_ishort", "light_voc"),
+            sizes,
+            (2.0, 3.0, 4.0, 5.0),
+        )
+    ])
+
+    diagnostics = joint_block_diagnostics(residual, data)
+
+    assert diagnostics["light_iv"]["normalized_rms"] == pytest.approx(2.0)
+    assert diagnostics["dark_iv"]["normalized_rms"] == pytest.approx(3.0)
+    assert diagnostics["light_ishort"]["normalized_rms"] == pytest.approx(4.0)
+    assert diagnostics["light_voc"]["normalized_rms"] == pytest.approx(5.0)
+    assert sum(row["weighted_squared_contribution"] for row in diagnostics.values()) \
+        == pytest.approx(np.sum(residual**2))
+    assert sum(row["objective_share"] for row in diagnostics.values()) \
+        == pytest.approx(1.0)
 
 
 def test_joint_block_score_uses_active_block_weights():

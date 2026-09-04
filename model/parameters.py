@@ -27,7 +27,7 @@ class SolarCellParams:
     auger_n: float = 2.8e-31
     auger_p: float = 9.9e-32
 
-    # Effective surface-recombination velocities (cm/s)
+    # Effective near-contact dead-layer loss velocities (cm/s)
     front_srv: float = 1e4
     back_srv: float = 1e6
 

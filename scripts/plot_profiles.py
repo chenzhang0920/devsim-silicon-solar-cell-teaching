@@ -81,11 +81,12 @@ def main() -> None:
     data = profiles(p, bias=bias)
     x_um = data["x"] * 1e4
     junction_um = p.emitter_depth * 1e4
-    equilibrium_field = -np.gradient(data["potential"], data["x"])
-    illuminated_field = -np.gradient(data["ill_potential"], data["x"])
+    field_x_um = data["field_x"] * 1e4
+    equilibrium_field = data["electric_field"]
+    illuminated_field = data["ill_electric_field"]
 
     fig, axes = plt.subplots(
-        2, 2, figsize=(12.4, 5.8), constrained_layout=True,
+        2, 2, figsize=(13.2, 7.2), constrained_layout=True,
     )
 
     ax = axes[0, 0]
@@ -97,15 +98,18 @@ def main() -> None:
     ax.set_xlim(0, 2.0)
     ax.set_ylim(1e15, 2e19)
     ax.legend(frameon=False, loc="center right", fontsize=15)
-    _style(ax, "$p^+$ emitter / n-type base", ylabel="Doping (cm$^{-3}$)")
+    _style(
+        ax, "$p^+$ emitter / n-type base",
+        xlabel="Depth (µm) — junction zoom", ylabel="Doping (cm$^{-3}$)",
+    )
 
     ax = axes[0, 1]
     ax.plot(
-        x_um, equilibrium_field / 1e3, color=C_BLUE, ls=":",
+        field_x_um, equilibrium_field / 1e3, color=C_BLUE, ls=":",
         label="equilibrium",
     )
     ax.plot(
-        x_um, illuminated_field / 1e3, color=C_ORANGE,
+        field_x_um, illuminated_field / 1e3, color=C_ORANGE,
         label=f"near $V_{{oc}}$, {bias:.3f} V" if args.bias == "near-voc"
         else f"illuminated, {bias:.3f} V",
     )
@@ -119,7 +123,10 @@ def main() -> None:
     )
     ax.set_ylim(-1.1 * peak, 1.1 * peak)
     ax.legend(frameon=False, loc="lower right", fontsize=15)
-    _style(ax, f"Field: equilibrium vs {state}", ylabel="Field (kV/cm)")
+    _style(
+        ax, "Electric field near the junction",
+        xlabel="Depth (µm) — junction zoom", ylabel="Field (kV/cm)",
+    )
 
     ax = axes[1, 0]
     ax.semilogy(x_um, data["electrons"], color=C_BLUE, ls=":", label="n eq.")
@@ -130,7 +137,10 @@ def main() -> None:
     ax.set_xlim(0, p.thickness * 1e4)
     ax.set_ylim(1e2, 1e21)
     ax.legend(frameon=False, ncol=2, loc="upper right", fontsize=15)
-    _style(ax, f"Carriers: equilibrium vs {state}", ylabel="Carrier density (cm$^{-3}$)")
+    _style(
+        ax, f"Carrier profiles: equilibrium vs {state}",
+        xlabel="Depth (µm) — full device", ylabel="Carrier density (cm$^{-3}$)",
+    )
 
     ax = axes[1, 1]
     ax.semilogy(x_um, data["generation"], color=C_BLUE)
@@ -141,7 +151,8 @@ def main() -> None:
         ax.set_ylim(max(float(positive.min()) * 0.5, 1e8), float(positive.max()) * 2.0)
     _style(
         ax,
-        f"Photogeneration at {state}",
+        f"Photogeneration across the full device",
+        xlabel="Depth (µm) — full device",
         ylabel="Generation (cm$^{-3}$ s$^{-1}$)",
     )
 

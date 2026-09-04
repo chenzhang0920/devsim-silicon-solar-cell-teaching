@@ -91,6 +91,16 @@ def test_checked_calibration_results_state_covariance_and_schema_contracts():
     assert "not an instrument-derived" in single["covariance_scaling"]
     assert "Unscaled local Jacobian" in joint["covariance_scaling"]
     assert metrics["schema_version"] == 1
+    objective = joint["joint_objective"]
+    assert objective["definition"] == "self_consistent_terminal_prediction"
+    assert objective["quality_gate_passed"] is (
+        objective["normalized_block_score"]
+        <= objective["quality_warning_threshold"]
+    )
+    assert metrics["joint_objective"] == objective
+    assert set(objective["blocks"]) == {
+        "light_iv", "dark_iv", "light_ishort", "light_voc"
+    }
 
 
 def test_repository_text_and_binary_rules_cover_portable_entry_points():
@@ -106,6 +116,7 @@ def test_repository_text_and_binary_rules_cover_portable_entry_points():
     assert ".venv/" in gitignore
     assert "results/*" not in gitignore.splitlines()
     assert "results/_audit*" in gitignore
+    assert "results/prepared_data_preview.png" in gitignore
 
 
 def test_raw_data_do_not_bundle_uncalibrated_power_notes():

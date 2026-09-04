@@ -124,7 +124,7 @@ def plot(V: np.ndarray, J_mA: np.ndarray,
     ax.set_xlabel("Voltage V (V)")
     ax.set_ylabel("Current density J (mA/cm²)")
     ax.set_title("The J–V knee locates the maximum-power point")
-    ax.text(0.99, 0.98, "positive J = power delivered by the cell",
+    ax.text(0.99, 0.98, "generation-positive J; output power density = VJ",
             transform=ax.transAxes, ha="right", va="top", fontsize=11.5, color=C_GRAY)
     if reference is not None:
         ax.legend(

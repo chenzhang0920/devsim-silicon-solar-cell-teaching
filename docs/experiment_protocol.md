@@ -175,25 +175,23 @@ python scripts/prepare_keithley.py --data data/raw/group01 --area 4.0
 python scripts/run_calibration.py --joint --sample 101
 ```
 
-The processed files still go to `data/processed/` by default, where the unique sample ID
-keeps them separate. Use `--prune` only when the selected `--data` directory is the complete
-intended measurement bundle and you deliberately want stale converter-owned outputs
-removed. For the bundled historical setup, the converter defaults are `--voltage-sign -1` and
-`--current-sign 1`. These values describe that wiring only; verify and override them for a
-new setup. Files labeled `voc` must also remain within the documented zero-current
-tolerance (default maximum |I| = 10 nA); change that threshold only to match a known
-instrument compliance/noise specification. The converter recognizes both English
-(`Index`, `Voltage`, `Current`) and Keithley labels generated under a Chinese-language
-locale, and requires header units `(V)` and `(A)`. Use the generic converter only for a standalone illuminated
-sweep in other units. The Keithley converter locates the
-native data columns, converts `I/A` to `J`, and writes
-sample-specific files plus `ishort_summary.csv` and `voc_summary.csv`. Existing files and
-summary rows for other samples are preserved by default, which makes a partial student
-conversion safe. If the input directory is a complete measurement bundle, add `--prune`
-to validate that each sample has illuminated/dark J-V plus illuminated Voc/short-circuit measurements
-and remove older converter-owned outputs with no matching raw export; unrelated processed
-files are always preserved. Measurement-like filename typos are rejected, while unrelated
-CSV files are listed in a warning rather than silently treated as measurements.
+The processed files go to `data/processed/` by default; unique sample IDs keep groups
+separate. Apply the following rules:
+
+- verify voltage and current polarity for every setup; the bundled historical wiring uses
+  `--voltage-sign -1 --current-sign 1`;
+- keep `voc` files within the documented zero-current tolerance (default |I| ≤ 10 nA), and
+  change it only for a known compliance or noise specification;
+- use the Keithley converter for native `(V)` and `(A)` columns; it recognizes English and
+  Chinese-locale Keithley headers and writes sample-specific J–V files plus
+  `ishort_summary.csv` and `voc_summary.csv`;
+- use the generic converter only for a standalone illuminated sweep in other units;
+- add `--prune` only when `--data` names a complete measurement bundle. It validates the
+  required illuminated/dark J–V and illuminated Voc/short-circuit files, then removes stale
+  converter-owned outputs while preserving unrelated processed files.
+
+By default, existing files and summary rows for other sample IDs are preserved. Filename
+typos that resemble measurement files are rejected; unrelated CSV files produce a warning.
 
 For the teaching forward-bias workflow, Keithley J-V tables retain only
 `0 <= V <= --v-max` (0.72 V by default). Reverse-bias rows remain unchanged in the raw

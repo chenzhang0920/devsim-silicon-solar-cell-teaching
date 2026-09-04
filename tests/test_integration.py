@@ -48,6 +48,8 @@ def test_device_is_front_p_plus_on_n_and_field_points_to_front():
     assert d["net_doping"][-1] == pytest.approx(p.base_doping)
     assert d["holes"][0] > d["electrons"][0]
     assert d["electrons"][-1] > d["holes"][-1]
+    mass_action = d["electrons"] * d["holes"]
+    assert mass_action == pytest.approx(np.full_like(mass_action, 1e20), rel=1e-10)
 
     x_um = d["x"] * 1e4
     ec, _, _, _ = band_edges(
@@ -60,7 +62,7 @@ def test_device_is_front_p_plus_on_n_and_field_points_to_front():
     assert vbi_numeric == pytest.approx(vbi_analytic, abs=0.01)
 
 
-    e_field = -np.gradient(d["potential"], d["x"])
+    e_field = d["electric_field"]
     assert e_field[int(np.argmax(np.abs(e_field)))] < 0
 
 

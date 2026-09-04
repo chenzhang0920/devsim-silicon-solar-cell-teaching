@@ -15,7 +15,7 @@ def test_readme_visual_assets_are_tracked_and_referenced():
         "results/iv_plot.png",
         "results/joint_observables.png",
         "results/eqe.png",
-        "results/identifiability.png",
+        "results/joint_identifiability.png",
     }
     assert expected <= refs
     assert all((root / ref).is_file() for ref in expected)

@@ -144,7 +144,8 @@ parameter could be calibrated.
 
 ### Run
 
-Use the n-base minority-hole lifetime for the standard exercise:
+Use the region-wide SRH hole-lifetime parameter for the standard exercise. Its
+terminal response is dominated by minority holes in the n-type base:
 
 ```bash
 python scripts/plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5
@@ -169,7 +170,7 @@ If the instructor assigns another parameter, change only `--param`, `--start`, a
 
 ---
 
-## Task 4 — Experimental data and Cell #3 joint calibration (30 points)
+## Task 4 — Experimental data and joint calibration (30 points)
 
 ### Goal
 
@@ -208,32 +209,32 @@ The joint objective uses four observable blocks:
 | Observable | Information supplied |
 |---|---|
 | illuminated J–V | current plateau, knee, and curve shape |
-| dark J–V | diode/leakage cross-check and limited leverage on effective series resistance |
+| dark J–V | forward-current cross-check and limited leverage on effective series resistance |
 | repeated illuminated short-circuit measurement | independent current and repeatability check |
 | illuminated open-circuit measurement | independent zero-current voltage check |
 
 The repeated short-circuit readings enter through a summary rather than as many copies of
 the same constraint. Dark short-circuit and dark zero-current-voltage files remain offset
-and leakage diagnostics; the latter is not a photovoltaic `Voc`. Each J–V block is scaled
-by its own characteristic current magnitude and by the square root of its point count, so
-a denser sweep does not win merely by containing more rows. The block priorities
+and leakage diagnostics; the latter is not a photovoltaic `Voc`. Pointwise J–V residuals
+are divided by a characteristic current scale and by the square root of the block's point
+count, so a denser sweep does not win merely by containing more rows. The block priorities
 and model–data discrepancy scales are documented under `CALIBRATION["joint"]` in
 `config.py`. They are transparent teaching choices, not instrument-derived confidence
 intervals; change them only with a stated reason and discuss whether the conclusion moves.
 
-In the assessed two-parameter fit, the dark curve is primarily a cross-observable check and
-can influence only the effective series resistance; lifetime, SRV, and diode parameters are
-fixed. Identifying those mechanisms would require demonstrated sensitivity and richer data.
+In the assessed two-parameter fit, the dark curve is primarily a forward-current
+cross-check and can influence only the effective series resistance; lifetime, effective
+near-contact loss velocities, and diode parameters are fixed. Identifying those mechanisms
+would require demonstrated sensitivity and richer data.
 
-To keep optimization short enough for class, the residual evaluates the terminal circuit
-equation at each measured point. The reported J–V curves and RMSE values are independently
-recomputed from the self-consistent terminal relation. They coincide for an exact fit; when
-the joint comparison shows systematic disagreement or the normalized residuals exceed the
-chosen discrepancy scales, treat covariance as local numerical sensitivity rather than
-evidence that the model is physically adequate. The metadata's normalized block score is
-the weighted mean squared discrepancy across active blocks: 1 matches the stated scales on
-average, while 4 corresponds to a twice-scale weighted RMS mismatch. It is a transparent
-teaching diagnostic, not a statistical reduced chi-square.
+Each optimizer evaluation computes self-consistent illuminated and dark terminal curves.
+The illuminated curve supplies the J–V, Jsc, and Voc residuals; the dark curve supplies the
+dark forward-current residual. Inspect the reported normalized RMS and objective share for
+all four blocks. The normalized block score is their weighted mean squared discrepancy:
+1 matches the stated scales on average, while 4 corresponds to a twice-scale weighted RMS
+mismatch. It is a transparent model-quality diagnostic, not a statistical reduced
+chi-square. If the gate fails, report the systematic disagreement and treat covariance only
+as local numerical sensitivity.
 
 For a generic two-column **illuminated I–V sweep**, convert raw I–V to processed illuminated J–V
 explicitly:
@@ -261,7 +262,8 @@ Treat that reduced fit as less informative than the canonical joint workflow.
 - the raw filenames and processed filenames used, without editing the raw files;
 - the observable, fit, and metrics outputs for the assigned dataset, using the canonical
   joint workflow on your own sample when those measurements are available;
-- a table of varied and fixed parameters, bounds, fitted values, units, and uncertainties;
+- a table of varied and fixed parameters, bounds, fitted values, units, and local
+  covariance diagnostics; call them uncertainties only when the quality gate passes;
 - the exact calibration command and any deliberate `config.py` changes.
 
 ### Explain
@@ -288,14 +290,14 @@ Task 4 creates `results/joint_identifiability.png`, `results/joint_fitted_params
 `results/joint_fit_metadata.json`. If they are missing, rerun:
 
 ```bash
-python scripts/run_calibration.py --joint --sample 3
+python scripts/run_calibration.py --joint --sample YOUR_SAMPLE_ID
 ```
 
 ### Submit
 
 - `results/joint_identifiability.png`;
-- a one-page conclusion that distinguishes fitted values, uncertainty, correlation,
-  bounds, and residual mismatch;
+- a one-page conclusion that distinguishes fitted values, local covariance diagnostics,
+  correlation, bounds, residual mismatch, and the quality-gate result;
 - at least two model limitations and one measurement limitation relevant to your result;
 - enough commands, filenames, parameter changes, and software information for another
   student to reproduce your figures.

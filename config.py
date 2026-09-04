@@ -30,7 +30,8 @@ MODEL_PARAMS = {
     "auger_n": 2.8e-31,
     "auger_p": 9.9e-32,
 
-    # Effective surface-recombination velocities (cm/s), implemented as dead layers
+    # Effective near-contact loss velocities (cm/s), implemented as dead layers.
+    # These are teaching proxies, not Robin-boundary surface-recombination parameters.
     "front_srv": 1e4,
     "back_srv": 1e6,
 
@@ -48,14 +49,16 @@ MODEL_PARAMS = {
 SIMULATION = {
     "quiet": True,                # set False to inspect native Newton iterations
 
-    # Stop just beyond the baseline Voc while avoiding the uninformative high-current branch.
+    # Junction-voltage continuation grid. Stop just beyond the baseline Voc while
+    # avoiding the uninformative high-current branch.
     "voltages": {"start": 0.0, "stop": 0.64, "step": 0.02},
     "light_ramp_steps": 8,        # larger values improve continuation but cost time
-    "dead_layer": 2e-5,           # surface-recombination approximation thickness (cm)
+    "bias_max_step": 0.05,        # maximum hidden continuation step for sparse input grids (V)
+    "dead_layer": 2e-5,           # effective near-contact loss-layer thickness (cm)
 
     # Fine spacing resolves surfaces and the narrow p+ junction; the base can be coarser.
     "mesh": {
-        "top": 1e-6,
+        "top": 2e-7,              # 2 nm resolves the shortest-wavelength absorption depth
         "junction": 2e-7,         # 2 nm
         "bulk": 1e-4,
         "surface": 1e-6,
@@ -74,7 +77,7 @@ CALIBRATION = {
     "diff_step": 1e-3,
     "residual_mode": "absolute",  # choices: absolute or relative
 
-    # A single sparse J-V curve cannot separate lifetime and SRV effects, so those
+    # A single sparse J-V curve cannot separate lifetime and near-contact loss effects, so those
     # parameters remain fixed. Light level and effective series resistance are the
     # two intentionally fitted, comparatively identifiable quantities.
     "params": {

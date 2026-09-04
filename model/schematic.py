@@ -31,38 +31,49 @@ def _draw_device(ax: plt.Axes, p: SolarCellParams) -> None:
     left, width = 2.4, 5.2
     right = left + width
     ax.add_patch(Rectangle((left, 11.2), width, 0.7, fc="#444444", ec="k"))
-    ax.text(5.0, 11.55, "front contact", ha="center", va="center",
-            fontsize=10.5, color="white")
+    ax.text(5.0, 11.55, "ideal front contact", ha="center", va="center",
+            fontsize=11.5, color="white")
     ax.add_patch(Rectangle((left, 0.1), width, 0.7, fc="#444444", ec="k"))
-    ax.text(5.0, 0.45, "back contact", ha="center", va="center",
-            fontsize=10.5, color="white")
+    ax.text(5.0, 0.45, "ideal rear contact", ha="center", va="center",
+            fontsize=11.5, color="white")
 
-    ax.add_patch(Rectangle((left, 10.2), width, 1.0, fc="#fdae6b", ec="k"))
+    junction_y = 9.9
+    ax.add_patch(Rectangle((left, junction_y), width, 11.2 - junction_y,
+                           fc="#fdae6b", ec="k"))
     na_label = _sci_latex(p.emitter_doping)
     nd_label = _sci_latex(p.base_doping)
-    ax.text(5.0, 10.70, f"p$^+$ emitter   $N_A={na_label}$ cm$^{{-3}}$",
-            ha="center", va="center", fontsize=9.5)
+    ax.text(5.0, 10.55, f"p$^+$ emitter   $N_A={na_label}$ cm$^{{-3}}$",
+            ha="center", va="center", fontsize=11.2)
 
-    ax.add_patch(Rectangle((left, 9.0), width, 1.2, fc="#ffffff", ec="k", hatch="///"))
-    ax.text(5.0, 9.60, "depletion region\nfield points toward front (−x)",
-            ha="center", va="center", fontsize=9.3)
-
-    ax.add_patch(Rectangle((left, 0.8), width, 8.2, fc="#9ecae1", ec="k"))
-    ax.text(5.0, 5.0, f"n base\n$N_D={nd_label}$ cm$^{{-3}}$\n\n"
+    ax.add_patch(Rectangle((left, 0.8), width, junction_y - 0.8,
+                           fc="#9ecae1", ec="k"))
+    ax.text(5.0, 5.0, f"n-type base\n$N_D={nd_label}$ cm$^{{-3}}$\n\n"
             "SRH + Auger\nbulk recombination",
-            ha="center", va="center", fontsize=10.5)
+            ha="center", va="center", fontsize=11.2)
 
-    ax.plot([left, right], [10.2, 10.2], ls="--", color="k", lw=1)
-    ax.text(7.78, 10.2, "junction", fontsize=9.5, va="center")
+    # The space-charge region is not a third material layer. It straddles the
+    # metallurgical junction and lies mostly in the lower-doped n-type base.
+    depletion_bottom = 9.05
+    depletion_top = 10.03
+    ax.add_patch(Rectangle(
+        (left, depletion_bottom), width, depletion_top - depletion_bottom,
+        fc="white", ec=C_DARK, alpha=0.70, hatch="///", lw=1.0,
+    ))
+    ax.text(
+        5.0, 9.48,
+        "space-charge region\n(spans junction; mostly in n base)",
+        ha="center", va="center", fontsize=10.8,
+        bbox=dict(boxstyle="round,pad=0.14", fc="white", ec="none", alpha=0.82),
+    )
+
+    ax.plot([left, right], [junction_y, junction_y], ls="--", color="k", lw=1.2)
+    ax.text(7.78, junction_y, "metallurgical junction", fontsize=10.8, va="center")
 
     for x0 in (3.7, 5.0, 6.3):
         ax.annotate("", xy=(x0, 11.95), xytext=(x0, 12.55),
                     arrowprops=dict(arrowstyle="->", color="gold", lw=2.2))
-    ax.text(5.0, 12.72, "AM1.5-like teaching input", ha="center", fontsize=11,
+    ax.text(5.0, 12.72, "AM1.5-like teaching input · shading omitted", ha="center", fontsize=10.8,
             color="darkgoldenrod")
-
-    ax.text(7.78, 10.70, "front SRV", fontsize=9.5, color="red", va="center")
-    ax.text(7.78, 0.45, "back SRV", fontsize=9.5, color="red", va="center")
 
     ax.annotate("", xy=(1.55, 11.0), xytext=(1.55, 7.0),
                 arrowprops=dict(arrowstyle="->", color=C_ORANGE, lw=2))
@@ -74,9 +85,9 @@ def _draw_device(ax: plt.Axes, p: SolarCellParams) -> None:
     depth_um = p.thickness * 1e4
     ax.annotate("", xy=(8.9, 1.0), xytext=(8.9, 11.0),
                 arrowprops=dict(arrowstyle="<->", color=C_DARK, lw=1.4))
-    ax.text(9.35, 6.0, "depth x", fontsize=10.5, va="center", rotation=90, color=C_DARK)
-    ax.text(8.9, 11.25, "0", fontsize=9.5, ha="center", color=C_DARK)
-    ax.text(8.9, 0.60, f"{depth_um:.0f} µm", fontsize=9.5, ha="center", color=C_DARK)
+    ax.text(9.35, 6.0, "depth x", fontsize=11.5, va="center", rotation=90, color=C_DARK)
+    ax.text(8.9, 11.25, "0", fontsize=11, ha="center", color=C_DARK)
+    ax.text(8.9, 0.60, f"{depth_um:.0f} µm", fontsize=11, ha="center", color=C_DARK)
 
     ax.set_title("① $p^+$-on-n structure\n(not to scale)", fontsize=15, pad=8)
 
@@ -101,7 +112,7 @@ def _draw_band(ax: plt.Axes, d: dict, p: SolarCellParams, bias: float) -> None:
     ax.set_title(f"② Bands near open circuit\n({bias:.3f} V, solved)",
                  fontsize=15, pad=8)
     ax.legend(
-        fontsize=9.5,
+        fontsize=11,
         frameon=True,
         facecolor="white",
         framealpha=0.9,
@@ -148,7 +159,7 @@ def _draw_workflow(ax: plt.Axes) -> None:
         ("Equations", "Poisson +\ndrift-diffusion"),
         ("Solve", "Newton\niteration"),
         ("Extract", "J-V / bands\ncarriers"),
-        ("Calibrate", "infer uncertain\nparameters"),
+        ("Calibrate", "estimate effective\nparameters"),
     ]
     w = 1.7
     gap = 0.2
@@ -157,7 +168,7 @@ def _draw_workflow(ax: plt.Axes) -> None:
         x = x0 + i * (w + gap)
         ax.add_patch(Rectangle((x, 0.8), w, 1.4, fc="#eef3f8", ec=C_BLUE, lw=1.2))
         ax.text(x + w / 2, 1.9, title, ha="center", va="center", fontsize=12, fontweight="bold")
-        ax.text(x + w / 2, 1.1, sub, ha="center", va="center", fontsize=10.5, color=C_DARK)
+        ax.text(x + w / 2, 1.1, sub, ha="center", va="center", fontsize=11.2, color=C_DARK)
         if i < len(steps) - 1:
             ax.annotate("", xy=(x + w + 0.18, 1.5), xytext=(x + w + 0.02, 1.5),
                         arrowprops=dict(arrowstyle="->", color="#888888", lw=1.6))

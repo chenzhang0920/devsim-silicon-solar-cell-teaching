@@ -103,7 +103,7 @@ bash scripts/run_all.sh full
 bash scripts/run_all.sh check
 ```
 
-The `full` profile regenerates the deterministic synthetic J-V reference from the current
+The `full` profile regenerates the deterministic synthetic J–V reference from the current
 `config.py`, then rebuilds the standard figures, synthetic smoke-test calibration,
 Cell #3 joint calibration, and the executed Notebook. Use
 `bash scripts/run_all.sh help` to see focused simulation, calibration, EQE, data
@@ -115,7 +115,7 @@ wiring polarity, and sample identity must be confirmed for each measurement sess
 After replacing raw files, run `prepare_keithley.py` or `prepare_data.py` with the recorded
 experimental settings before calibrating; otherwise existing processed tables will still
 be used. The `full` profile always rebuilds the checked Cell #3 course example. For a new
-sample, run `bash scripts/run_all.sh joint --sample <ID>` (or the corresponding Python
+sample, run `bash scripts/run_all.sh joint --sample YOUR_SAMPLE_ID` (or the corresponding Python
 calibration command) after conversion.
 
 ## 🔬 Model and conventions
@@ -124,9 +124,12 @@ Light enters at `x = 0`, through the front contact and p<sup>+</sup> emitter. Th
 n-type base extends to the rear contact:
 
 ```text
-light  →  front contact | p⁺ emitter | p–n junction | n-type base | rear contact
-                         x = 0  ───────────────────────────────→  depth
+light  →  front contact | p⁺ emitter | n-type base | rear contact
+                         x = 0       ↑ x = 0.5 µm junction       → depth
 ```
+
+The depletion region straddles that metallurgical junction; it is not a separate
+material layer and extends mainly into the lower-doped n-type base.
 
 The terminal convention is
 `V = V_front(p) − V_back(n)`. Illuminated current density is positive when the cell
@@ -137,7 +140,7 @@ The forward model includes:
 
 - finite-volume Poisson and electron/hole drift–diffusion equations;
 - SRH and Auger bulk recombination;
-- effective front and rear surface-recombination losses;
+- effective near-contact recombination losses represented by thin dead layers;
 - a finite-bin teaching spectrum with Beer–Lambert absorption;
 - ohmic contacts and optional effective terminal series/shunt resistance.
 
@@ -151,7 +154,7 @@ options instead of copying physical constants into scripts or the Notebook.
 |---|---|
 | 1D abrupt p<sup>+</sup>-on-n structure | no texture, front-contact shading, fingers, lateral current spreading, or 2D/3D geometry |
 | constant low-field mobilities at 300 K | Boltzmann statistics; no degeneracy, band-gap narrowing, field/doping-dependent mobility, self-heating, or temperature sweep |
-| effective bulk and surface recombination | no process-calibrated interface-state or passivation model |
+| bulk recombination and effective near-contact loss layers | no Robin interface-SRV, selective-contact, process-calibrated interface-state, or passivation model |
 | finite-bin absorption model | no precision ASTM spectrum, interference, ray tracing, or calibrated antireflection stack |
 | effective terminal parasitics | no spatial contact or interconnect solution |
 
@@ -211,7 +214,7 @@ explicit:
 | Observable | Information contributed |
 |---|---|
 | illuminated J–V | photocurrent, knee shape, and zero crossing |
-| dark J–V | cross-check of diode/leakage behavior; limited leverage on effective series resistance |
+| dark J–V | forward-current cross-check; limited leverage on effective series resistance |
 | repeated illuminated short-circuit readings | independent current anchor and repeatability |
 | illuminated open-circuit voltage | independent voltage anchor |
 
@@ -220,24 +223,26 @@ particular, the fitted generation scale is not a measured number of suns, and an
 series resistance may include the device, contacts, wiring, and model discrepancy. A close
 curve is therefore not sufficient evidence of a unique material parameter.
 The dark curve is chiefly a cross-observable model check in this two-parameter exercise; it
-does not identify lifetime, SRV, or detailed diode physics because those quantities remain
+does not identify lifetime, interface recombination, or detailed diode physics because those quantities remain
 fixed by design.
 
-For classroom-speed optimization, the objective evaluates the terminal circuit equation at
-the measured points. The plotted metrics are then recomputed from a self-consistent terminal
-J–V curve. An exact fit makes these views agree; when systematic mismatch remains, prioritize
-the plotted RMSE and residual pattern, and interpret covariance only as local optimizer
-sensitivity—not as proof that the model or parameters are physically adequate. The saved
-normalized block score is a weighted mean squared discrepancy: 1 matches the stated scales
-on average and 4 corresponds to a twice-scale weighted RMS mismatch. It is deliberately not
-presented as a statistical reduced chi-square.
+Each optimizer evaluation computes one self-consistent illuminated terminal curve and one
+self-consistent dark terminal curve. Illuminated J–V, independent Jsc, and independent Voc
+are extracted from the same illuminated solution. Each output table reports the normalized
+RMS and objective share of every observation block, so systematic mismatch cannot be hidden
+inside one aggregate value. The normalized block score is the weighted mean squared
+discrepancy: 1 matches the stated scales on average and 4 corresponds to a twice-scale
+weighted RMS mismatch. It is a model-quality teaching diagnostic, not a statistical reduced
+chi-square. If the quality gate fails, covariance indicates only local optimizer sensitivity,
+not physical adequacy or unique parameter identification.
 
 Interpret these outputs together:
 
 - `results/joint_observables.png` — agreement across all observation blocks;
 - `results/joint_metrics.json` — numerical residual summaries;
 - `results/joint_fitted_params.json` and `results/joint_fit_metadata.json` — fitted values,
-  bounds, uncertainty, configuration, software versions, and data provenance;
+  bounds, gate-qualified local covariance diagnostics, configuration, software versions,
+  and data provenance;
 - `results/joint_identifiability.png` — local covariance sensitivity and parameter
   correlation, explicitly qualified by the fit-quality gate.
 
@@ -280,13 +285,13 @@ Captions state whether an item is simulated, synthetic, or measured.
 </p>
 
 <p align="center">
-  <img src="results/joint_observables.png" alt="Cell 3 historical measurements compared with the joint-calibrated model" width="820">
+  <img src="results/joint_observables.png" alt="Cell 3 historical measurements compared with the best-fit teaching model" width="820">
   <br><sub><strong>Joint calibration.</strong> Historical Cell #3 observations test one parameter set in several ways; systematic mismatch reveals model limits.</sub>
 </p>
 
 <p align="center">
-  <img src="results/identifiability.png" alt="Parameter uncertainty and correlation diagnostic for the synthetic smoke-test calibration" width="820">
-  <br><sub><strong>Trust check (synthetic example).</strong> Local uncertainty, correlation, active bounds, and fit adequacy together determine how strongly a fitted value is supported.</sub>
+  <img src="results/joint_identifiability.png" alt="Local covariance sensitivity and parameter correlation for the Cell 3 joint calibration after its quality gate" width="820">
+  <br><sub><strong>Trust check.</strong> The Cell #3 quality gate fails, so covariance is shown only as local numerical sensitivity; it does not validate the model or fitted parameters.</sub>
 </p>
 
 Rebuildable images are checked into `results/` so the lesson remains readable on GitHub.

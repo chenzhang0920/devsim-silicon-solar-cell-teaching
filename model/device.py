@@ -41,6 +41,7 @@ from devsim import (
     finalize_mesh,
     get_contact_current,
     get_contact_list,
+    get_edge_model_values,
     get_node_model_values,
     get_parameter,
     reset_devsim,
@@ -101,6 +102,7 @@ _TOP = "top"
 _BOT = "bot"
 
 _LIGHT_RAMP_STEPS = SIMULATION.get("light_ramp_steps", 8)
+_BIAS_MAX_STEP = SIMULATION.get("bias_max_step", 0.05)
 _DEAD_LAYER = SIMULATION.get("dead_layer", 2e-5)
 _MESH_CFG = SIMULATION.get("mesh", {})
 
@@ -153,6 +155,24 @@ def _validate_voltages(voltages) -> np.ndarray:
     if np.any(np.diff(values) < 0):
         raise ValueError("DEVSIM voltage sweeps must be sorted in ascending order for stable continuation")
     return values
+
+
+def _bias_continuation_points(start: float, stop: float) -> np.ndarray:
+    """Return hidden bias substeps ending exactly at ``stop``.
+
+    Caller-requested output points are unchanged; the added points only keep
+    nonlinear continuation reliable for sparse or student-defined grids.
+    """
+    max_step = float(_BIAS_MAX_STEP)
+    if not np.isfinite(max_step) or max_step <= 0:
+        raise ValueError("SIMULATION.bias_max_step must be finite and > 0")
+    if not np.all(np.isfinite([start, stop])):
+        raise ValueError("bias continuation endpoints must be finite")
+    delta = float(stop - start)
+    if delta == 0:
+        return np.empty(0, dtype=float)
+    intervals = max(1, int(np.ceil(abs(delta) / max_step)))
+    return np.linspace(start, stop, intervals + 1, dtype=float)[1:]
 
 
 def _build_mesh(p: SolarCellParams) -> None:
@@ -317,7 +337,7 @@ def _setup_device(p: SolarCellParams) -> None:
 
 
 def _add_generation(p: SolarCellParams) -> None:
-    """Add optical generation plus SRH, Auger, and effective surface recombination."""
+    """Add optical generation, bulk recombination, and near-contact loss layers."""
     usrh = "(Electrons*Holes - n_i^2)/(taup*(Electrons + n1) + taun*(Holes + p1))"
 
     uauger = (f"({p.auger_n}*Electrons + {p.auger_p}*Holes)"
@@ -408,6 +428,14 @@ def _grab(*names: str) -> dict:
             for n in names}
 
 
+def _grab_edges(*names: str) -> dict:
+    """Read selected edge models into NumPy arrays."""
+    return {n: np.asarray(
+                get_edge_model_values(device=_DEVICE, region=_REGION, name=n),
+                dtype=float)
+            for n in names}
+
+
 @_quiet_sim
 def sweep_light(p: SolarCellParams, n_steps: int | None = None) -> list[dict]:
     """Return physical-profile frames while illumination ramps from dark to full."""
@@ -490,10 +518,13 @@ def simulate(p: SolarCellParams,
     _illuminate(p)
 
     currents = []
+    current_bias = 0.0
     for v in voltages:
-        _set_top_bias(v)
-        _solve_dc(absolute_error=1e10)
+        for continuation_bias in _bias_continuation_points(current_bias, float(v)):
+            _set_top_bias(continuation_bias)
+            _solve_dc(absolute_error=1e10)
         currents.append(_output_current_density())
+        current_bias = float(v)
 
     return np.asarray(voltages, dtype=float), np.asarray(currents, dtype=float)
 
@@ -530,11 +561,13 @@ def profiles(p: SolarCellParams, bias: float = 0.0) -> dict:
 
     eq = _grab("x", "Potential", "Electrons", "Holes",
                "NetDoping", "Donors", "Acceptors")
+    eq_edges = _grab_edges("ElectricField")
 
     _illuminate(p)
     if bias:
         _ramp_bias(bias)
     ill = _grab("Potential", "Electrons", "Holes", "OpticalGeneration")
+    ill_edges = _grab_edges("ElectricField")
 
     return {
         "x": eq["x"],
@@ -544,8 +577,11 @@ def profiles(p: SolarCellParams, bias: float = 0.0) -> dict:
         "net_doping": eq["NetDoping"],
         "donors": eq["Donors"],
         "acceptors": eq["Acceptors"],
+        "field_x": 0.5 * (eq["x"][:-1] + eq["x"][1:]),
+        "electric_field": eq_edges["ElectricField"],
         "ill_potential": ill["Potential"],
         "ill_electrons": ill["Electrons"],
         "ill_holes": ill["Holes"],
+        "ill_electric_field": ill_edges["ElectricField"],
         "generation": ill["OpticalGeneration"],
     }

@@ -33,6 +33,27 @@ def test_simulate_rejects_unsorted_voltage_before_solver():
         simulate(SolarCellParams(), np.array([0.2, 0.1]))
 
 
+def test_simulate_inserts_hidden_bias_steps_but_returns_requested_grid(monkeypatch):
+    applied = []
+    monkeypatch.setattr(device, "_BIAS_MAX_STEP", 0.05)
+    monkeypatch.setattr(device, "_setup_device", lambda params: None)
+    monkeypatch.setattr(device, "_illuminate", lambda params: None)
+    monkeypatch.setattr(device, "_set_top_bias", lambda value: applied.append(float(value)))
+    monkeypatch.setattr(device, "_solve_dc", lambda **kwargs: None)
+    monkeypatch.setattr(
+        device, "_output_current_density",
+        lambda: applied[-1] if applied else 0.0,
+    )
+    requested = np.array([0.0, 0.12, 0.20])
+
+    returned_voltage, returned_current = simulate.__wrapped__(SolarCellParams(), requested)
+
+    assert returned_voltage == pytest.approx(requested)
+    assert returned_current == pytest.approx(requested)
+    path = np.array([0.0, *applied])
+    assert np.max(np.abs(np.diff(path))) <= 0.05 + 1e-12
+
+
 @pytest.mark.parametrize("func,args", [
     (sweep_light, {"n_steps": 0}),
     (sweep_bias, {"v_max": 0.6, "n_steps": 0}),

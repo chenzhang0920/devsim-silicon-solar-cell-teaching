@@ -92,15 +92,18 @@ def test_student_deck_matches_build_and_data_contracts():
     assert 'class="device-emblem"' in html
     assert "p⁺ emitter" in html
     assert 'class="slide closing-slide"' in html
-    assert len(re.findall(r'<section class="slide', html)) == 16
+    assert len(re.findall(r'<section class="slide', html)) == 17
     assert "@media (min-width:1101px) and (max-height:720px)" in html
-    assert html.count('class="kicker"') == html.count('data-step=') == 16
+    assert html.count('class="kicker"') == html.count('data-step=') == 17
     assert ".kicker::before" in html
-    assert "p { font-size:1.25rem; }" in html
-    assert "ul > li { font-size:1.25rem;" in html
-    assert "pre {" in html and "font-size:1.12rem;" in html
+    assert "p { font-size:1.36rem; }" in html
+    assert "ul > li { font-size:1.36rem;" in html
+    assert "pre {" in html and "font-size:1.2rem;" in html
     assert "p, ul > li { font-size:1.25rem;" in html
     assert "pre { font-size:1.2rem;" in html
+    assert '.takeaway::before { content:"✓";' in html
+    assert "From Raw Data to a Reproducible Fit" in html
+    assert "Separate Data, Model and Claim" in html
 
     refs = set(re.findall(r'src="\.\./results/([^"]+)"', html))
     declared = {

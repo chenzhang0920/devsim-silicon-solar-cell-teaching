@@ -293,6 +293,13 @@ def test_synthetic_generator_rejects_invalid_noise_before_simulation(noise):
         make_demo_data.make_iv(seed=42, noise_frac=noise)
 
 
+def test_synthetic_generator_does_not_silently_change_voltage_step():
+    with pytest.raises(ValueError, match="integer multiple"):
+        make_demo_data.make_iv(
+            seed=42, noise_frac=0.0, v_stop=0.64, v_step=0.025
+        )
+
+
 def test_synthetic_generator_cannot_write_into_raw_data(monkeypatch):
     monkeypatch.setattr(sys, "argv", [
         "make_demo_data.py", "--iv-out", "data/raw/not-a-measurement.csv",

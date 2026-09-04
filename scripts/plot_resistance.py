@@ -51,7 +51,7 @@ def main() -> None:
     for k, Rs in enumerate(Rs_list):
         Vs = _series(V, J_A, Rs)
         ff = solar_metrics(Vs, J * 1e-3)["FF"]
-        label = (f"ideal (FF = {ff:.3f})" if Rs == 0
+        label = (f"baseline: $R_s=0$ (FF = {ff:.3f})" if Rs == 0
                  else f"$R_s$ = {Rs:.0f} Ω·cm²  (FF = {ff:.3f})")
         ax1.plot(
             Vs, J, lw=2.2, ls=line_styles[k], label=label,
@@ -71,8 +71,8 @@ def main() -> None:
         metrics = solar_metrics(V, Jsh)
         vs = metrics["Voc"]
         Jsh_mA = Jsh * 1e3                   # -> mA/cm²
-        label = (f"ideal: $V_{{oc}}$={vs:.3f} V, FF={metrics['FF']:.3f}" if np.isinf(Rsh)
-                 else f"$R_{{sh}}$={Rsh:.0f} Ω·cm²: $V_{{oc}}$={vs:.3f} V, FF={metrics['FF']:.3f}")
+        label = (f"baseline: $R_{{sh}}=\\infty$; $V_{{oc}}={vs:.3f}$ V; FF={metrics['FF']:.3f}" if np.isinf(Rsh)
+                 else f"$R_{{sh}}={Rsh:.0f}$ Ω·cm²; $V_{{oc}}={vs:.3f}$ V; FF={metrics['FF']:.3f}")
         ax2.plot(
             V, Jsh_mA, lw=2.2, ls=line_styles[k], label=label,
             color=(C_DARK, C_ORANGE, "#b2182b")[k],

@@ -20,7 +20,7 @@ from model.style import C_BLUE, C_ORANGE, C_DARK
 
 def _style(ax, title, *, show_ylabel=True):
     ax.set_title(title, fontsize=18, pad=8)
-    ax.set_xlabel("x (µm)", fontsize=16)
+    ax.set_xlabel("Depth (µm) — front-junction zoom", fontsize=16)
     if show_ylabel:
         ax.set_ylabel("Energy (eV)", fontsize=16)
     ax.tick_params(labelsize=15)

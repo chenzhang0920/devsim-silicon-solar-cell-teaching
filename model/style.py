@@ -3,9 +3,9 @@ import matplotlib as mpl
 
 C_BLUE = "#2c7fb8"
 C_ORANGE = "#d95f0e"
-C_GREEN = "#2ca25f"
-C_YELLOW = "#f0a202"
-C_GRAY = "#7a8790"
+C_GREEN = "#18845b"
+C_YELLOW = "#9c6700"
+C_GRAY = "#52616c"
 C_DARK = "#34424c"
 C_GRID = "#d9e1e6"
 C_LIGHT_BLUE = "#dceef8"

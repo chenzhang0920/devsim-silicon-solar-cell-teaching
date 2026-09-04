@@ -159,7 +159,8 @@ def main() -> None:
         for name, path in data.paths.items():
             _verify_hash(path, expected_hashes.get(name))
         print(f"[NOTE] Recreating the complete Cell #{sample} joint-observable figure")
-        fig = joint_comparison_figure(data, full)
+        blocks = metadata.get("joint_objective", {}).get("blocks")
+        fig = joint_comparison_figure(data, full, blocks)
         compare = None
         # Replay both the figure and numerical diagnostics from the complete
         # parameter snapshot stored with the fit.  Passing only ``fitted`` here
@@ -224,8 +225,24 @@ def main() -> None:
         score = objective.get("normalized_block_score")
         threshold = objective.get("quality_warning_threshold")
         if score is not None:
-            print(f"  block score   : {float(score):.3f} "
-                  "(1 = stated scales; 4 = twice-scale weighted RMS)")
+            print(f"  block score   : {float(score):.3f} (weighted mean-square)")
+            print(f"  weighted RMS  : {np.sqrt(float(score)):.3f} × stated scale")
+        blocks = objective.get("blocks", {})
+        if blocks:
+            labels = {
+                "light_iv": "illuminated J-V",
+                "dark_iv": "dark J-V",
+                "light_ishort": "independent Jsc",
+                "light_voc": "independent Voc",
+            }
+            print("\n  block diagnostics:")
+            print(f"    {'block':<18}{'RMS / scale':>15}{'share':>10}")
+            for name, values in blocks.items():
+                print(
+                    f"    {labels.get(name, name):<18}"
+                    f"{float(values['normalized_rms']):>15.3f}"
+                    f"{float(values['objective_share']):>9.1%}"
+                )
         if score is not None and threshold is not None \
                 and float(score) > float(threshold):
             print(

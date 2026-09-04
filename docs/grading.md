@@ -55,13 +55,17 @@ Measured EQE is not required. A correct modeled-EQE analysis can receive all Tas
 |---|---:|
 | Preserves raw data and records sample, area, temperature, illumination, wiring, units, sweep settings, and sign convention | 6 |
 | Produces valid processed J–V data with correct area normalization, units, ordering, short-circuit coverage, and zero crossing | 6 |
-| Applies the canonical joint-calibration workflow to the assigned dataset and documents the command, varied/fixed parameters, bounds, values, units, and uncertainties | 7 |
+| Applies the canonical joint-calibration workflow to the assigned dataset and documents the command, varied/fixed parameters, bounds, values, units, and gate-qualified local covariance diagnostics | 7 |
 | Uses the multi-observable plot and metrics to evaluate illuminated J–V, dark J–V, short-circuit, open-circuit, and residual agreement | 7 |
 | Distinguishes effective fitted quantities from independently measured irradiance or unique material constants | 4 |
 | **Task 4 total** | **30** |
 
 A light-only fit may replace the joint fit only when the instructor confirms that the
 joint observables are unavailable. The report must state this limitation explicitly.
+
+A low residual or visually close fit is not required for full credit. Full credit remains
+available when the workflow is correct, the block-level residuals are interpreted
+systematically, and model limitations are supported by evidence.
 
 ## Task 5 — Identifiability, limitations, and reproducibility (15 points)
 

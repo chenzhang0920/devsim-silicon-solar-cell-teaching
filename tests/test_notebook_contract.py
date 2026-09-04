@@ -164,6 +164,9 @@ def test_notebook_uses_portable_setup_and_the_configured_reporting_grid():
     assert "lifetimes = np.geomspace(1e-6, 1e-4, 5)" in code
     assert "quality_adequate=quality_adequate" in code
     assert "not validated parameter uncertainties" in code
+    assert "joint_block_diagnostics" in code
+    assert "Objective share (%)" in code
+    assert 'device_data["electric_field"]' in code
     assert code.index("Normalized block score") < code.index(
         "Fitted effective parameters and local covariance diagnostics"
     )
