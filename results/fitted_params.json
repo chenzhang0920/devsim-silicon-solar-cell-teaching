@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "parameters": {
+    "electron_lifetime": {
+      "value": 1e-05,
+      "vary": false,
+      "min": 1e-09,
+      "max": 0.001,
+      "stderr": null
+    },
+    "hole_lifetime": {
+      "value": 1e-05,
+      "vary": false,
+      "min": 1e-09,
+      "max": 0.001,
+      "stderr": null
+    },
+    "front_srv": {
+      "value": 10000.0,
+      "vary": false,
+      "min": 100.0,
+      "max": 10000000.0,
+      "stderr": null
+    },
+    "back_srv": {
+      "value": 1000000.0,
+      "vary": false,
+      "min": 100.0,
+      "max": 10000000.0,
+      "stderr": null
+    },
+    "photon_flux": {
+      "value": 0.996454173345115,
+      "vary": true,
+      "min": 0.1,
+      "max": 2.0,
+      "stderr": 0.002175900456438502
+    },
+    "series_resistance": {
+      "value": 0.0016379024426633638,
+      "vary": true,
+      "min": 0.0,
+      "max": 20.0,
+      "stderr": 0.0026767647141835824
+    },
+    "shunt_resistance": {
+      "value": 0.0,
+      "vary": false,
+      "min": 0.0,
+      "max": 5000.0,
+      "stderr": null
+    }
+  }
+}

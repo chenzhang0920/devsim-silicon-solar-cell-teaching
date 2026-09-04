@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#003b71">
+<link rel="icon" type="image/png" href="logo1_HKUSTGZ.png">
+<title>Silicon Solar Cell Device Modeling — Student Lab Slides</title>
+<style>
+  :root {
+    --bg:#f6f8fb; --panel:#ffffff; --fg:#17242d; --muted:#52616c;
+    --blue:#0878ae; --blue-dark:#003b71; --gold:#b58b2a; --gold-dark:#755711;
+    --orange:#c95f18; --green:#18845b; --line:#d3dee6;
+    --soft-blue:#eaf4fa; --soft-gold:#fbf5e7; --soft-orange:#fff2e9; --soft-green:#eaf6f1;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; }
+  body {
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:var(--bg); color:var(--fg); line-height:1.34;
+  }
+  .slide {
+    display:none; position:relative; width:100vw; height:100vh; overflow:hidden;
+    padding:1.7rem 3.2rem 3rem;
+    background:linear-gradient(135deg, rgba(8,120,174,.025), transparent 34%),var(--bg);
+  }
+  .slide.active { display:flex; flex-direction:column; }
+  .title-slide.active, .closing-slide.active, .balanced.active { justify-content:center; }
+  .title-slide, .closing-slide {
+    background:radial-gradient(circle at 88% 16%, rgba(181,139,42,.13), transparent 26%),
+               linear-gradient(135deg, #fff 0%, #f2f7fb 64%, #eef4f8 100%);
+  }
+  .title-slide { padding-right:23rem; }
+  .closing-slide { align-items:center; padding-right:3.2rem; text-align:center; }
+  .title-slide > :not(.device-emblem) { position:relative; z-index:1; }
+  .global-logo {
+    position:fixed; z-index:30; top:.75rem; right:1.5rem; width:10rem; height:auto;
+    object-fit:contain; filter:drop-shadow(0 1px 1px rgba(0,0,0,.05));
+  }
+  .course-footer {
+    position:fixed; z-index:19; left:50%; bottom:.48rem; transform:translateX(-50%);
+    color:#65737d; font-size:.86rem; font-weight:650; letter-spacing:.025em;
+    white-space:nowrap; pointer-events:none;
+  }
+  .kicker {
+    display:flex; align-items:center; gap:.5rem; color:var(--gold-dark);
+    text-transform:uppercase; letter-spacing:.11em; font-size:.95rem; font-weight:800;
+    margin-bottom:.3rem;
+  }
+  .kicker::before {
+    content:attr(data-step); display:inline-grid; place-items:center;
+    width:2rem; height:2rem; flex:0 0 2rem; color:var(--blue-dark); background:var(--soft-blue);
+    border:1px solid #b9d9ed; border-radius:50%; font-size:.82rem; letter-spacing:0; line-height:1;
+  }
+  h1 { color:var(--blue-dark); font-size:clamp(2.8rem,5vw,4.6rem); line-height:1.03; margin-bottom:1rem; }
+  h2 {
+    color:var(--blue-dark); font-size:clamp(2rem,3vw,2.65rem); line-height:1.08;
+    margin-bottom:.7rem; border-bottom:3px solid var(--gold); padding:0 10.8rem .32rem 0;
+  }
+  h3 { color:var(--blue-dark); font-size:1.35rem; margin:.5rem 0 .3rem; }
+  p { font-size:1.25rem; }
+  ul { list-style:none; }
+  ul > li { font-size:1.25rem; line-height:1.32; padding-left:1.25rem; margin-bottom:.28rem; position:relative; }
+  ul > li::before { content:"▸"; position:absolute; left:0; color:var(--blue); font-weight:800; }
+  strong, b { font-weight:750; }
+  code, pre { font-family:"SFMono-Regular", Consolas, "Liberation Mono", monospace; background:#edf1f4; border-radius:4px; }
+  code { padding:.08rem .28rem; font-size:.94em; }
+  pre { padding:.5rem .72rem; margin:.08rem 0 .5rem; overflow-x:auto; white-space:pre-wrap; font-size:1.12rem; line-height:1.3; }
+  sub, sup { line-height:0; }
+  .subtitle { max-width:64rem; color:var(--muted); font-size:1.45rem; margin-bottom:1rem; }
+  .title-meta, .closing-meta {
+    display:grid; grid-template-columns:minmax(15rem,.72fr) minmax(25rem,1.28fr);
+    gap:.8rem; max-width:62rem; margin:.7rem 0 .55rem;
+  }
+  .person-card {
+    display:flex; flex-direction:column; justify-content:center; min-height:4.8rem;
+    padding:.62rem .86rem; background:rgba(255,255,255,.9); border:1px solid var(--line);
+    border-top:3px solid var(--gold); border-radius:8px; box-shadow:0 2px 10px rgba(0,59,113,.07);
+  }
+  .person-card.ta { border-top-color:var(--blue); }
+  .meta-label { color:var(--muted); font-size:.82rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+  .person-card strong { color:var(--blue-dark); font-size:1.16rem; }
+  .contact-line { color:var(--muted); font-size:1.08rem; margin-top:.08rem; }
+  .contact-line a { color:var(--blue-dark); text-decoration:none; border-bottom:1px solid #a8c7d8; }
+  .contact-line a:hover, .contact-line a:focus-visible { color:var(--orange); }
+  .tag {
+    display:inline-block; color:var(--blue-dark); background:var(--soft-blue); border:1px solid #b9d9ed;
+    border-radius:999px; padding:.25rem .65rem; margin:.12rem .28rem .12rem 0; font-size:1rem; font-weight:700;
+  }
+  .device-emblem {
+    position:absolute; right:4rem; top:50%; transform:translateY(-47%); width:16rem; padding:1.1rem;
+    text-align:center; background:rgba(255,255,255,.92); border:1px solid var(--line);
+    border-top:5px solid var(--gold); border-radius:14px; box-shadow:0 12px 32px rgba(0,59,113,.13);
+  }
+  .emblem-sun { color:var(--gold); font-size:4rem; line-height:1; }
+  .emblem-rays { color:var(--orange); font-size:1.6rem; letter-spacing:.7rem; margin:.2rem 0 .4rem .7rem; }
+  .emblem-cell { overflow:hidden; border:3px solid var(--blue-dark); border-radius:8px; }
+  .cell-layer { display:grid; place-items:center; min-height:3.6rem; font-size:1.25rem; font-weight:800; }
+  .cell-layer.pplus { color:#513b08; background:#f3d788; border-bottom:2px solid var(--blue-dark); }
+  .cell-layer.nbase { color:white; background:#2585b4; min-height:5.7rem; }
+  .emblem-caption { color:var(--muted); font-size:1rem; font-weight:700; margin-top:.55rem; }
+  .closing-loop { display:flex; align-items:center; justify-content:center; gap:1.8rem; margin:.55rem 0; }
+  .closing-loop span { position:relative; color:var(--blue-dark); font-size:1.14rem; font-weight:800; }
+  .closing-loop span:not(:last-child)::after { content:"→"; position:absolute; right:-1.25rem; color:var(--gold-dark); }
+  .closing-slide h1 { font-size:clamp(3rem,5.4vw,5rem); margin-bottom:.6rem; }
+  .closing-slide .subtitle { max-width:58rem; }
+  .closing-slide .takeaway { text-align:left; }
+  .columns { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:stretch; }
+  .card {
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:.78rem 1rem; box-shadow:0 2px 8px rgba(0,59,113,.06);
+  }
+  .card h3 { margin-top:0; }
+  .card li { font-size:1.22rem; }
+  .storyline { display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem; margin-top:1rem; }
+  .storyline .card { border-top:4px solid var(--blue); text-align:center; }
+  .storyline strong { display:block; color:var(--blue-dark); font-size:1.2rem; margin-bottom:.2rem; }
+  .storyline span { color:var(--muted); font-size:1.12rem; }
+  .formula {
+    display:block; text-align:center; font-family:Cambria, "Times New Roman", serif;
+    background:#fff; border:1px solid var(--line); border-radius:7px;
+    padding:.62rem .72rem; margin:.4rem 0; font-size:1.3rem;
+  }
+  .flow { display:grid; grid-template-columns:repeat(6,1fr); gap:.55rem; margin:.62rem 0; }
+  .flow .step {
+    position:relative; min-height:4.8rem; display:flex; flex-direction:column; justify-content:center;
+    text-align:center; background:var(--panel); border:2px solid var(--blue); border-radius:7px; padding:.42rem;
+  }
+  .flow .step:not(:last-child)::after {
+    content:"→"; position:absolute; right:-.52rem; top:35%; z-index:2;
+    color:#687984; font-weight:800; background:var(--bg);
+  }
+  .flow .step strong { color:var(--blue-dark); font-size:1.08rem; }
+  .flow .step small { color:var(--muted); font-size:1.1rem; margin-top:.18rem; }
+  .fig {
+    max-width:100%; max-height:58vh; object-fit:contain; margin:.2rem auto;
+    border-radius:7px; background:#fff; box-shadow:0 2px 12px rgba(23,36,45,.14); display:block;
+  }
+  .cap { text-align:center; font-size:1.12rem; color:var(--muted); margin:.28rem 0 .38rem; }
+  .takeaway, .prompt, .caution {
+    border-radius:7px; padding:.58rem .8rem; margin:.38rem 0; font-size:1.2rem;
+  }
+  .takeaway { background:var(--soft-blue); border-left:5px solid var(--blue); }
+  .prompt { background:var(--soft-gold); border-left:5px solid var(--gold); }
+  .caution { background:var(--soft-orange); border-left:5px solid var(--orange); }
+  .visual.active {
+    display:grid; grid-template-columns:minmax(0,2.35fr) minmax(17rem,.72fr);
+    grid-template-rows:auto auto auto minmax(0,1fr); column-gap:1.35rem; align-items:start;
+  }
+  .visual > .kicker, .visual > h2, .visual > pre { grid-column:1 / -1; }
+  .visual > .fig { grid-column:1; grid-row:4; width:100%; max-height:65vh; margin:.08rem 0; align-self:center; }
+  .visual > .side { grid-column:2; grid-row:4; align-self:center; }
+  .full-visual img { display:block; max-width:98%; max-height:65vh; object-fit:contain; margin:.18rem auto; }
+  .print-only { display:none !important; }
+  .structure-layout { display:grid; grid-template-columns:minmax(28rem,1.25fr) minmax(22rem,.75fr); gap:1.5rem; align-items:center; }
+  .structure-card {
+    background:#fff; border:1px solid var(--line); border-radius:12px; padding:1rem 1.6rem 1.15rem;
+    box-shadow:0 5px 18px rgba(0,59,113,.09); text-align:center;
+  }
+  .illumination { color:var(--gold-dark); font-size:1.2rem; font-weight:800; margin-bottom:.35rem; }
+  .illumination b { display:block; color:var(--orange); font-size:1.6rem; letter-spacing:1.4rem; margin-left:1.4rem; }
+  .device-stack { max-width:34rem; margin:0 auto; border:3px solid var(--blue-dark); border-radius:8px; overflow:hidden; }
+  .device-layer { display:grid; grid-template-columns:1fr auto; align-items:center; gap:1rem; padding:.45rem .9rem; font-size:1.15rem; font-weight:750; }
+  .device-layer span:last-child { font-size:1.1rem; font-weight:650; opacity:.9; }
+  .device-layer.metal { color:white; background:#4b5358; min-height:2.4rem; }
+  .device-layer.emitter { color:#513b08; background:#f3d788; min-height:4.8rem; }
+  .device-layer.junction { color:var(--blue-dark); background:repeating-linear-gradient(135deg,#fff,#fff 9px,#eaf4fa 9px,#eaf4fa 18px); border-top:3px solid var(--blue-dark); border-bottom:3px solid var(--blue-dark); min-height:3rem; }
+  .device-layer.base { color:white; background:#287ca6; min-height:8.2rem; }
+  .collection-paths { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; max-width:34rem; margin:.72rem auto 0; }
+  .collection-paths span { border-radius:7px; padding:.5rem; font-size:1.05rem; font-weight:800; }
+  .holes { color:#83410f; background:var(--soft-orange); }
+  .electrons { color:var(--blue-dark); background:var(--soft-blue); }
+  .scope-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.85rem; margin-top:.55rem; }
+  .scope-card { background:#fff; border:1px solid var(--line); border-top:4px solid var(--blue); border-radius:8px; padding:.72rem .85rem; }
+  .scope-card:nth-child(2) { border-top-color:var(--gold); }
+  .scope-card:nth-child(3) { border-top-color:var(--green); }
+  .scope-card h3 { margin:0 0 .25rem; }
+  .scope-card p { font-size:1.15rem; }
+  .progress { position:fixed; z-index:20; top:0; left:0; height:5px; background:var(--blue); transition:width .2s ease; }
+  .nav-bar {
+    position:fixed; z-index:20; left:0; right:0; bottom:.35rem; display:flex;
+    justify-content:space-between; align-items:center; padding:0 1rem;
+    pointer-events:none; color:#697780; font-size:.88rem;
+  }
+  .nav-group { display:flex; align-items:center; gap:.45rem; pointer-events:auto; }
+  .nav-btn { width:2rem; height:1.7rem; border:1px solid #b8c4cc; border-radius:5px; background:rgba(255,255,255,.9); color:var(--blue-dark); cursor:pointer; font-weight:800; }
+  .nav-btn:hover, .nav-btn:focus-visible { background:var(--soft-blue); outline:2px solid var(--blue); }
+  .help { color:var(--muted); }
+  @media (min-width:1101px) and (max-height:720px) {
+    .slide { padding:1rem 1.8rem 2.25rem; }
+    .title-slide { padding-right:18.5rem; }
+    .closing-slide { padding-right:1.8rem; }
+    .global-logo { width:8.5rem; top:.4rem; right:.8rem; }
+    .device-emblem { right:1.8rem; width:13.6rem; padding:.68rem; }
+    .emblem-sun { font-size:2.8rem; }
+    .emblem-rays { font-size:1.15rem; margin:.08rem 0 .18rem .7rem; }
+    .cell-layer { min-height:2.6rem; font-size:1.05rem; }
+    .cell-layer.nbase { min-height:3.6rem; }
+    .course-footer { bottom:.3rem; font-size:.78rem; }
+    .kicker { font-size:.86rem; margin-bottom:.14rem; }
+    .kicker::before { width:1.6rem; height:1.6rem; flex-basis:1.6rem; font-size:.7rem; }
+    h1 { font-size:clamp(2.45rem,4.5vw,3.75rem); margin-bottom:.55rem; }
+    h2 { font-size:2.05rem; margin-bottom:.4rem; padding:0 9rem .23rem 0; }
+    h3 { font-size:1.3rem; margin:.3rem 0 .16rem; }
+    p, ul > li { font-size:1.25rem; line-height:1.25; }
+    pre { font-size:1.2rem; padding:.32rem .55rem; margin:0 0 .25rem; }
+    .subtitle { font-size:1.22rem; margin-bottom:.45rem; }
+    .title-meta, .closing-meta { grid-template-columns:minmax(13rem,.72fr) minmax(23rem,1.28fr); gap:.5rem; margin:.35rem 0; }
+    .person-card { min-height:3.65rem; padding:.4rem .62rem; }
+    .tag { font-size:.93rem; padding:.15rem .46rem; }
+    .card { padding:.5rem .68rem; }
+    .card li { font-size:1.2rem; }
+    .storyline { margin-top:.55rem; gap:.5rem; }
+    .storyline strong { font-size:1.08rem; }
+    .storyline span { font-size:1.05rem; }
+    .formula { font-size:1.14rem; padding:.38rem .55rem; margin:.25rem 0; }
+    .flow { gap:.34rem; margin:.35rem 0; }
+    .flow .step { min-height:3.8rem; padding:.25rem; }
+    .flow .step strong { font-size:1.12rem; }
+    .flow .step small { font-size:1.08rem; }
+    .visual.active { grid-template-columns:minmax(0,2.15fr) minmax(16rem,.72fr); column-gap:.9rem; }
+    .visual > .fig { max-height:59vh; }
+    .full-visual img { max-height:59vh; }
+    .cap { font-size:1.1rem; margin:.16rem 0 .22rem; }
+    .takeaway, .prompt, .caution { font-size:1.18rem; padding:.38rem .58rem; margin:.18rem 0; }
+    .structure-layout { gap:1rem; }
+    .structure-card { padding:.55rem 1rem .65rem; }
+    .illumination { font-size:1.05rem; margin-bottom:.08rem; }
+    .illumination b { font-size:1.25rem; }
+    .device-layer { padding:.22rem .65rem; font-size:1.15rem; }
+    .device-layer.metal { min-height:1.8rem; }
+    .device-layer.emitter { min-height:3.1rem; }
+    .device-layer.junction { min-height:2.2rem; }
+    .device-layer.base { min-height:5rem; }
+    .collection-paths { margin-top:.35rem; }
+    .collection-paths span { padding:.28rem; font-size:1.15rem; }
+    .scope-card { padding:.48rem .62rem; }
+    .scope-card p { font-size:1.14rem; }
+  }
+  @media (max-width:1100px) {
+    .slide { padding:1.25rem 1.5rem 2.8rem; overflow:auto; }
+    .title-slide, .closing-slide { padding-right:1.5rem; }
+    .global-logo { width:8rem; top:.5rem; right:.7rem; }
+    h2 { padding-right:8.5rem; }
+    .device-emblem { position:relative; right:auto; top:auto; transform:none; align-self:center; width:min(17rem,82%); margin:.55rem auto .2rem; padding:.65rem; }
+    .title-meta, .closing-meta, .columns, .structure-layout { grid-template-columns:1fr; }
+    .person-card { min-height:auto; }
+    .visual.active { display:flex; flex-direction:column; }
+    .visual > .fig { max-height:45vh; width:auto; margin:.18rem auto; }
+    .visual > .side { width:100%; }
+    .storyline, .scope-grid { grid-template-columns:1fr 1fr; }
+    .flow { grid-template-columns:repeat(3,1fr); }
+    .nav-bar { background:linear-gradient(transparent,var(--bg) 35%); padding-top:.8rem; }
+  }
+  @media print {
+    @page { size:16in 9in; margin:0; }
+    body { background:white; }
+    .slide, .slide.active { display:flex !important; width:16in; height:9in; overflow:hidden; page-break-after:always; break-after:page; }
+    .visual, .visual.active { display:grid !important; }
+    .title-slide, .closing-slide, .balanced { justify-content:center; }
+    .screen-only { display:none !important; }
+    .print-only { display:block !important; }
+    .progress, .nav-bar { display:none !important; }
+    .global-logo { position:fixed; top:.28in; right:.38in; width:1.7in; }
+    .course-footer { position:fixed; bottom:.16in; font-size:9pt; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .screen-only { display:none !important; }
+    .print-only { display:block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+<img class="global-logo" src="logo1_HKUSTGZ.png" alt="The Hong Kong University of Science and Technology (Guangzhou)">
+<div class="course-footer">MICS3090 (L01) · Integrated Circuit Devices</div>
+
+<section class="slide title-slide active">
+  <p class="kicker" data-step="01">MICS3090 (L01) · Integrated Circuit Devices</p>
+  <h1>Silicon Solar Cell<br>Device Modeling</h1>
+  <p class="subtitle">From a front-illuminated <strong>p<sup>+</sup>-on-n junction</strong> to a solved J–V curve—and then to defensible parameter calibration.</p>
+  <div>
+    <span class="tag">1D device physics</span>
+    <span class="tag">Poisson + drift–diffusion</span>
+    <span class="tag">J–V &amp; EQE</span>
+    <span class="tag">data calibration</span>
+  </div>
+  <div class="title-meta">
+    <div class="person-card">
+      <span class="meta-label">Instructor</span>
+      <strong>Renjie WANG</strong>
+    </div>
+    <div class="person-card ta">
+      <span class="meta-label">Teaching Assistant</span>
+      <strong>Zhang CHEN</strong>
+      <span class="contact-line"><a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a> · TA office W2-4F-028</span>
+    </div>
+  </div>
+  <div class="takeaway" style="max-width:62rem"><strong>Guiding question:</strong> what can measured J–V observables tell us—and what remains uncertain?</div>
+  <aside class="device-emblem" aria-label="Front-illuminated p-plus-on-n silicon solar-cell structure">
+    <div class="emblem-sun" aria-hidden="true">☀</div>
+    <div class="emblem-rays" aria-hidden="true">↓ ↓ ↓</div>
+    <div class="emblem-cell">
+      <div class="cell-layer pplus">p⁺ emitter</div>
+      <div class="cell-layer nbase">n-type base</div>
+    </div>
+    <div class="emblem-caption">light → carriers → current</div>
+  </aside>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="02">Start with the destination</p>
+  <h2>Learning Outcomes &amp; Today’s Story</h2>
+  <div class="columns">
+    <div class="card">
+      <h3>By the end, you can…</h3>
+      <ul>
+        <li>translate a p<sup>+</sup>-on-n structure into a 1D DEVSIM model</li>
+        <li>connect doping, electric field, band bending and carrier collection</li>
+        <li>extract J<sub>sc</sub>, V<sub>oc</sub>, FF and EQE</li>
+        <li>judge whether fitted parameters are supportable</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Evidence before conclusions</h3>
+      <ul>
+        <li>state geometry, material assumptions and sign convention</li>
+        <li>check internal profiles before trusting terminal curves</li>
+        <li>test sensitivity before fitting a parameter</li>
+        <li>report residuals, uncertainty and model limits</li>
+      </ul>
+    </div>
+  </div>
+  <div class="storyline" aria-label="Teaching sequence">
+    <div class="card"><strong>Build</strong><span>structure + equations</span></div>
+    <div class="card"><strong>Solve</strong><span>continuation + sweep</span></div>
+    <div class="card"><strong>Validate</strong><span>J–V + EQE</span></div>
+    <div class="card"><strong>Calibrate</strong><span>fit + question</span></div>
+  </div>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="03">Device orientation</p>
+  <h2>Read the p⁺-on-n Cell from Front to Rear</h2>
+  <div class="structure-layout">
+    <figure class="structure-card">
+      <div class="illumination">Front illumination (AM1.5-like teaching input)<b aria-hidden="true">↓ ↓ ↓</b></div>
+      <div class="device-stack">
+        <div class="device-layer metal"><span>front ohmic contact · shading omitted</span><span>x = 0</span></div>
+        <div class="device-layer emitter"><span>p⁺ emitter · N<sub>A</sub> = 10<sup>19</sup> cm<sup>−3</sup></span><span>0–0.5 µm</span></div>
+        <div class="device-layer junction"><span>metallurgical p–n junction</span><span>x = 0.5 µm</span></div>
+        <div class="device-layer base"><span>n-type base · N<sub>D</sub> = 10<sup>17</sup> cm<sup>−3</sup></span><span>0.5–250 µm</span></div>
+        <div class="device-layer metal"><span>rear metal contact</span><span>x = 250 µm</span></div>
+      </div>
+      <div class="collection-paths">
+        <span class="holes">holes h⁺ → front contact</span>
+        <span class="electrons">electrons e⁻ → rear contact</span>
+      </div>
+      <figcaption class="cap">Schematic only; vertical layer thicknesses are not to scale.</figcaption>
+    </figure>
+    <div>
+      <ul>
+        <li>Light enters through the shallow p⁺ emitter at x = 0</li>
+        <li>The depletion region extends around the 0.5 µm junction, mostly into the lower-doped n base</li>
+        <li>Electrons are minority carriers in p⁺; holes are minority carriers in the n base</li>
+      </ul>
+      <div class="takeaway"><strong>Direction check:</strong> in the depletion region, the built-in field points from n to p (−x): holes drift toward the front and electrons toward the rear. Diffusion also matters in the quasi-neutral regions.</div>
+      <div class="prompt"><strong>Before solving:</strong> sketch the sign of net doping and electric field.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="04">Physics → numerics</p>
+  <h2>What DEVSIM Actually Solves</h2>
+  <div class="columns">
+    <div class="card">
+      <h3>Electrostatics</h3>
+      <span class="formula">∇·(ε∇ψ) = −q(p − n + N<sub>D</sub> − N<sub>A</sub>)</span>
+      <p>Charge sets potential, band bending and electric field.</p>
+    </div>
+    <div class="card">
+      <h3>Carrier conservation</h3>
+      <span class="formula">∇·J<sub>n</sub> = q(R − G), &nbsp; ∇·J<sub>p</sub> = −q(R − G)</span>
+      <p>Generation, recombination and current must balance.</p>
+    </div>
+  </div>
+  <span class="formula">J<sub>n</sub> = qµ<sub>n</sub>(nE + V<sub>t</sub>∇n), &nbsp;&nbsp; J<sub>p</sub> = qµ<sub>p</sub>(pE − V<sub>t</sub>∇p)</span>
+  <div class="flow">
+    <div class="step"><strong>1 · Structure</strong><small>doping + geometry</small></div>
+    <div class="step"><strong>2 · Mesh</strong><small>nodes + edges</small></div>
+    <div class="step"><strong>3 · Models</strong><small>ψ, n, p, G, R</small></div>
+    <div class="step"><strong>4 · Solve</strong><small>Newton iteration</small></div>
+    <div class="step"><strong>5 · Sweep</strong><small>terminal bias</small></div>
+    <div class="step"><strong>6 · Extract</strong><small>J–V + profiles</small></div>
+  </div>
+  <div class="caution"><strong>Numerical habit:</strong> solve equilibrium first, add illumination gradually, then ramp voltage. This continuation sequence stabilizes the nonlinear solve.</div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="05">Task 2 · Internal physics</p>
+  <h2>One Junction Connects Doping, Field and Carriers</h2>
+  <pre>python scripts/plot_profiles.py --bias near-voc</pre>
+  <img class="fig" src="../results/profiles.png" alt="Four physical profiles across the p-plus-on-n cell: doping, electric field, carriers, and optical generation">
+  <div class="side">
+    <ul>
+      <li>Locate the junction at 0.5 µm in the doping and field panels</li>
+      <li>Compare equilibrium and illuminated carrier densities</li>
+      <li>Generation is strongest at the illuminated front surface</li>
+    </ul>
+    <div class="prompt"><strong>Consistency check:</strong> do the doping transition and negative field peak occur at the same position? Compare band bending on the next slide.</div>
+  </div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="06">Tasks 1–2 · Band diagram</p>
+  <h2>Quasi-Fermi-Level Splitting Sets the Photovoltage</h2>
+  <pre>python scripts/plot_band.py --bias near-voc</pre>
+  <img class="fig" src="../results/band.png" alt="Equilibrium and illuminated band diagrams near open circuit">
+  <div class="side">
+    <ul>
+      <li>Equilibrium has one flat Fermi level</li>
+      <li>Illumination creates E<sub>Fn</sub> and E<sub>Fp</sub></li>
+      <li>The contact-to-contact splitting divided by q approaches V<sub>oc</sub>; local splitting is a diagnostic</li>
+    </ul>
+    <div class="takeaway"><strong>Consistency check:</strong> near open circuit, compare ΔE<sub>F</sub>/q with V<sub>oc</sub> from the regenerated J–V curve.</div>
+    <div class="prompt"><strong>Explain:</strong> why does stronger recombination reduce the splitting?</div>
+  </div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="07">Task 2 · Terminal behavior</p>
+  <h2>Read an Illuminated J–V Curve</h2>
+  <pre>python scripts/run_sim.py
+python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv</pre>
+  <img class="fig" src="../results/iv_plot.png" alt="Simulated illuminated J–V curve with bundled synthetic reference, Jsc, Voc, and maximum-power point">
+  <div class="side">
+    <ul>
+      <li>J<sub>sc</sub>: current density at V = 0</li>
+      <li>V<sub>oc</sub>: voltage at the J = 0 crossing</li>
+      <li>FF = P<sub>max</sub>/(J<sub>sc</sub>V<sub>oc</sub>) measures the knee</li>
+      <li>Modeled η uses stated P<sub>in</sub>; experimental η requires measured irradiance</li>
+    </ul>
+    <div class="takeaway"><strong>Read, do not memorize:</strong> extract J<sub>sc</sub>, V<sub>oc</sub>, FF and the MPP from your regenerated curve.</div>
+    <div class="prompt"><strong>Sign convention:</strong> positive J means power delivered by the cell.</div>
+  </div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="08">Task 2 · Terminal non-idealities</p>
+  <h2>R<sub>s</sub> and R<sub>sh</sub> Distort Different J–V Regions</h2>
+  <pre>python scripts/plot_resistance.py</pre>
+  <img class="fig" src="../results/resistance.png" alt="Series and shunt resistance effects on the solar-cell current-voltage curve">
+  <div class="side">
+    <ul>
+      <li><strong>R<sub>s</sub>:</strong> rounds the high-current knee and mainly lowers FF</li>
+      <li><strong>R<sub>sh</sub>:</strong> tilts the curve near short circuit and lowers V<sub>oc</sub>/FF</li>
+      <li>Both are effective terminal post-processing terms here—not spatial DEVSIM regions</li>
+    </ul>
+    <div class="prompt"><strong>Diagnosis:</strong> does the measured voltage range contain the region needed to infer R<sub>s</sub>?</div>
+  </div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="09">Task 2 · Optical input</p>
+  <h2>Wavelength Controls Where Photons Are Absorbed</h2>
+  <pre>python scripts/plot_spectrum.py</pre>
+  <img class="fig" src="../results/spectrum.png" alt="Sixteen-bin teaching spectrum and silicon absorption coefficient">
+  <div class="side">
+    <ul>
+      <li>Blue photons: large α, absorbed near the front</li>
+      <li>Near-band-edge photons: small α, penetrate deeply</li>
+      <li>Absorption limit: (1 − R)[1 − exp(−αW)]</li>
+    </ul>
+    <div class="caution"><strong>Scope:</strong> 16 above-band-gap bins drive generation; total modeled P<sub>in</sub> is stated separately. This is not precision ASTM G173 input.</div>
+    <div class="prompt"><strong>Predict:</strong> which wavelengths respond most strongly to front-surface recombination?</div>
+  </div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="10">Task 2 · Spectral response</p>
+  <h2>EQE Locates Wavelength-Dependent Losses</h2>
+  <pre>python scripts/plot_eqe.py</pre>
+  <img class="fig" src="../results/eqe.png" alt="Modeled external quantum efficiency and the absorption-only limit">
+  <div class="side">
+    <ul>
+      <li>EQE = collected electrons per incident photon</li>
+      <li>Blue loss probes front-surface/emitter collection</li>
+      <li>Near-IR loss probes weak absorption and base/rear collection</li>
+      <li>J<sub>sc</sub> = q∫EQE(λ)Φ(λ)dλ</li>
+    </ul>
+    <div class="takeaway"><strong>Cross-check:</strong> integrate the modeled EQE and compare its J<sub>sc</sub> with the full-spectrum J–V result.</div>
+    <div class="caution"><strong>Data boundary:</strong> no measured EQE is bundled or required. Add an overlay only when a real spectral measurement is available.</div>
+  </div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="11">Task 3 · Before fitting</p>
+  <h2>Sensitivity: Does the Observable Respond?</h2>
+  <pre>python scripts/plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5</pre>
+  <img class="fig" src="../results/sweep.png" alt="Sensitivity of solar-cell metrics to hole lifetime">
+  <div class="side">
+    <ul>
+      <li>Holes are minority carriers in the n base: sweep τ<sub>p</sub></li>
+      <li>Longer lifetime improves collection until other losses dominate</li>
+      <li>J<sub>sc</sub> responds strongly; V<sub>oc</sub> changes more weakly</li>
+    </ul>
+    <div class="takeaway"><strong>Calibration rule:</strong> if an observable barely moves, it cannot reliably identify that parameter.</div>
+  </div>
+</section>
+
+<section class="slide full-visual">
+  <p class="kicker" data-step="12">Calibration mechanics · Synthetic demo</p>
+  <h2>Watch a One-Parameter Optimizer Converge</h2>
+  <pre>python scripts/plot_optimization.py --params photon_flux --init photon_flux=0.5 --max-nfev 30 --gif</pre>
+  <img class="screen-only" src="../results/optimization.gif" alt="Synthetic-data animation showing the simulated J–V curve, residual objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
+  <img class="print-only" src="../results/optimization.png" alt="Static synthetic-data summary of J–V agreement, objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
+  <p class="cap"><strong>Hardware-free example:</strong> J–V agreement, objective reduction and the fitted generation-scale trajectory are shown in the same panel order.</p>
+  <div class="takeaway"><strong>Convergence is not truth:</strong> an optimizer can converge even when a model is incomplete or parameters trade off.</div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="13">Task 4 · Historical measured data</p>
+  <h2>Historical Cell #3: More Observables Expose Model Mismatch</h2>
+  <pre>python scripts/run_calibration.py --joint --sample 3</pre>
+  <img class="fig" src="../results/joint_observables.png" alt="Historical Cell 3 illuminated and dark J–V measurements compared with the joint model and independent short-circuit and open-circuit checks">
+  <div class="side">
+    <ul>
+      <li>Joint objective: light J–V + dark J–V + independent J<sub>sc</sub> and V<sub>oc</sub></li>
+      <li>Dark J–V mainly cross-checks the model; lifetime and SRV stay fixed</li>
+      <li>Residual pattern and block score expose systematic disagreement</li>
+    </ul>
+    <div class="caution"><strong>Interpretation:</strong> the small terminal model is a diagnostic, not a promise of a perfect curve.</div>
+  </div>
+</section>
+
+<section class="slide visual">
+  <p class="kicker" data-step="14">Task 5 · Trust the parameter?</p>
+  <h2>Parameter Trust Requires Fit Quality First</h2>
+  <pre>python scripts/run_calibration.py --joint --sample 3</pre>
+  <img class="fig" src="../results/joint_identifiability.png" alt="Relative fitted-parameter uncertainty and correlation matrix for the Cell 3 joint calibration">
+  <div class="side">
+    <ul>
+      <li>A failed quality gate makes covariance a local sensitivity diagnostic—not proof of identifiability</li>
+      <li>Small σ/|value| cannot repair systematic residual mismatch</li>
+      <li>|ρ| ≈ 1, bound hits or near-zero values weaken parameter claims</li>
+    </ul>
+    <div class="takeaway"><strong>Report the evidence:</strong> fitted values are effective model parameters, not automatically unique material constants.</div>
+  </div>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="15">Task 5 · Reproducible claims</p>
+  <h2>From Raw Data to a Defensible Claim</h2>
+  <div class="flow">
+    <div class="step"><strong>1 · Inspect</strong><small>units + sign</small></div>
+    <div class="step"><strong>2 · Convert</strong><small>I → J using area</small></div>
+    <div class="step"><strong>3 · Validate</strong><small>J<sub>sc</sub>, V<sub>oc</sub>, range</small></div>
+    <div class="step"><strong>4 · Sweep</strong><small>sensitivity first</small></div>
+    <div class="step"><strong>5 · Fit</strong><small>few parameters</small></div>
+    <div class="step"><strong>6 · Report</strong><small>residual + uncertainty</small></div>
+  </div>
+  <div class="scope-grid">
+    <div class="scope-card">
+      <h3>Data</h3>
+      <p>Preserve raw files; state units, illuminated area and sign convention. Experimental efficiency requires independently measured irradiance.</p>
+    </div>
+    <div class="scope-card">
+      <h3>Model</h3>
+      <p>1D abrupt junction, Boltzmann statistics, fixed mobility, coarse Beer–Lambert optics and terminal R<sub>s</sub>/R<sub>sh</sub>; no band-gap narrowing, texture or lateral grid.</p>
+    </div>
+    <div class="scope-card">
+      <h3>Claim</h3>
+      <p>Fit only sensitive parameters. Show residuals, uncertainty and cross-observable checks; explain systematic mismatch.</p>
+    </div>
+  </div>
+  <div class="takeaway"><strong>Keep the assignment small:</strong> a transparent two-parameter result is stronger than an elaborate but unidentifiable fit.</div>
+</section>
+
+<section class="slide closing-slide">
+  <p class="kicker" data-step="16">MICS3090 (L01) · Integrated Circuit Devices</p>
+  <h1>Questions &amp; Discussion</h1>
+  <p class="subtitle">A useful model is the simplest one that explains the observations within clearly stated limits.</p>
+  <div class="takeaway" style="max-width:62rem">
+    <strong>Take-home message:</strong> build the p<sup>+</sup>-on-n physics carefully, validate across observables, fit only what the data can identify, and report limitations explicitly.
+  </div>
+  <div class="closing-loop" aria-label="Modeling workflow summary">
+    <span>Structure</span><span>Physics</span><span>Data</span><span>Trust</span>
+  </div>
+  <div class="closing-meta">
+    <div class="person-card">
+      <span class="meta-label">Instructor</span>
+      <strong>Renjie WANG</strong>
+    </div>
+    <div class="person-card ta">
+      <span class="meta-label">Teaching Assistant</span>
+      <strong>Zhang CHEN</strong>
+      <span class="contact-line"><a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a> · TA office W2-4F-028</span>
+    </div>
+  </div>
+</section>
+
+<div class="nav-bar" aria-label="Slide navigation">
+  <div class="nav-group">
+    <button class="nav-btn prev" type="button" aria-label="Previous slide">←</button>
+    <button class="nav-btn next" type="button" aria-label="Next slide">→</button>
+    <span class="counter" aria-live="polite"></span>
+  </div>
+  <span class="help">← → / Space · Home / End · Print to PDF</span>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const counter = document.querySelector('.counter');
+  const progress = document.querySelector('.progress');
+  const hashIndex = () => {
+    const match = location.hash.match(/^#slide-(\d+)$/);
+    return match ? Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1)) : 0;
+  };
+  let current = hashIndex();
+  function show(index, updateHash = true) {
+    current = Math.min(slides.length - 1, Math.max(0, index));
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === current);
+      slide.setAttribute('aria-hidden', i === current ? 'false' : 'true');
+    });
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    progress.style.width = `${100 * (current + 1) / slides.length}%`;
+    document.querySelector('.prev').disabled = current === 0;
+    document.querySelector('.next').disabled = current === slides.length - 1;
+    if (updateHash) history.replaceState(null, '', `#slide-${current + 1}`);
+  }
+  document.addEventListener('keydown', event => {
+    if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'PageDown') {
+      event.preventDefault(); show(current + 1);
+    } else if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+      event.preventDefault(); show(current - 1);
+    } else if (event.key === 'Home') show(0);
+    else if (event.key === 'End') show(slides.length - 1);
+  });
+  document.querySelector('.prev').addEventListener('click', () => show(current - 1));
+  document.querySelector('.next').addEventListener('click', () => show(current + 1));
+  window.addEventListener('hashchange', () => show(hashIndex(), false));
+  show(current, false);
+</script>
+</body>
+</html>

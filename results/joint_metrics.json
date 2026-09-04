@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "sample": "3",
+  "light_iv_points": 13,
+  "dark_iv_points": 15,
+  "light_iv_rmse_A_cm2": 0.004184823286057714,
+  "dark_iv_rmse_A_cm2": 0.0016769920633419777,
+  "light_ishort_measured_A_cm2": 0.0404593996703624,
+  "light_ishort_simulated_A_cm2": 0.045421087484814576,
+  "light_ishort_error_A_cm2": 0.004961687814452179,
+  "light_voc_measured_V": 0.643770933151245,
+  "light_voc_simulated_V": 0.6272896972458994,
+  "light_voc_error_V": -0.01648123590534556,
+  "dark_zero_current_offset_V": 0.2284016609191895,
+  "dark_ishort_diagnostic_A_cm2": 0.0001025159531127
+}

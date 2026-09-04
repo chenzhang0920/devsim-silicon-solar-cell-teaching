@@ -1,0 +1,28 @@
+* text=auto
+
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.csv text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.cff text eol=lf
+*.ini text eol=lf
+*.ipynb text eol=lf
+.editorconfig text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+LICENSE text eol=lf
+
+*.gif binary
+*.jpg binary
+*.jpeg binary
+*.npy binary
+*.pdf binary
+*.png binary
+
+# Preserve native instrument exports byte-for-byte, including BOM, CRLF, and
+# vendor-generated trailing fields.
+data/raw/keithley/*.csv -text -whitespace

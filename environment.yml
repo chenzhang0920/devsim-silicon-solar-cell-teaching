@@ -1,0 +1,56 @@
+# =============================================================================
+# DEVSIM Silicon Solar Cell: device simulation and parameter-identification environment
+# =============================================================================
+#
+# Simulates a silicon solar cell with the open-source DEVSIM TCAD tool and
+# identifies model parameters from experimental data.
+#
+#   DEVSIM: finite-volume solver for Poisson and drift-diffusion equations
+#
+# This is the project's only environment definition; requirements.txt is not used.
+#
+# Create the environment:
+#
+#   conda env create -f environment.yml
+#   conda activate devsim_solar
+#
+# Update an existing environment:
+#
+#   conda env update -f environment.yml --prune
+#
+# Verify:
+#
+#   python -c "import devsim; print('DEVSIM:', devsim.__version__)"
+#   python -c "import numpy, scipy, lmfit; print(numpy.__version__, scipy.__version__, lmfit.__version__)"
+#   python -m pytest tests/ -v
+#
+name: devsim_solar
+channels:
+  - conda-forge
+
+dependencies:
+  # Python
+  - python>=3.10,<3.13
+
+  # Numerical and scientific computing
+  - numpy>=1.24,<2.2.0
+  - scipy>=1.11,<2.0.0
+
+  # Parameter identification
+  - lmfit>=1.2         # bounded nonlinear least-squares fitting and uncertainty reports
+
+  # Data handling
+  - pandas>=1.4.0
+
+  # Visualization and notebook execution
+  - matplotlib>=3.7,<4.0.0
+  - jupyterlab>=4.0     # teaching notebook (notebooks/tutorial.ipynb)
+
+  # Development and testing
+  - pytest>=7.4
+
+  # pip-only package
+  - pip
+  - pip:
+      # Course-validated DEVSIM version; its bundled direct solver needs no MKL package.
+      - devsim==2.10.1  # Course-validated version; pinned against native API/DLL changes.
