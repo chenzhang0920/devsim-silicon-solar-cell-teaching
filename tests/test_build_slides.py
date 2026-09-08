@@ -109,7 +109,9 @@ def test_student_deck_matches_build_and_data_contracts():
     assert 'class="content calibration-layout"' in html
     assert 'class="content quality-layout"' in html
     assert "../results/joint_identifiability.png" not in html
-    assert "p, li, td, th, dd { font-size:1.34rem; }" in html
+    assert "p, li, td, th, dd { font-size:1.55rem; }" in html
+    assert ".small { color:var(--muted); font-size:1.3rem; }" in html
+    assert "font-size:1.25rem; font-weight:650; font-family" in html
     assert "font-size:clamp(2.35rem,3.5vw,3.25rem)" in html
     assert "DEVSIM in semiconductor TCAD" in html
     assert "DEVSIM and Crosslight APSYS" in html

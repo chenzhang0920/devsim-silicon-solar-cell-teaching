@@ -28,7 +28,7 @@
   .slide:has(> .command) { grid-template-rows:auto auto minmax(0,1fr); }
   .slide::after {
     content:attr(data-step) " / 24"; position:fixed; right:1.6rem; bottom:.72rem;
-    color:#718087; font-size:.88rem; font-variant-numeric:tabular-nums;
+    color:#62727a; font-size:1.05rem; font-weight:650; font-variant-numeric:tabular-nums;
   }
   .global-logo {
     position:fixed; z-index:20; top:1rem; right:1.55rem; width:9.2rem; height:auto;
@@ -36,7 +36,7 @@
   }
   .course-footer {
     position:fixed; z-index:20; left:50%; bottom:.72rem; transform:translateX(-50%);
-    color:#718087; font-size:.86rem; font-weight:650; letter-spacing:.02em; white-space:nowrap;
+    color:#62727a; font-size:1.05rem; font-weight:700; letter-spacing:.02em; white-space:nowrap;
   }
   .progress { position:fixed; z-index:25; left:0; top:0; height:4px; background:var(--blue); transition:width .18s ease; }
   h1, h2, h3, p { margin-top:0; }
@@ -46,8 +46,8 @@
     font-size:clamp(2.35rem,3.5vw,3.25rem); line-height:1.06; letter-spacing:-.02em;
     border-bottom:2px solid var(--gold);
   }
-  h3 { margin-bottom:.4rem; color:var(--navy); font-size:1.45rem; line-height:1.15; }
-  p, li, td, th, dd { font-size:1.34rem; }
+  h3 { margin-bottom:.4rem; color:var(--navy); font-size:1.7rem; line-height:1.15; }
+  p, li, td, th, dd { font-size:1.55rem; }
   p { margin-bottom:.7rem; }
   ul, ol { margin:.25rem 0 0; padding-left:1.25rem; }
   li { margin-bottom:.42rem; padding-left:.15rem; }
@@ -59,13 +59,13 @@
   pre {
     margin:.25rem 0; padding:.8rem 1rem; overflow:auto; white-space:pre-wrap;
     color:#eef5f7; background:#142b38; border-left:4px solid var(--gold);
-    font-size:1.08rem; line-height:1.32;
+    font-size:1.25rem; line-height:1.32;
   }
   a { color:var(--navy); text-underline-offset:.14em; }
   .content { min-height:0; height:100%; align-self:stretch; }
   .content.middle { width:100%; align-content:center; }
-  .lead { max-width:75rem; color:var(--muted); font-size:1.65rem; line-height:1.35; }
-  .small { color:var(--muted); font-size:1.03rem; }
+  .lead { max-width:75rem; color:var(--muted); font-size:1.9rem; line-height:1.35; }
+  .small { color:var(--muted); font-size:1.3rem; }
   .two { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
   .two.wide-left { grid-template-columns:minmax(0,1.35fr) minmax(22rem,.65fr); }
   .two.wide-right { grid-template-columns:minmax(24rem,.72fr) minmax(0,1.28fr); }
@@ -75,28 +75,28 @@
   .plain-block.green { border-top-color:var(--green); }
   .equation {
     display:block; margin:.5rem 0 1rem; color:#121b21;
-    font-family:Cambria, Georgia, "Times New Roman", serif; font-size:1.66rem; line-height:1.42;
+    font-family:Cambria, Georgia, "Times New Roman", serif; font-size:1.85rem; line-height:1.42;
   }
-  .equation.large { font-size:2rem; }
-  .note { margin-top:.9rem; padding:.55rem 0 .55rem 1rem; border-left:4px solid var(--gold); font-size:1.24rem; }
+  .equation.large { font-size:2.2rem; }
+  .note { margin-top:.9rem; padding:.55rem 0 .55rem 1rem; border-left:4px solid var(--gold); font-size:1.42rem; }
   .note.warn { border-left-color:var(--rust); }
-  .question { margin-top:1rem; color:var(--navy); font-size:1.34rem; font-weight:700; }
+  .question { margin-top:1rem; color:var(--navy); font-size:1.5rem; font-weight:700; }
   .sequence { display:grid; grid-template-columns:repeat(4,1fr); gap:1.6rem; margin-top:2.2rem; }
   .sequence > div { position:relative; padding-top:.7rem; border-top:4px solid var(--blue); }
   .sequence > div:nth-child(2) { border-top-color:var(--gold); }
   .sequence > div:nth-child(3) { border-top-color:var(--green); }
   .sequence > div:nth-child(4) { border-top-color:var(--rust); }
-  .sequence strong { display:block; margin-bottom:.25rem; color:var(--navy); font-size:1.45rem; }
-  .sequence span { color:var(--muted); font-size:1.18rem; }
+  .sequence strong { display:block; margin-bottom:.25rem; color:var(--navy); font-size:1.55rem; }
+  .sequence span { color:var(--muted); font-size:1.35rem; }
   .simple-table { width:100%; border-collapse:collapse; table-layout:fixed; }
   .simple-table th, .simple-table td { padding:.62rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); line-height:1.24; }
-  .simple-table th { color:var(--navy); border-top:2px solid var(--navy); background:#f1f5f5; font-size:1.18rem; }
-  .simple-table td { font-size:1.16rem; }
+  .simple-table th { color:var(--navy); border-top:2px solid var(--navy); background:#f1f5f5; font-size:1.42rem; }
+  .simple-table td { font-size:1.4rem; }
   .simple-table th:first-child, .simple-table td:first-child { width:18%; font-weight:750; }
   .code-map { display:grid; grid-template-columns:minmax(34rem,1.15fr) minmax(24rem,.85fr); gap:2.5rem; align-items:center; align-content:center; }
   .file-map { display:grid; grid-template-columns:max-content 1fr; gap:.42rem 1rem; margin:0; }
-  .file-map dt { color:var(--navy); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.05rem; font-weight:800; }
-  .file-map dd { margin:0; color:var(--muted); font-size:1.18rem; }
+  .file-map dt { color:var(--navy); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.22rem; font-weight:800; }
+  .file-map dd { margin:0; color:var(--muted); font-size:1.32rem; }
   .circuit-layout { display:grid; grid-template-columns:minmax(32rem,1.18fr) minmax(24rem,.82fr); gap:2.5rem; align-items:center; }
   .device-circuit { display:block; width:100%; max-height:72vh; overflow:visible; }
   .device-circuit .wire, .device-circuit .terminal, .device-circuit .voltage-guide { fill:none; stroke:var(--navy); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke; }
@@ -104,15 +104,15 @@
   .device-circuit .voltage-guide { stroke:var(--muted); stroke-width:1.2; }
   .device-circuit .light-ray { stroke:var(--gold); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke; }
   .device-circuit .svg-main { fill:var(--ink); font-size:17px; font-weight:800; }
-  .device-circuit .svg-sub { fill:var(--muted); font-size:14px; font-weight:650; }
+  .device-circuit .svg-sub { fill:var(--muted); font-size:17px; font-weight:650; }
   .device-circuit .svg-light { fill:#49370b; }
   .device-circuit .svg-white { fill:white; }
-  .device-circuit .svg-circuit { fill:var(--navy); font-size:15px; font-weight:750; }
+  .device-circuit .svg-circuit { fill:var(--navy); font-size:18px; font-weight:750; }
   .definition { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2rem; margin-top:.75rem; }
   .definition > div { padding-top:.6rem; border-top:3px solid var(--blue); }
   .definition > div:nth-child(2) { border-top-color:var(--gold); }
   .definition > div:nth-child(3) { border-top-color:var(--green); }
-  .definition p { color:var(--muted); font-size:1.23rem; }
+  .definition p { color:var(--muted); font-size:1.4rem; }
   .model-problem { display:grid; grid-template-rows:auto auto auto; gap:1.25rem; align-content:center; }
   .model-flow {
     display:grid; grid-template-columns:minmax(0,1fr) 3rem minmax(0,1.15fr) 3rem minmax(0,1fr);
@@ -121,32 +121,32 @@
   .flow-block { padding:.8rem 0 .9rem; border-top:4px solid var(--blue); border-bottom:1px solid var(--line); }
   .flow-block.state { border-top-color:var(--gold); }
   .flow-block.output { border-top-color:var(--green); }
-  .flow-block p { margin:0; color:var(--muted); font-size:1.18rem; }
+  .flow-block p { margin:0; color:var(--muted); font-size:1.35rem; }
   .flow-arrow { align-self:center; color:var(--gold); font-family:Georgia,serif; font-size:2.7rem; text-align:center; }
-  .eyebrow { display:block; margin-bottom:.35rem; color:var(--muted); font-size:.9rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+  .eyebrow { display:block; margin-bottom:.35rem; color:var(--muted); font-size:1.18rem; font-weight:800; letter-spacing:.07em; text-transform:uppercase; }
   .model-bottom { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
   .model-bottom > div { padding-top:.55rem; border-top:2px solid var(--line); }
-  .model-bottom strong { display:block; margin-bottom:.25rem; color:var(--navy); font-size:1.15rem; }
-  .model-bottom span { color:var(--muted); font-size:1.05rem; }
+  .model-bottom strong { display:block; margin-bottom:.25rem; color:var(--navy); font-size:1.3rem; }
+  .model-bottom span { color:var(--muted); font-size:1.28rem; }
   .junction { display:grid; grid-template-columns:minmax(28rem,.9fr) minmax(33rem,1.1fr); gap:3rem; align-items:center; }
   .depletion {
     --jx:27%; position:relative; display:grid; grid-template-columns:2.15fr 5.85fr;
     height:9rem; margin:2rem 0 2.8rem; border-top:2px solid var(--navy); border-bottom:2px solid var(--navy);
   }
-  .depletion > div { display:flex; align-items:center; justify-content:center; text-align:center; font-size:1.28rem; font-weight:800; }
+  .depletion > div { display:flex; align-items:center; justify-content:center; text-align:center; font-size:1.38rem; font-weight:800; }
   .depletion .p { color:#49370b; background:#efd88f; }
   .depletion .n { color:white; background:#3f86ae; }
   .depletion::before {
     content:"W₀ ≈ 0.109 µm"; position:absolute; left:calc(var(--jx) - 2%); top:-1.45rem; width:50%;
-    color:var(--rust); border-bottom:4px solid var(--rust); text-align:center; font-size:1.08rem; font-weight:800;
+    color:var(--rust); border-bottom:4px solid var(--rust); text-align:center; font-size:1.25rem; font-weight:800;
   }
   .depletion::after {
     content:"metallurgical junction"; position:absolute; left:var(--jx); bottom:-2rem; transform:translateX(-50%);
-    color:var(--navy); font-size:1.05rem; font-weight:750; white-space:nowrap;
+    color:var(--navy); font-size:1.22rem; font-weight:750; white-space:nowrap;
   }
   .number-pair { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
   .number-pair strong { display:block; color:var(--navy); font-size:1.7rem; }
-  .number-pair span { color:var(--muted); font-size:1.12rem; }
+  .number-pair span { color:var(--muted); font-size:1.28rem; }
   .electrostatic-plot { display:block; width:100%; height:auto; margin-top:1.2rem; }
   .electrostatic-plot .axis { stroke:#7c8990; stroke-width:1.2; vector-effect:non-scaling-stroke; }
   .electrostatic-plot .guide { stroke:#aab5ba; stroke-width:1; stroke-dasharray:4 4; vector-effect:non-scaling-stroke; }
@@ -154,24 +154,24 @@
   .electrostatic-plot .rho-n { fill:#247da8; opacity:.8; }
   .electrostatic-plot .curve { fill:none; stroke:var(--navy); stroke-width:3; vector-effect:non-scaling-stroke; }
   .electrostatic-plot .label { fill:var(--navy); font-size:17px; font-weight:800; }
-  .electrostatic-plot .sub { fill:var(--muted); font-size:13px; }
+  .electrostatic-plot .sub { fill:var(--muted); font-size:15px; }
   .equation-stack { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem 3rem; }
   .equation-stack > div { padding-top:.45rem; border-top:2px solid var(--line); }
-  .equation-stack p { color:var(--muted); font-size:1.18rem; }
+  .equation-stack p { color:var(--muted); font-size:1.35rem; }
   .physics-loop {
     grid-column:1 / -1; display:grid;
     grid-template-columns:minmax(10rem,1fr) auto minmax(10rem,1fr) auto minmax(10rem,1fr) auto minmax(10rem,1fr);
     gap:.75rem; align-items:center; margin-top:.6rem; padding:.7rem 0; border-top:2px solid var(--gold); border-bottom:2px solid var(--gold);
   }
   .physics-loop div { text-align:center; }
-  .physics-loop strong { display:block; color:var(--navy); font-size:1.12rem; }
-  .physics-loop span { color:var(--muted); font-family:Cambria,Georgia,serif; font-size:1.05rem; }
+  .physics-loop strong { display:block; color:var(--navy); font-size:1.3rem; }
+  .physics-loop span { color:var(--muted); font-family:Cambria,Georgia,serif; font-size:1.22rem; }
   .physics-loop b { color:var(--gold); font-size:1.5rem; font-weight:500; }
   .numerics { display:grid; grid-template-columns:repeat(3,1fr); gap:2.4rem; align-items:start; }
   .numerics > div { padding-top:.65rem; border-top:4px solid var(--blue); }
   .numerics > div:nth-child(2) { border-top-color:var(--gold); }
   .numerics > div:nth-child(3) { border-top-color:var(--green); }
-  .numerics p { color:var(--muted); font-size:1.18rem; }
+  .numerics p { color:var(--muted); font-size:1.35rem; }
   .numerical-story { display:grid; grid-template-rows:auto auto auto; gap:.85rem; align-content:center; }
   .mesh-row { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(20rem,.55fr); gap:2.4rem; align-items:center; }
   .mesh-figure { display:block; width:100%; max-height:18vh; }
@@ -180,32 +180,32 @@
   .mesh-figure .node { fill:var(--navy); }
   .mesh-figure .volume { fill:#e8f1f4; stroke:#a7bac4; stroke-width:1; }
   .mesh-figure .flux { fill:none; stroke:var(--rust); stroke-width:2.4; vector-effect:non-scaling-stroke; }
-  .mesh-figure text { fill:var(--navy); font-size:14px; font-weight:700; }
+  .mesh-figure text { fill:var(--navy); font-size:16px; font-weight:700; }
   .mesh-copy { padding-left:1.5rem; border-left:1px solid var(--line); }
-  .mesh-copy p { margin:0; color:var(--muted); font-size:1.12rem; }
+  .mesh-copy p { margin:0; color:var(--muted); font-size:1.3rem; }
   .solver-path { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
   .solver-path > div { padding-top:.45rem; border-top:3px solid var(--blue); }
   .solver-path > div:nth-child(2) { border-top-color:var(--gold); }
   .solver-path > div:nth-child(3) { border-top-color:var(--green); }
   .solver-path > div:nth-child(4) { border-top-color:var(--rust); }
-  .solver-path strong { display:block; color:var(--navy); font-size:1.12rem; }
-  .solver-path span { color:var(--muted); font-size:1rem; }
+  .solver-path strong { display:block; color:var(--navy); font-size:1.3rem; }
+  .solver-path span { color:var(--muted); font-size:1.22rem; }
   .figure-layout { display:grid; grid-template-columns:minmax(0,2.35fr) minmax(20rem,.65fr); gap:2.2rem; min-height:0; height:100%; align-items:start; padding-top:.35rem; }
   .figure-layout img { display:block; width:100%; max-height:74vh; object-fit:contain; }
   .figure-layout .explain { padding-left:1.6rem; border-left:1px solid var(--line); }
-  .figure-layout .explain li { font-size:1.22rem; }
-  .command { margin:-.55rem 0 .1rem; color:var(--muted); font-size:1.02rem; font-family:"SFMono-Regular",Consolas,monospace; }
+  .figure-layout .explain li { font-size:1.4rem; }
+  .command { margin:-.55rem 0 .1rem; color:#4f6069; font-size:1.25rem; font-weight:650; font-family:"SFMono-Regular",Consolas,monospace; }
   .double-figure { display:grid; grid-template-columns:1fr 1fr; gap:2rem; min-height:0; align-items:center; }
   .double-figure figure { margin:0; }
   .double-figure img { display:block; width:100%; max-height:59vh; object-fit:contain; }
-  figcaption { margin-top:.35rem; color:var(--muted); font-size:1.05rem; text-align:center; }
+  figcaption { margin-top:.35rem; color:var(--muted); font-size:1.25rem; text-align:center; }
   .parameter-table td:first-child { width:17%; color:var(--navy); font-family:"SFMono-Regular",Consolas,monospace; }
   .fit { color:var(--green); font-weight:800; }
   .fixed { color:var(--muted); font-weight:700; }
   .calibration-layout { display:grid; grid-template-rows:minmax(0,1fr) auto; gap:.8rem; align-content:start; }
   .calibration-layout > img { display:block; width:100%; max-height:65vh; object-fit:contain; }
   .calibration-notes { display:grid; grid-template-columns:1.05fr 1fr 1.3fr; gap:2rem; padding-top:.65rem; border-top:1px solid var(--line); }
-  .calibration-notes p { margin:0; font-size:1.08rem; }
+  .calibration-notes p { margin:0; font-size:1.25rem; }
   .calibration-notes .note { margin:0; }
   .quality-layout { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(24rem,.55fr); gap:3rem; align-self:start; align-items:start; width:100%; height:auto; padding-top:4rem; }
   .quality-viz { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
@@ -213,14 +213,14 @@
   .quality-panel h3 { margin-bottom:1.2rem; }
   .cov-chart { padding:.5rem 0; }
   .cov-row { display:grid; grid-template-columns:9rem minmax(0,1fr) 4.5rem; gap:1rem; align-items:center; margin:1.35rem 0; }
-  .cov-row > strong { color:var(--navy); font-size:1.12rem; }
+  .cov-row > strong { color:var(--navy); font-size:1.25rem; }
   .cov-track { position:relative; height:2.2rem; background:var(--soft); border-left:1px solid var(--navy); border-right:1px dashed var(--muted); }
   .cov-bar { height:100%; width:var(--w); min-width:3px; background:var(--gold); }
-  .cov-value { color:var(--navy); font-size:1.15rem; font-weight:800; }
-  .cov-axis { display:flex; justify-content:space-between; margin-left:10rem; color:var(--muted); font-size:.92rem; }
+  .cov-value { color:var(--navy); font-size:1.28rem; font-weight:800; }
+  .cov-axis { display:flex; justify-content:space-between; margin-left:10rem; color:var(--muted); font-size:1.2rem; }
   .corr-wrap { display:grid; grid-template-columns:7rem 1fr; grid-template-rows:auto 1fr; gap:.55rem; align-items:center; max-width:32rem; margin:0 auto; }
-  .corr-top { grid-column:2; display:grid; grid-template-columns:1fr 1fr; text-align:center; color:var(--muted); font-size:1rem; }
-  .corr-side { display:grid; grid-template-rows:1fr 1fr; gap:2px; text-align:right; color:var(--muted); font-size:1rem; }
+  .corr-top { grid-column:2; display:grid; grid-template-columns:1fr 1fr; text-align:center; color:var(--muted); font-size:1.2rem; }
+  .corr-side { display:grid; grid-template-rows:1fr 1fr; gap:2px; text-align:right; color:var(--muted); font-size:1.2rem; }
   .corr-grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:2px; aspect-ratio:1; }
   .corr-grid div { display:flex; align-items:center; justify-content:center; color:#111; background:#f3d3c2; font-family:Georgia,serif; font-size:1.65rem; }
   .corr-grid .diag { color:white; background:#7d0025; }
@@ -234,10 +234,10 @@
   .cover-device .wire { fill:none; stroke:var(--navy); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
   .cover-device .ray { fill:none; stroke:var(--gold); stroke-width:3; stroke-linecap:round; }
   .cover-device .label { fill:var(--navy); font-size:21px; font-weight:800; }
-  .cover-device .sub { fill:var(--muted); font-size:15px; }
-  .title-slide .subtitle { max-width:65rem; color:var(--muted); font-size:1.65rem; }
-  .meta { display:flex; gap:2.5rem; margin-top:2rem; color:var(--navy); font-size:1.08rem; }
-  .meta span { display:block; color:var(--muted); font-size:.88rem; text-transform:uppercase; letter-spacing:.08em; }
+  .cover-device .sub { fill:var(--muted); font-size:18px; }
+  .title-slide .subtitle { max-width:65rem; color:var(--muted); font-size:1.9rem; }
+  .meta { display:flex; gap:2.5rem; margin-top:2rem; color:var(--navy); font-size:1.3rem; }
+  .meta span { display:block; color:var(--muted); font-size:1.15rem; text-transform:uppercase; letter-spacing:.07em; }
   .closing { grid-template-rows:1fr; }
   .closing .content { display:grid; align-content:center; width:100%; max-width:none; }
   .closing h2 { border:0; padding-right:0; font-size:3.6rem; }
@@ -247,7 +247,7 @@
   .exit-check li { counter-increment:exit; position:relative; margin:0; padding:.75rem 0 .75rem 3.1rem; border-top:1px solid var(--line); }
   .exit-check li::before { content:counter(exit); position:absolute; left:0; top:.58rem; color:var(--gold); font-family:Georgia,serif; font-size:1.8rem; }
   .exit-check strong { display:block; color:var(--navy); }
-  .exit-check span { color:var(--muted); font-size:1.05rem; }
+  .exit-check span { color:var(--muted); font-size:1.25rem; }
   .nav { position:fixed; z-index:30; left:1rem; bottom:.45rem; display:flex; gap:.35rem; }
   .nav button { width:2rem; height:1.75rem; border:1px solid var(--line); background:rgba(255,255,255,.88); color:var(--navy); cursor:pointer; }
   .print-only { display:none !important; }
@@ -256,24 +256,24 @@
     .global-logo { top:.45rem; right:.8rem; width:8rem; }
     h1 { font-size:4rem; }
     h2 { font-size:2.12rem; padding-right:9rem; }
-    h3 { font-size:1.28rem; }
-    p, li, td, th, dd { font-size:1.18rem; }
-    .lead { font-size:1.35rem; }
-    .equation { font-size:1.38rem; margin:.3rem 0 .6rem; }
-    .equation.large { font-size:1.6rem; }
-    pre { font-size:.94rem; line-height:1.24; padding:.5rem .7rem; }
+    h3 { font-size:1.4rem; }
+    p, li, td, th, dd { font-size:1.28rem; }
+    .lead { font-size:1.5rem; }
+    .equation { font-size:1.5rem; margin:.3rem 0 .6rem; }
+    .equation.large { font-size:1.7rem; }
+    pre { font-size:1.1rem; line-height:1.24; padding:.5rem .7rem; }
     .sequence { margin-top:1.1rem; }
     .sequence strong { font-size:1.25rem; }
-    .sequence span, .definition p, .numerics p, .file-map dd { font-size:1.03rem; }
-    .simple-table th, .simple-table td { padding:.38rem .52rem; font-size:1rem; }
+    .sequence span, .definition p, .numerics p, .file-map dd { font-size:1.16rem; }
+    .simple-table th, .simple-table td { padding:.38rem .52rem; font-size:1.16rem; }
     .device-circuit { max-height:63vh; }
     .depletion { height:6.5rem; margin:1.2rem 0 2.1rem; }
     .figure-layout img { max-height:69vh; }
     .calibration-layout > img { max-height:60vh; }
     .quality-layout { padding-top:1rem; }
-    .figure-layout .explain li { font-size:1.08rem; }
+    .figure-layout .explain li { font-size:1.18rem; }
     .double-figure img { max-height:55vh; }
-    .note { font-size:1.1rem; }
+    .note { font-size:1.2rem; }
   }
   @media (max-width:1100px) {
     body { overflow:auto; }
@@ -293,7 +293,7 @@
     @page { size:16in 9in; margin:0; }
     .slide, .slide.active { display:grid !important; width:16in; height:9in; overflow:hidden; page-break-after:always; break-after:page; }
     .global-logo { position:fixed; top:.25in; right:.3in; width:1.45in; }
-    .course-footer { bottom:.12in; font-size:9pt; }
+    .course-footer { bottom:.12in; font-size:10pt; }
     .progress, .nav { display:none !important; }
     .screen-only { display:none !important; }
     .print-only { display:block !important; }
@@ -328,13 +328,13 @@
       <text class="sub" x="246" y="119">incident photon flux Φ(λ)</text>
       <rect x="55" y="150" width="300" height="68" fill="#efd88f" stroke="#123b5d" stroke-width="3"></rect>
       <rect x="55" y="218" width="300" height="138" fill="#3f86ae" stroke="#123b5d" stroke-width="3"></rect>
-      <text class="label" x="205" y="190" text-anchor="middle">p<tspan baseline-shift="super" font-size="14">+</tspan> emitter</text>
+      <text class="label" x="205" y="190" text-anchor="middle">p<tspan baseline-shift="super" font-size="16">+</tspan> emitter</text>
       <text x="205" y="284" text-anchor="middle" fill="white" font-size="22" font-weight="800">n-type base</text>
-      <text x="205" y="312" text-anchor="middle" fill="white" font-size="15">silicon absorber</text>
+      <text x="205" y="312" text-anchor="middle" fill="white" font-size="18">silicon absorber</text>
       <path class="wire" d="M355 150H466V205"></path>
       <rect x="433" y="205" width="66" height="88" fill="#fbfcfa" stroke="#123b5d" stroke-width="3"></rect>
       <text class="label" x="466" y="244" text-anchor="middle">load</text>
-      <text class="label" x="466" y="271" text-anchor="middle">R<tspan baseline-shift="sub" font-size="14">L</tspan></text>
+      <text class="label" x="466" y="271" text-anchor="middle">R<tspan baseline-shift="sub" font-size="16">L</tspan></text>
       <path class="wire" d="M466 293V356H355"></path>
       <path class="wire" d="M383 150H425" marker-end="url(#cover-current-arrow)"></path>
       <text class="label" x="404" y="132" text-anchor="middle">I = AJ</text>
@@ -462,14 +462,14 @@ get_contact_current(...)   # intrinsic J(V)</pre>
           <rect x="25" y="150" width="275" height="128" fill="#3f86ae" stroke="#123b5d" stroke-width="2"></rect>
           <line class="terminal" x1="25" y1="88" x2="300" y2="88"></line>
           <line class="terminal" x1="25" y1="278" x2="300" y2="278"></line>
-          <text x="162.5" y="115" class="svg-main svg-light" text-anchor="middle">p<tspan baseline-shift="super" font-size="12">+</tspan> emitter</text>
+          <text x="162.5" y="115" class="svg-main svg-light" text-anchor="middle">p<tspan baseline-shift="super" font-size="14">+</tspan> emitter</text>
           <text x="162.5" y="136" class="svg-sub svg-light" text-anchor="middle">0 ≤ x &lt; 0.5 µm</text>
           <text x="162.5" y="204" class="svg-main svg-white" text-anchor="middle">n-type base</text>
           <text x="162.5" y="227" class="svg-sub svg-white" text-anchor="middle">0.5 µm ≤ x ≤ 250 µm</text>
           <path class="wire" d="M300 88H405V138"></path>
           <rect x="374" y="138" width="62" height="70" rx="2" fill="#fbfcfa" stroke="#123b5d" stroke-width="2"></rect>
           <text x="405" y="169" class="svg-circuit" text-anchor="middle">load</text>
-          <text x="405" y="191" class="svg-circuit" text-anchor="middle">R<tspan baseline-shift="sub" font-size="11">L</tspan></text>
+          <text x="405" y="191" class="svg-circuit" text-anchor="middle">R<tspan baseline-shift="sub" font-size="14">L</tspan></text>
           <path class="wire" d="M405 208V278H300"></path>
           <path class="wire" d="M325 88H365" marker-end="url(#arrow-current)"></path>
           <circle cx="300" cy="88" r="4" fill="#123b5d"></circle>
@@ -478,8 +478,8 @@ get_contact_current(...)   # intrinsic J(V)</pre>
           <text x="312" y="110" class="svg-main">+</text>
           <text x="312" y="274" class="svg-main">−</text>
           <path class="voltage-guide" d="M338 94V273 M332 94H338 M332 273H338"></path>
-          <text x="354" y="184" class="svg-circuit" text-anchor="middle" transform="rotate(-90 354 184)">V<tspan baseline-shift="sub" font-size="11">term</tspan> = V<tspan baseline-shift="sub" font-size="11">p</tspan> − V<tspan baseline-shift="sub" font-size="11">n</tspan></text>
-          <text x="230" y="322" class="svg-circuit" text-anchor="middle">P<tspan baseline-shift="sub" font-size="11">out</tspan> = V<tspan baseline-shift="sub" font-size="11">term</tspan>I</text>
+          <text x="354" y="184" class="svg-circuit" text-anchor="middle" transform="rotate(-90 354 184)">V<tspan baseline-shift="sub" font-size="14">term</tspan> = V<tspan baseline-shift="sub" font-size="14">p</tspan> − V<tspan baseline-shift="sub" font-size="14">n</tspan></text>
+          <text x="230" y="322" class="svg-circuit" text-anchor="middle">P<tspan baseline-shift="sub" font-size="14">out</tspan> = V<tspan baseline-shift="sub" font-size="14">term</tspan>I</text>
         </g>
       </svg>
       <figcaption>Schematic, not a scale drawing of the layer thicknesses.</figcaption>
