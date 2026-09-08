@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#003b71">
 <link rel="icon" type="image/png" href="logo1_HKUSTGZ.png">
-<title>Silicon Solar Cell Device Modeling — Student Lab Slides</title>
+<title>DEVSIM Semiconductor Device Modeling — Student Lab Slides</title>
 <style>
   :root {
     --bg:#f6f8fb; --panel:#ffffff; --fg:#17242d; --muted:#52616c;
@@ -210,9 +210,9 @@
   .source-note a { color:var(--blue-dark); }
   .setup-layout { display:grid; grid-template-columns:minmax(30rem,1fr) minmax(28rem,1fr); gap:1.35rem; align-items:start; }
   .setup-layout pre { margin:.1rem 0; font-size:1.2rem; line-height:1.35; }
-  .file-map { margin:.08rem 0; }
-  .file-map dt { float:left; clear:left; width:8.3rem; color:var(--blue-dark); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.05rem; font-weight:800; }
-  .file-map dd { margin:0 0 .43rem 8.7rem; color:var(--muted); font-size:1.18rem; line-height:1.25; }
+  .file-map { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:.38rem .9rem; margin:.08rem 0; }
+  .file-map dt { color:var(--blue-dark); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.05rem; font-weight:800; }
+  .file-map dd { margin:0; color:var(--muted); font-size:1.18rem; line-height:1.25; }
   .api-flow { grid-template-columns:repeat(6,1fr); }
   .api-flow code { display:block; margin-top:.18rem; font-size:.82rem; overflow-wrap:anywhere; }
   .progress { position:fixed; z-index:20; top:0; left:0; height:5px; background:var(--blue); transition:width .2s ease; }
@@ -285,8 +285,9 @@
     .source-note { font-size:.88rem; margin-top:.2rem; }
     .setup-layout { grid-template-columns:minmax(27rem,1fr) minmax(24rem,1fr); gap:.8rem; }
     .setup-layout pre { font-size:1.1rem; line-height:1.24; }
-    .file-map dt { width:7.5rem; font-size:.95rem; }
-    .file-map dd { margin-left:7.9rem; margin-bottom:.26rem; font-size:1.08rem; }
+    .file-map { gap:.26rem .72rem; }
+    .file-map dt { font-size:.95rem; }
+    .file-map dd { font-size:1.08rem; }
     .api-flow code { font-size:.74rem; }
   }
   @media (max-width:1100px) {
@@ -591,7 +592,7 @@ jupyter lab notebooks/tutorial.ipynb</pre>
       </ul>
     </div>
   </div>
-  <div class="takeaway"><strong>Boundary-condition count:</strong> the three second-order or conservation fields require conditions at both ends. The ideal contact models close ψ, n and p at the front and rear.</div>
+  <div class="takeaway"><strong>Boundary-condition count:</strong> Poisson and the two steady-state continuity equations need contact conditions at both ends. The ideal contact models close ψ, n and p at the front and rear.</div>
 </section>
 
 <section class="slide visual">
