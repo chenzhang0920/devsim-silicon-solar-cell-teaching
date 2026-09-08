@@ -25,6 +25,7 @@
     padding:3.2rem 4.5vw 3rem; background:var(--paper);
   }
   .slide.active { display:grid; }
+  .slide:has(> .command) { grid-template-rows:auto auto minmax(0,1fr); }
   .slide::after {
     content:attr(data-step) " / 24"; position:fixed; right:1.6rem; bottom:.72rem;
     color:#718087; font-size:.88rem; font-variant-numeric:tabular-nums;
@@ -61,8 +62,8 @@
     font-size:1.08rem; line-height:1.32;
   }
   a { color:var(--navy); text-underline-offset:.14em; }
-  .content { min-height:0; align-self:start; }
-  .content.middle { align-self:center; width:100%; }
+  .content { min-height:0; height:100%; align-self:stretch; }
+  .content.middle { width:100%; align-content:center; }
   .lead { max-width:75rem; color:var(--muted); font-size:1.65rem; line-height:1.35; }
   .small { color:var(--muted); font-size:1.03rem; }
   .two { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
@@ -92,12 +93,12 @@
   .simple-table th { color:var(--navy); border-top:2px solid var(--navy); background:#f1f5f5; font-size:1.18rem; }
   .simple-table td { font-size:1.16rem; }
   .simple-table th:first-child, .simple-table td:first-child { width:18%; font-weight:750; }
-  .code-map { display:grid; grid-template-columns:minmax(34rem,1.15fr) minmax(24rem,.85fr); gap:2.5rem; align-items:start; }
+  .code-map { display:grid; grid-template-columns:minmax(34rem,1.15fr) minmax(24rem,.85fr); gap:2.5rem; align-items:center; align-content:center; }
   .file-map { display:grid; grid-template-columns:max-content 1fr; gap:.42rem 1rem; margin:0; }
   .file-map dt { color:var(--navy); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.05rem; font-weight:800; }
   .file-map dd { margin:0; color:var(--muted); font-size:1.18rem; }
   .circuit-layout { display:grid; grid-template-columns:minmax(32rem,1.18fr) minmax(24rem,.82fr); gap:2.5rem; align-items:center; }
-  .device-circuit { display:block; width:100%; max-height:66vh; overflow:visible; }
+  .device-circuit { display:block; width:100%; max-height:72vh; overflow:visible; }
   .device-circuit .wire, .device-circuit .terminal, .device-circuit .voltage-guide { fill:none; stroke:var(--navy); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke; }
   .device-circuit .terminal { stroke-width:3; }
   .device-circuit .voltage-guide { stroke:var(--muted); stroke-width:1.2; }
@@ -112,6 +113,21 @@
   .definition > div:nth-child(2) { border-top-color:var(--gold); }
   .definition > div:nth-child(3) { border-top-color:var(--green); }
   .definition p { color:var(--muted); font-size:1.23rem; }
+  .model-problem { display:grid; grid-template-rows:auto auto auto; gap:1.25rem; align-content:center; }
+  .model-flow {
+    display:grid; grid-template-columns:minmax(0,1fr) 3rem minmax(0,1.15fr) 3rem minmax(0,1fr);
+    gap:1rem; align-items:stretch;
+  }
+  .flow-block { padding:.8rem 0 .9rem; border-top:4px solid var(--blue); border-bottom:1px solid var(--line); }
+  .flow-block.state { border-top-color:var(--gold); }
+  .flow-block.output { border-top-color:var(--green); }
+  .flow-block p { margin:0; color:var(--muted); font-size:1.18rem; }
+  .flow-arrow { align-self:center; color:var(--gold); font-family:Georgia,serif; font-size:2.7rem; text-align:center; }
+  .eyebrow { display:block; margin-bottom:.35rem; color:var(--muted); font-size:.9rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+  .model-bottom { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+  .model-bottom > div { padding-top:.55rem; border-top:2px solid var(--line); }
+  .model-bottom strong { display:block; margin-bottom:.25rem; color:var(--navy); font-size:1.15rem; }
+  .model-bottom span { color:var(--muted); font-size:1.05rem; }
   .junction { display:grid; grid-template-columns:minmax(28rem,.9fr) minmax(33rem,1.1fr); gap:3rem; align-items:center; }
   .depletion {
     --jx:27%; position:relative; display:grid; grid-template-columns:2.15fr 5.85fr;
@@ -131,16 +147,51 @@
   .number-pair { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
   .number-pair strong { display:block; color:var(--navy); font-size:1.7rem; }
   .number-pair span { color:var(--muted); font-size:1.12rem; }
+  .electrostatic-plot { display:block; width:100%; height:auto; margin-top:1.2rem; }
+  .electrostatic-plot .axis { stroke:#7c8990; stroke-width:1.2; vector-effect:non-scaling-stroke; }
+  .electrostatic-plot .guide { stroke:#aab5ba; stroke-width:1; stroke-dasharray:4 4; vector-effect:non-scaling-stroke; }
+  .electrostatic-plot .rho-p { fill:#b9511e; opacity:.8; }
+  .electrostatic-plot .rho-n { fill:#247da8; opacity:.8; }
+  .electrostatic-plot .curve { fill:none; stroke:var(--navy); stroke-width:3; vector-effect:non-scaling-stroke; }
+  .electrostatic-plot .label { fill:var(--navy); font-size:17px; font-weight:800; }
+  .electrostatic-plot .sub { fill:var(--muted); font-size:13px; }
   .equation-stack { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem 3rem; }
   .equation-stack > div { padding-top:.45rem; border-top:2px solid var(--line); }
   .equation-stack p { color:var(--muted); font-size:1.18rem; }
+  .physics-loop {
+    grid-column:1 / -1; display:grid;
+    grid-template-columns:minmax(10rem,1fr) auto minmax(10rem,1fr) auto minmax(10rem,1fr) auto minmax(10rem,1fr);
+    gap:.75rem; align-items:center; margin-top:.6rem; padding:.7rem 0; border-top:2px solid var(--gold); border-bottom:2px solid var(--gold);
+  }
+  .physics-loop div { text-align:center; }
+  .physics-loop strong { display:block; color:var(--navy); font-size:1.12rem; }
+  .physics-loop span { color:var(--muted); font-family:Cambria,Georgia,serif; font-size:1.05rem; }
+  .physics-loop b { color:var(--gold); font-size:1.5rem; font-weight:500; }
   .numerics { display:grid; grid-template-columns:repeat(3,1fr); gap:2.4rem; align-items:start; }
   .numerics > div { padding-top:.65rem; border-top:4px solid var(--blue); }
   .numerics > div:nth-child(2) { border-top-color:var(--gold); }
   .numerics > div:nth-child(3) { border-top-color:var(--green); }
   .numerics p { color:var(--muted); font-size:1.18rem; }
-  .figure-layout { display:grid; grid-template-columns:minmax(0,2.35fr) minmax(20rem,.65fr); gap:2.2rem; min-height:0; align-items:center; }
-  .figure-layout img { display:block; width:100%; max-height:68vh; object-fit:contain; }
+  .numerical-story { display:grid; grid-template-rows:auto auto auto; gap:.85rem; align-content:center; }
+  .mesh-row { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(20rem,.55fr); gap:2.4rem; align-items:center; }
+  .mesh-figure { display:block; width:100%; max-height:18vh; }
+  .mesh-figure .axis { stroke:var(--navy); stroke-width:2; vector-effect:non-scaling-stroke; }
+  .mesh-figure .face { stroke:var(--gold); stroke-width:2; stroke-dasharray:4 3; vector-effect:non-scaling-stroke; }
+  .mesh-figure .node { fill:var(--navy); }
+  .mesh-figure .volume { fill:#e8f1f4; stroke:#a7bac4; stroke-width:1; }
+  .mesh-figure .flux { fill:none; stroke:var(--rust); stroke-width:2.4; vector-effect:non-scaling-stroke; }
+  .mesh-figure text { fill:var(--navy); font-size:14px; font-weight:700; }
+  .mesh-copy { padding-left:1.5rem; border-left:1px solid var(--line); }
+  .mesh-copy p { margin:0; color:var(--muted); font-size:1.12rem; }
+  .solver-path { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+  .solver-path > div { padding-top:.45rem; border-top:3px solid var(--blue); }
+  .solver-path > div:nth-child(2) { border-top-color:var(--gold); }
+  .solver-path > div:nth-child(3) { border-top-color:var(--green); }
+  .solver-path > div:nth-child(4) { border-top-color:var(--rust); }
+  .solver-path strong { display:block; color:var(--navy); font-size:1.12rem; }
+  .solver-path span { color:var(--muted); font-size:1rem; }
+  .figure-layout { display:grid; grid-template-columns:minmax(0,2.35fr) minmax(20rem,.65fr); gap:2.2rem; min-height:0; height:100%; align-items:start; padding-top:.35rem; }
+  .figure-layout img { display:block; width:100%; max-height:74vh; object-fit:contain; }
   .figure-layout .explain { padding-left:1.6rem; border-left:1px solid var(--line); }
   .figure-layout .explain li { font-size:1.22rem; }
   .command { margin:-.55rem 0 .1rem; color:var(--muted); font-size:1.02rem; font-family:"SFMono-Regular",Consolas,monospace; }
@@ -151,15 +202,52 @@
   .parameter-table td:first-child { width:17%; color:var(--navy); font-family:"SFMono-Regular",Consolas,monospace; }
   .fit { color:var(--green); font-weight:800; }
   .fixed { color:var(--muted); font-weight:700; }
+  .calibration-layout { display:grid; grid-template-rows:minmax(0,1fr) auto; gap:.8rem; align-content:start; }
+  .calibration-layout > img { display:block; width:100%; max-height:65vh; object-fit:contain; }
+  .calibration-notes { display:grid; grid-template-columns:1.05fr 1fr 1.3fr; gap:2rem; padding-top:.65rem; border-top:1px solid var(--line); }
+  .calibration-notes p { margin:0; font-size:1.08rem; }
+  .calibration-notes .note { margin:0; }
+  .quality-layout { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(24rem,.55fr); gap:3rem; align-self:start; align-items:start; width:100%; height:auto; padding-top:4rem; }
+  .quality-viz { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+  .quality-panel { padding-top:.75rem; border-top:3px solid var(--gold); }
+  .quality-panel h3 { margin-bottom:1.2rem; }
+  .cov-chart { padding:.5rem 0; }
+  .cov-row { display:grid; grid-template-columns:9rem minmax(0,1fr) 4.5rem; gap:1rem; align-items:center; margin:1.35rem 0; }
+  .cov-row > strong { color:var(--navy); font-size:1.12rem; }
+  .cov-track { position:relative; height:2.2rem; background:var(--soft); border-left:1px solid var(--navy); border-right:1px dashed var(--muted); }
+  .cov-bar { height:100%; width:var(--w); min-width:3px; background:var(--gold); }
+  .cov-value { color:var(--navy); font-size:1.15rem; font-weight:800; }
+  .cov-axis { display:flex; justify-content:space-between; margin-left:10rem; color:var(--muted); font-size:.92rem; }
+  .corr-wrap { display:grid; grid-template-columns:7rem 1fr; grid-template-rows:auto 1fr; gap:.55rem; align-items:center; max-width:32rem; margin:0 auto; }
+  .corr-top { grid-column:2; display:grid; grid-template-columns:1fr 1fr; text-align:center; color:var(--muted); font-size:1rem; }
+  .corr-side { display:grid; grid-template-rows:1fr 1fr; gap:2px; text-align:right; color:var(--muted); font-size:1rem; }
+  .corr-grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:2px; aspect-ratio:1; }
+  .corr-grid div { display:flex; align-items:center; justify-content:center; color:#111; background:#f3d3c2; font-family:Georgia,serif; font-size:1.65rem; }
+  .corr-grid .diag { color:white; background:#7d0025; }
+  .quality-explain { padding-left:2rem; border-left:1px solid var(--line); }
+  .quality-explain .equation { margin-top:0; }
+  .quality-explain .status { color:var(--rust); font-size:1.35rem; font-weight:800; }
   .title-slide { grid-template-rows:1fr; background:linear-gradient(100deg,#fbfcfa 0%,#fbfcfa 68%,#eef4f5 100%); }
-  .title-slide .cover { align-self:center; max-width:86rem; padding-left:1.7rem; border-left:8px solid var(--gold); }
+  .cover-layout { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(28rem,.85fr); gap:4rem; align-items:center; height:100%; }
+  .title-slide .cover { max-width:72rem; padding-left:1.7rem; border-left:8px solid var(--gold); }
+  .cover-device { display:block; width:100%; max-height:62vh; }
+  .cover-device .wire { fill:none; stroke:var(--navy); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+  .cover-device .ray { fill:none; stroke:var(--gold); stroke-width:3; stroke-linecap:round; }
+  .cover-device .label { fill:var(--navy); font-size:21px; font-weight:800; }
+  .cover-device .sub { fill:var(--muted); font-size:15px; }
   .title-slide .subtitle { max-width:65rem; color:var(--muted); font-size:1.65rem; }
   .meta { display:flex; gap:2.5rem; margin-top:2rem; color:var(--navy); font-size:1.08rem; }
   .meta span { display:block; color:var(--muted); font-size:.88rem; text-transform:uppercase; letter-spacing:.08em; }
   .closing { grid-template-rows:1fr; }
-  .closing .content { align-self:center; max-width:84rem; }
+  .closing .content { display:grid; align-content:center; width:100%; max-width:none; }
   .closing h2 { border:0; padding-right:0; font-size:3.6rem; }
   .closing .meta { margin-top:2.5rem; }
+  .closing-grid { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(25rem,.75fr); gap:4rem; align-items:start; }
+  .exit-check { margin:0; padding:0; list-style:none; counter-reset:exit; }
+  .exit-check li { counter-increment:exit; position:relative; margin:0; padding:.75rem 0 .75rem 3.1rem; border-top:1px solid var(--line); }
+  .exit-check li::before { content:counter(exit); position:absolute; left:0; top:.58rem; color:var(--gold); font-family:Georgia,serif; font-size:1.8rem; }
+  .exit-check strong { display:block; color:var(--navy); }
+  .exit-check span { color:var(--muted); font-size:1.05rem; }
   .nav { position:fixed; z-index:30; left:1rem; bottom:.45rem; display:flex; gap:.35rem; }
   .nav button { width:2rem; height:1.75rem; border:1px solid var(--line); background:rgba(255,255,255,.88); color:var(--navy); cursor:pointer; }
   .print-only { display:none !important; }
@@ -178,9 +266,11 @@
     .sequence strong { font-size:1.25rem; }
     .sequence span, .definition p, .numerics p, .file-map dd { font-size:1.03rem; }
     .simple-table th, .simple-table td { padding:.38rem .52rem; font-size:1rem; }
-    .device-circuit { max-height:58vh; }
+    .device-circuit { max-height:63vh; }
     .depletion { height:6.5rem; margin:1.2rem 0 2.1rem; }
-    .figure-layout img { max-height:65vh; }
+    .figure-layout img { max-height:69vh; }
+    .calibration-layout > img { max-height:60vh; }
+    .quality-layout { padding-top:1rem; }
     .figure-layout .explain li { font-size:1.08rem; }
     .double-figure img { max-height:55vh; }
     .note { font-size:1.1rem; }
@@ -189,7 +279,10 @@
     body { overflow:auto; }
     .slide { min-height:100vh; height:auto; overflow:auto; padding:2.2rem 1.5rem 3.2rem; }
     .two, .two.wide-left, .two.wide-right, .code-map, .circuit-layout, .junction,
-    .definition, .equation-stack, .numerics, .figure-layout, .double-figure { grid-template-columns:1fr; }
+    .definition, .equation-stack, .numerics, .figure-layout, .double-figure, .model-flow,
+    .model-bottom, .physics-loop, .mesh-row, .solver-path, .cover-layout,
+    .closing-grid, .calibration-notes, .quality-layout, .quality-viz { grid-template-columns:1fr; }
+    .flow-arrow, .physics-loop b { display:none; }
     .divide > :last-child, .figure-layout .explain { padding-left:0; border-left:0; }
     .global-logo { width:7.4rem; top:.55rem; right:.6rem; }
     h2 { padding-right:7.8rem; }
@@ -213,7 +306,8 @@
 <div class="course-footer">MICS3090 (L01) · Integrated Circuit Devices</div>
 
 <section class="slide title-slide active" data-step="01" data-title="DEVSIM Silicon Solar-Cell Modeling">
-  <div class="cover">
+  <div class="cover-layout">
+    <div class="cover">
     <p class="small">MICS3090 (L01) · Integrated Circuit Devices</p>
     <h1>DEVSIM Silicon<br>Solar-Cell Modeling</h1>
     <p class="subtitle">A p<sup>+</sup>-on-n case study that connects semiconductor equations, numerical solution and experimental calibration.</p>
@@ -221,6 +315,31 @@
       <div><span>Instructor</span>Renjie WANG</div>
       <div><span>Teaching Assistant</span>Zhang CHEN · <a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a><br>TA office W2-4F-028</div>
     </div>
+    </div>
+    <svg class="cover-device" viewBox="0 0 520 440" role="img" aria-labelledby="cover-device-title">
+      <title id="cover-device-title">Front-illuminated p-plus-on-n silicon solar cell connected to a load</title>
+      <defs>
+        <marker id="cover-current-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#123b5d"></path></marker>
+        <marker id="cover-light-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a97b21"></path></marker>
+      </defs>
+      <circle cx="190" cy="42" r="18" fill="#a97b21"></circle>
+      <path class="ray" d="M190 9V0 M190 84V75 M157 42H147 M233 42H223 M168 20L160 12 M220 72L212 64 M168 64L160 72 M220 12L212 20"></path>
+      <path class="ray" d="M165 98V134 M190 98V134 M215 98V134" marker-end="url(#cover-light-arrow)"></path>
+      <text class="sub" x="246" y="119">incident photon flux Φ(λ)</text>
+      <rect x="55" y="150" width="300" height="68" fill="#efd88f" stroke="#123b5d" stroke-width="3"></rect>
+      <rect x="55" y="218" width="300" height="138" fill="#3f86ae" stroke="#123b5d" stroke-width="3"></rect>
+      <text class="label" x="205" y="190" text-anchor="middle">p<tspan baseline-shift="super" font-size="14">+</tspan> emitter</text>
+      <text x="205" y="284" text-anchor="middle" fill="white" font-size="22" font-weight="800">n-type base</text>
+      <text x="205" y="312" text-anchor="middle" fill="white" font-size="15">silicon absorber</text>
+      <path class="wire" d="M355 150H466V205"></path>
+      <rect x="433" y="205" width="66" height="88" fill="#fbfcfa" stroke="#123b5d" stroke-width="3"></rect>
+      <text class="label" x="466" y="244" text-anchor="middle">load</text>
+      <text class="label" x="466" y="271" text-anchor="middle">R<tspan baseline-shift="sub" font-size="14">L</tspan></text>
+      <path class="wire" d="M466 293V356H355"></path>
+      <path class="wire" d="M383 150H425" marker-end="url(#cover-current-arrow)"></path>
+      <text class="label" x="404" y="132" text-anchor="middle">I = AJ</text>
+      <text class="sub" x="205" y="400" text-anchor="middle">Poisson + carrier continuity → J(V)</text>
+    </svg>
   </div>
 </section>
 
@@ -286,7 +405,7 @@
 
 <section class="slide" data-step="05" data-title="Running the course model">
   <h2>Running the course model</h2>
-  <div class="content code-map">
+  <div class="content middle code-map">
     <div>
       <h3>Environment and entry points</h3>
       <pre>git clone https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching.git
@@ -309,7 +428,7 @@ solve(type="dc")           # repeated continuation steps
 get_contact_current(...)   # intrinsic J(V)</pre>
     </div>
     <div>
-      <h3>One source of truth</h3>
+      <h3>Project structure</h3>
       <dl class="file-map">
         <dt>config.py</dt><dd>geometry, physics, solver and calibration settings</dd>
         <dt>model/</dt><dd>mesh, equations, contacts, illumination and terminal mapping</dd>
@@ -325,7 +444,7 @@ get_contact_current(...)   # intrinsic J(V)</pre>
 
 <section class="slide" data-step="06" data-title="Device, coordinates and external circuit">
   <h2>Device, coordinates and external circuit</h2>
-  <div class="content circuit-layout">
+  <div class="content middle circuit-layout">
     <figure style="margin:0">
       <svg class="device-circuit" viewBox="0 0 460 350" role="img" aria-labelledby="circuit-title circuit-desc">
         <title id="circuit-title">Front-illuminated p-plus-on-n cell connected to a load</title>
@@ -381,27 +500,36 @@ get_contact_current(...)   # intrinsic J(V)</pre>
 
 <section class="slide" data-step="07" data-title="The complete mathematical problem">
   <h2>The complete mathematical problem</h2>
-  <div class="content middle">
-    <span class="equation large">{ψ(x), n(x), p(x)} = S[geometry, doping, material models, G(x), T, contact bias]</span>
-    <div class="definition">
-      <div>
-        <h3>Prescribed inputs</h3>
-        <p>L = 250 µm, emitter depth, N<sub>A</sub>(x), N<sub>D</sub>(x), ε, mobilities, lifetimes, Auger coefficients, optical spectrum, reflectance, T and contact voltages.</p>
+  <div class="content model-problem">
+    <p class="lead">A device simulation is a boundary-value problem. Inputs and contact conditions define the problem; DEVSIM solves the internal state; terminal post-processing produces quantities that can be compared with measurements.</p>
+    <div class="model-flow" aria-label="Flow from prescribed inputs through the PDE solution to measurable outputs">
+      <div class="flow-block">
+        <span class="eyebrow">1 · Prescribe</span>
+        <h3>Device and experiment</h3>
+        <p>Geometry, N<sub>A</sub>(x), N<sub>D</sub>(x), material coefficients, G(x), temperature and contact bias.</p>
       </div>
-      <div>
-        <h3>Solved fields</h3>
-        <p>Electrostatic potential ψ, electron density n and hole density p at the mesh nodes.</p>
+      <div class="flow-arrow" aria-hidden="true">→</div>
+      <div class="flow-block state">
+        <span class="eyebrow">2 · Solve self-consistently</span>
+        <h3>u(x) = [ψ(x), n(x), p(x)]</h3>
+        <span class="equation">F(u; θ, V, G) = 0</span>
+        <p>Poisson plus electron and hole continuity at every mesh node.</p>
       </div>
-      <div>
-        <h3>Calculated outputs</h3>
-        <p>Electric field, band energies, electron and hole currents, recombination, contact current, J–V, J<sub>sc</sub>, V<sub>oc</sub>, FF and EQE.</p>
+      <div class="flow-arrow" aria-hidden="true">→</div>
+      <div class="flow-block output">
+        <span class="eyebrow">3 · Calculate and compare</span>
+        <h3>Fields and terminal response</h3>
+        <p>E, bands, J<sub>n</sub>, J<sub>p</sub>, R, J–V, J<sub>sc</sub>, V<sub>oc</sub>, FF and EQE.</p>
       </div>
     </div>
-    <div class="two divide" style="margin-top:1.5rem">
-      <p><strong>Inside DEVSIM:</strong> the one-dimensional silicon PDE system returns intrinsic current density as a function of junction voltage.</p>
-      <p><strong>After the PDE solve:</strong> area, series resistance and shunt resistance map the intrinsic solution to terminal measurements.</p>
+    <div>
+      <div class="model-bottom">
+        <div><strong>Boundary conditions close the PDEs</strong><span>Front and rear contacts prescribe potential and equilibrium carrier values.</span></div>
+        <div><strong>The intrinsic solve returns J<sub>device</sub>(V<sub>j</sub>)</strong><span>Area does not change the one-dimensional internal solution.</span></div>
+        <div><strong>The circuit map produces measured quantities</strong><span>V<sub>term</sub> = V<sub>j</sub> − JR<sub>s</sub> and I = AJ.</span></div>
+      </div>
+      <p class="note warn">Illuminated area and irradiance are experimental metadata. The present area is 3 cm × 4 cm = 12 cm². <code>photon_flux</code> is a dimensionless generation scale, not a measured irradiance.</p>
     </div>
-    <p class="note warn">Illuminated area and irradiance are experimental metadata. The present area is 3 cm × 4 cm = 12 cm². The baseline <code>photon_flux</code> is a dimensionless scale, not a measured irradiance.</p>
   </div>
 </section>
 
@@ -424,6 +552,34 @@ get_contact_current(...)   # intrinsic J(V)</pre>
         <div><strong>≈ 99%</strong><span>of W<sub>0</sub> lies in the lower-doped n-type base</span></div>
         <div><strong>2 nm mesh target</strong><span>is much smaller than W<sub>0</sub>, but mesh refinement must still verify the result</span></div>
       </div>
+      <svg class="electrostatic-plot" viewBox="0 0 900 190" role="img" aria-labelledby="electrostatic-title electrostatic-desc">
+        <title id="electrostatic-title">Qualitative charge, electric-field and potential profiles through the depletion region</title>
+        <desc id="electrostatic-desc">Fixed acceptor charge is negative on the narrow p side and fixed donor charge is positive on the wider n side. The electric field is negative, and electrostatic potential rises from p to n.</desc>
+        <g transform="translate(0 10)">
+          <text class="label" x="0" y="18">ρ(x)</text>
+          <line class="axis" x1="22" y1="91" x2="270" y2="91"></line>
+          <line class="guide" x1="105" y1="34" x2="105" y2="150"></line>
+          <rect class="rho-p" x="78" y="91" width="27" height="60"></rect>
+          <rect class="rho-n" x="105" y="79" width="135" height="12"></rect>
+          <text class="sub" x="69" y="162">p<tspan baseline-shift="super">+</tspan></text>
+          <text class="sub" x="226" y="162">n</text>
+        </g>
+        <g transform="translate(310 10)">
+          <text class="label" x="0" y="18">E(x)</text>
+          <line class="axis" x1="22" y1="58" x2="270" y2="58"></line>
+          <line class="guide" x1="105" y1="34" x2="105" y2="150"></line>
+          <path class="curve" d="M58 58 L105 139 L240 58"></path>
+          <text class="sub" x="97" y="162">junction</text>
+        </g>
+        <g transform="translate(620 10)">
+          <text class="label" x="0" y="18">ψ(x)</text>
+          <line class="axis" x1="22" y1="143" x2="270" y2="143"></line>
+          <line class="guide" x1="105" y1="34" x2="105" y2="150"></line>
+          <path class="curve" d="M50 132 C82 132,91 126,105 111 C139 73,186 48,244 48"></path>
+          <text class="sub" x="168" y="34">rise ≈ V<tspan baseline-shift="sub">bi</tspan></text>
+          <text class="sub" x="150" y="162">qualitative, not to scale</text>
+        </g>
+      </svg>
       <p class="note warn">“Depleted” describes mobile-carrier removal near a junction. It does not mean that this ordinary p–n cell contains intrinsic silicon.</p>
     </div>
   </div>
@@ -453,6 +609,15 @@ get_contact_current(...)   # intrinsic J(V)</pre>
       <h3>Self-consistent coupling</h3>
       <p>Potential changes transport. Carrier densities change charge. Charge then changes potential. DEVSIM solves the coupled residual rather than treating each equation independently.</p>
       <p class="question">Prediction before simulation: where should the strongest electric field occur, and what sign should it have for x increasing from p<sup>+</sup> to n?</p>
+    </div>
+    <div class="physics-loop" aria-label="Self-consistent coupling among charge, Poisson equation, potential, transport and continuity">
+      <div><strong>Charge</strong><span>ρ = q(p − n + N<sub>D</sub> − N<sub>A</sub>)</span></div>
+      <b aria-hidden="true">→</b>
+      <div><strong>Poisson</strong><span>ρ determines ψ and E</span></div>
+      <b aria-hidden="true">→</b>
+      <div><strong>Transport</strong><span>ψ, n and p determine J<sub>n</sub>, J<sub>p</sub></span></div>
+      <b aria-hidden="true">→</b>
+      <div><strong>Continuity</strong><span>∇·J updates n and p, closing the loop</span></div>
     </div>
   </div>
 </section>
@@ -508,7 +673,31 @@ get_contact_current(...)   # intrinsic J(V)</pre>
 
 <section class="slide" data-step="12" data-title="Numerical solution">
   <h2>Numerical solution</h2>
-  <div class="content middle">
+  <div class="content numerical-story">
+    <div class="mesh-row">
+      <svg class="mesh-figure" viewBox="0 0 900 145" role="img" aria-labelledby="mesh-title mesh-desc">
+        <title id="mesh-title">One-dimensional finite-volume mesh</title>
+        <desc id="mesh-desc">Unknowns live at mesh nodes. Fluxes cross control-volume faces, and sources are integrated within each control volume.</desc>
+        <defs><marker id="arrow-flux" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#b9511e"></path></marker></defs>
+        <rect class="volume" x="290" y="35" width="300" height="70" rx="2"></rect>
+        <line class="face" x1="290" y1="24" x2="290" y2="116"></line>
+        <line class="face" x1="590" y1="24" x2="590" y2="116"></line>
+        <line class="axis" x1="90" y1="70" x2="810" y2="70"></line>
+        <circle class="node" cx="170" cy="70" r="7"></circle>
+        <circle class="node" cx="440" cy="70" r="8"></circle>
+        <circle class="node" cx="710" cy="70" r="7"></circle>
+        <path class="flux" d="M210 49H282" marker-end="url(#arrow-flux)"></path>
+        <path class="flux" d="M598 49H670" marker-end="url(#arrow-flux)"></path>
+        <text x="151" y="96">i−1</text><text x="433" y="96">i</text><text x="701" y="96">i+1</text>
+        <text x="219" y="39">J<tspan baseline-shift="sub">i−½</tspan></text>
+        <text x="608" y="39">J<tspan baseline-shift="sub">i+½</tspan></text>
+        <text x="356" y="128">control volume Ω<tspan baseline-shift="sub">i</tspan></text>
+      </svg>
+      <div class="mesh-copy">
+        <h3>Where the algebra comes from</h3>
+        <p>Unknowns are stored at nodes. Edge fluxes connect neighboring nodes. Integrating each conservation law over Ω<sub>i</sub> converts the PDEs into nonlinear algebraic residuals.</p>
+      </div>
+    </div>
     <div class="numerics">
       <div>
         <h3>Finite-volume balance</h3>
@@ -526,13 +715,15 @@ get_contact_current(...)   # intrinsic J(V)</pre>
         <p>For u = [ψ, n, p], DEVSIM assembles the residual and Jacobian until the coupled system converges.</p>
       </div>
     </div>
-    <div class="sequence" style="margin-top:1.5rem">
+    <div>
+      <div class="solver-path">
       <div><strong>Equilibrium</strong><span>Poisson only</span></div>
       <div><strong>Dark device</strong><span>add carrier continuity</span></div>
       <div><strong>Illumination</strong><span>ramp G from zero</span></div>
       <div><strong>Bias sweep</strong><span>reuse the previous solution</span></div>
+      </div>
+      <p class="note warn">Convergence is one numerical check. Repeat the calculation with a finer mesh and confirm that J<sub>sc</sub>, V<sub>oc</sub> and the internal profiles remain stable.</p>
     </div>
-    <p class="note warn">Convergence is one numerical check. Repeat the calculation with a finer mesh and confirm that J<sub>sc</sub>, V<sub>oc</sub> and the internal profiles remain stable.</p>
   </div>
 </section>
 
@@ -702,19 +893,18 @@ get_contact_current(...)   # intrinsic J(V)</pre>
 <section class="slide" data-step="22" data-title="Joint calibration of Cell #3">
   <h2>Joint calibration of Cell #3</h2>
   <p class="command">python scripts/run_calibration.py --joint --sample 3</p>
-  <div class="content figure-layout">
+  <div class="content calibration-layout">
     <img src="../results/joint_observables.png" alt="Cell 3 illuminated and dark J–V curves with short-circuit and open-circuit checks">
-    <div class="explain">
-      <span class="equation">r<sub>b</sub> = √(w<sub>b</sub>/N<sub>b</sub>) [y<sub>sim,b</sub> − y<sub>meas,b</sub>]/σ<sub>b</sub></span>
-      <h3>Observable blocks</h3>
-      <ul>
-        <li>illuminated J–V</li>
-        <li>dark J–V</li>
-        <li>independent J<sub>sc</sub></li>
-        <li>independent V<sub>oc</sub></li>
-      </ul>
-      <p>Dividing by N<sub>b</sub> prevents a dense curve from dominating solely because it contains more points. The weights express teaching priorities; the σ values are declared discrepancy scales.</p>
-      <p class="note">Dark current tests the fixed recombination model. It is not expected to become accurate merely by changing the light scale.</p>
+    <div class="calibration-notes">
+      <div>
+        <span class="eyebrow">Block-scaled residual</span>
+        <span class="equation">r<sub>b</sub> = √(w<sub>b</sub>/N<sub>b</sub>) [y<sub>sim,b</sub> − y<sub>meas,b</sub>]/σ<sub>b</sub></span>
+      </div>
+      <div>
+        <span class="eyebrow">Four independent checks</span>
+        <p>Illuminated J–V · dark J–V · measured J<sub>sc</sub> · measured V<sub>oc</sub></p>
+      </div>
+      <p class="note">N<sub>b</sub> prevents a dense curve from dominating by point count. Dark current tests the fixed recombination model; changing the light scale cannot repair it.</p>
     </div>
   </div>
 </section>
@@ -722,10 +912,41 @@ get_contact_current(...)   # intrinsic J(V)</pre>
 <section class="slide" data-step="23" data-title="Fit quality and parameter trust">
   <h2>Fit quality and parameter trust</h2>
   <p class="command">python scripts/run_calibration.py --joint --sample 3</p>
-  <div class="content figure-layout">
-    <img src="../results/joint_identifiability.png" alt="Local covariance and correlation diagnostics for Cell 3 with a failed quality gate">
-    <div class="explain">
+  <div class="content quality-layout">
+    <div class="quality-viz" role="img" aria-label="Local covariance scale and correlation diagnostics for the two fitted Cell 3 parameters">
+      <div class="quality-panel">
+        <h3>Relative local covariance scale</h3>
+        <div class="cov-chart">
+          <div class="cov-row">
+            <strong>Flux scale</strong>
+            <div class="cov-track"><div class="cov-bar" style="--w:10%"></div></div>
+            <span class="cov-value">3.0%</span>
+          </div>
+          <div class="cov-row">
+            <strong>Series R</strong>
+            <div class="cov-track"><div class="cov-bar" style="--w:27%"></div></div>
+            <span class="cov-value">8.1%</span>
+          </div>
+        </div>
+        <div class="cov-axis"><span>0</span><span>30% local reference</span></div>
+        <p class="small">These scales come from the local Jacobian near the fitted point. They are not measurement-certified uncertainties.</p>
+      </div>
+      <div class="quality-panel">
+        <h3>Fitted-parameter correlation</h3>
+        <div class="corr-wrap">
+          <div class="corr-top"><span>Flux scale</span><span>Series R</span></div>
+          <div class="corr-side"><span>Flux scale</span><span>Series R</span></div>
+          <div class="corr-grid">
+            <div class="diag">1.00</div><div>0.19</div>
+            <div>0.19</div><div class="diag">1.00</div>
+          </div>
+        </div>
+        <p class="small">The fitted directions are only weakly correlated locally. That statement does not repair model–data mismatch.</p>
+      </div>
+    </div>
+    <div class="quality-explain">
       <span class="equation">Q = Σ<sub>b</sub>w<sub>b</sub>RMS<sub>b</sub><sup>2</sup>/Σ<sub>b</sub>w<sub>b</sub> = 15.1 &gt; 4.0</span>
+      <p class="status">Model–data adequacy gate: failed</p>
       <ul>
         <li>illuminated J–V has normalized RMS ≈ 5.0</li>
         <li>the V<sub>oc</sub> check differs by ≈ 4.5 declared scales</li>
@@ -740,16 +961,29 @@ get_contact_current(...)   # intrinsic J(V)</pre>
 
 <section class="slide closing" data-step="24" data-title="Student workflow">
   <div class="content">
-    <h2>Student workflow</h2>
-    <p class="lead">Build the forward model first. Check its internal physics. Add experimental data only after units, signs, illuminated area and irradiance are documented.</p>
-    <div class="sequence">
-      <div><strong>1 · Reproduce</strong><span>run the baseline scripts and Notebook</span></div>
-      <div><strong>2 · Explain</strong><span>connect each result to an equation or boundary condition</span></div>
-      <div><strong>3 · Replace data</strong><span>preserve raw files and create validated processed tables</span></div>
-      <div><strong>4 · Calibrate</strong><span>test sensitivity, fit few parameters and report mismatch</span></div>
+    <div class="closing-grid">
+      <div>
+        <h2>Student workflow</h2>
+        <p class="lead">Build the forward model first. Check its internal physics. Add experimental data only after units, signs, illuminated area and irradiance are documented.</p>
+        <div class="sequence">
+          <div><strong>1 · Reproduce</strong><span>run the baseline scripts and Notebook</span></div>
+          <div><strong>2 · Explain</strong><span>connect each result to an equation or boundary condition</span></div>
+          <div><strong>3 · Replace data</strong><span>preserve raw files and create validated processed tables</span></div>
+          <div><strong>4 · Calibrate</strong><span>test sensitivity, fit few parameters and report mismatch</span></div>
+        </div>
+        <p class="question">A useful result states what the model explains, what the data constrain and what remains uncertain.</p>
+        <p><a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a> · <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching">Course repository</a></p>
+      </div>
+      <div>
+        <h3>Before reporting a result</h3>
+        <ol class="exit-check">
+          <li><strong>Check the structure and signs</strong><span>p<sup>+</sup> at the illuminated front, n-type base at the rear, and a declared current convention.</span></li>
+          <li><strong>Check equations and boundaries</strong><span>Every solved field has a governing equation and contact condition.</span></li>
+          <li><strong>Check the numerics</strong><span>Convergence, continuation and mesh refinement agree.</span></li>
+          <li><strong>Check the evidence</strong><span>Residuals, data provenance and parameter sensitivity support the interpretation.</span></li>
+        </ol>
+      </div>
     </div>
-    <p class="question">A useful result states what the model explains, what the data constrain and what remains uncertain.</p>
-    <p><a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a> · <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching">Course repository</a></p>
     <div class="meta">
       <div><span>Instructor</span>Renjie WANG</div>
       <div><span>Teaching Assistant</span>Zhang CHEN · <a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a><br>TA office W2-4F-028</div>

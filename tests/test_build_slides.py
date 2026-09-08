@@ -102,6 +102,13 @@ def test_student_deck_matches_build_and_data_contracts():
     assert 'class="kicker"' not in html
     assert 'class="card"' not in html
     assert 'class="takeaway"' not in html
+    assert ".slide:has(> .command)" in html
+    assert 'class="cover-device"' in html
+    assert 'class="electrostatic-plot"' in html
+    assert 'class="mesh-figure"' in html
+    assert 'class="calibration-layout"' in html
+    assert 'class="quality-layout"' in html
+    assert "../results/joint_identifiability.png" not in html
     assert "p, li, td, th, dd { font-size:1.34rem; }" in html
     assert "font-size:clamp(2.35rem,3.5vw,3.25rem)" in html
     assert "DEVSIM in semiconductor TCAD" in html
@@ -119,6 +126,7 @@ def test_student_deck_matches_build_and_data_contracts():
     assert "The model contains more parameters than the present measurements can identify" in html
     assert "Bounded least-squares calibration" in html
     assert "Q = Σ" in html and "15.1 &gt; 4.0" in html
+    assert "Model–data adequacy gate: failed" in html
     assert "Student workflow" in html
     assert 'href="https://zenodo.org/records/17328734"' in html
 
