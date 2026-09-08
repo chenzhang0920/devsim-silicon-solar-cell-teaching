@@ -137,8 +137,18 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "docs/grading.md" in html
     assert "Zhang CHEN" in html
     assert "zchen758@connect.hkust-gz.edu.cn" in html
+    assert 'id="model"' in html
+    assert "Begin with the complete mathematical problem" in html
+    assert "Unknowns</strong><span>&psi;(x), n(x), and p(x)" in html
+    assert "Which equations are solved in the silicon?" in html
+    assert "What is imposed at x = 0 and x = L?" in html
+    assert "V<sub>back</sub> = 0 is the electrical reference" in html
+    assert "R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions" in html
+    assert "Area is experimental metadata" in html
+    assert "3 cm &times; 4 cm = 12 cm<sup>2</sup>" in html
+    assert "Solve equilibrium Poisson with both external contact biases at zero" in html
     assert 'id="physics"' in html
-    assert "Follow the five questions in order" in html
+    assert "Now interpret the model one mechanism at a time" in html
     assert "Question 1 · Junction electrostatics" in html
     assert "Question 5 · From device solution to measured data" in html
     assert "d<sup>2</sup>&psi;/dx<sup>2</sup>" in html
