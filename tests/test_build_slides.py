@@ -106,8 +106,8 @@ def test_student_deck_matches_build_and_data_contracts():
     assert 'class="cover-device"' in html
     assert 'class="electrostatic-plot"' in html
     assert 'class="mesh-figure"' in html
-    assert 'class="calibration-layout"' in html
-    assert 'class="quality-layout"' in html
+    assert 'class="content calibration-layout"' in html
+    assert 'class="content quality-layout"' in html
     assert "../results/joint_identifiability.png" not in html
     assert "p, li, td, th, dd { font-size:1.34rem; }" in html
     assert "font-size:clamp(2.35rem,3.5vw,3.25rem)" in html
