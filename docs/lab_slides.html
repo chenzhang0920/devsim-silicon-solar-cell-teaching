@@ -3,414 +3,205 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#003b71">
+<meta name="theme-color" content="#123b5d">
 <link rel="icon" type="image/png" href="logo1_HKUSTGZ.png">
-<title>DEVSIM Semiconductor Device Modeling — Student Lab Slides</title>
+<title>DEVSIM Silicon Solar-Cell Modeling · MICS3090 (L01)</title>
 <style>
   :root {
-    --bg:#f6f8fb; --panel:#ffffff; --fg:#17242d; --muted:#52616c;
-    --blue:#0878ae; --blue-dark:#003b71; --gold:#b58b2a; --gold-dark:#755711;
-    --orange:#c95f18; --green:#18845b; --line:#d3dee6;
-    --soft-blue:#eaf4fa; --soft-gold:#fbf5e7; --soft-orange:#fff2e9; --soft-green:#eaf6f1;
+    --paper:#fbfcfa; --ink:#20282e; --muted:#5b6870; --navy:#123b5d;
+    --blue:#247da8; --gold:#a97b21; --rust:#b9511e; --green:#247250;
+    --line:#cbd5da; --soft:#edf3f5; --warm:#f7f0df;
   }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  html, body { height:100%; }
+  * { box-sizing:border-box; }
+  html, body { width:100%; height:100%; margin:0; }
   body {
-    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background:var(--bg); color:var(--fg); line-height:1.34;
+    overflow:hidden; color:var(--ink); background:var(--paper);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    line-height:1.34;
   }
   .slide {
     display:none; position:relative; width:100vw; height:100vh; overflow:hidden;
-    padding:1.7rem 3.2rem 3rem;
-    background:linear-gradient(135deg, rgba(8,120,174,.025), transparent 34%),var(--bg);
+    grid-template-rows:auto minmax(0,1fr); gap:1.25rem;
+    padding:3.2rem 4.5vw 3rem; background:var(--paper);
   }
-  .slide.active { display:flex; flex-direction:column; }
-  .title-slide.active, .closing-slide.active, .balanced.active { justify-content:center; }
-  .title-slide, .closing-slide {
-    background:radial-gradient(circle at 88% 16%, rgba(181,139,42,.13), transparent 26%),
-               linear-gradient(135deg, #fff 0%, #f2f7fb 64%, #eef4f8 100%);
+  .slide.active { display:grid; }
+  .slide::after {
+    content:attr(data-step) " / 24"; position:fixed; right:1.6rem; bottom:.72rem;
+    color:#718087; font-size:.88rem; font-variant-numeric:tabular-nums;
   }
-  .title-slide { padding-right:23rem; }
-  .closing-slide { align-items:center; padding-right:3.2rem; text-align:center; }
-  .title-slide > :not(.device-emblem) { position:relative; z-index:1; }
   .global-logo {
-    position:fixed; z-index:30; top:.75rem; right:1.5rem; width:10rem; height:auto;
-    object-fit:contain; filter:drop-shadow(0 1px 1px rgba(0,0,0,.05));
+    position:fixed; z-index:20; top:1rem; right:1.55rem; width:9.2rem; height:auto;
+    object-fit:contain;
   }
   .course-footer {
-    position:fixed; z-index:19; left:50%; bottom:.48rem; transform:translateX(-50%);
-    color:#65737d; font-size:.86rem; font-weight:650; letter-spacing:.025em;
-    white-space:nowrap; pointer-events:none;
+    position:fixed; z-index:20; left:50%; bottom:.72rem; transform:translateX(-50%);
+    color:#718087; font-size:.86rem; font-weight:650; letter-spacing:.02em; white-space:nowrap;
   }
-  .kicker {
-    display:flex; align-items:center; gap:.5rem; color:var(--gold-dark);
-    text-transform:uppercase; letter-spacing:.11em; font-size:.95rem; font-weight:800;
-    margin-bottom:.3rem;
-  }
-  .kicker::before {
-    content:attr(data-step); display:inline-grid; place-items:center;
-    width:2rem; height:2rem; flex:0 0 2rem; color:var(--blue-dark); background:var(--soft-blue);
-    border:1px solid #b9d9ed; border-radius:50%; font-size:.82rem; letter-spacing:0; line-height:1;
-  }
-  h1 { color:var(--blue-dark); font-size:clamp(2.8rem,5vw,4.6rem); line-height:1.03; margin-bottom:1rem; }
+  .progress { position:fixed; z-index:25; left:0; top:0; height:4px; background:var(--blue); transition:width .18s ease; }
+  h1, h2, h3, p { margin-top:0; }
+  h1 { max-width:69rem; margin-bottom:1.1rem; color:var(--navy); font-size:clamp(3.5rem,6vw,6.4rem); line-height:.98; letter-spacing:-.035em; }
   h2 {
-    color:var(--blue-dark); font-size:clamp(2rem,3vw,2.65rem); line-height:1.08;
-    margin-bottom:.7rem; border-bottom:3px solid var(--gold); padding:0 10.8rem .32rem 0;
+    margin:0; padding:0 11rem .55rem 0; color:var(--navy);
+    font-size:clamp(2.35rem,3.5vw,3.25rem); line-height:1.06; letter-spacing:-.02em;
+    border-bottom:2px solid var(--gold);
   }
-  h3 { color:var(--blue-dark); font-size:1.35rem; margin:.5rem 0 .3rem; }
-  p { font-size:1.36rem; }
-  ul { list-style:none; }
-  ul > li { font-size:1.36rem; line-height:1.30; padding-left:1.3rem; margin-bottom:.3rem; position:relative; }
-  ul > li::before { content:"▸"; position:absolute; left:0; color:var(--blue); font-weight:800; }
-  strong, b { font-weight:750; }
-  code, pre { font-family:"SFMono-Regular", Consolas, "Liberation Mono", monospace; background:#edf1f4; border-radius:4px; }
-  code { padding:.08rem .28rem; font-size:.94em; }
-  pre { padding:.5rem .72rem; margin:.08rem 0 .5rem; overflow-x:auto; white-space:pre-wrap; font-size:1.2rem; line-height:1.3; }
+  h3 { margin-bottom:.4rem; color:var(--navy); font-size:1.45rem; line-height:1.15; }
+  p, li, td, th, dd { font-size:1.34rem; }
+  p { margin-bottom:.7rem; }
+  ul, ol { margin:.25rem 0 0; padding-left:1.25rem; }
+  li { margin-bottom:.42rem; padding-left:.15rem; }
+  li::marker { color:var(--blue); }
+  strong { font-weight:760; }
   sub, sup { line-height:0; }
-  .subtitle { max-width:64rem; color:var(--muted); font-size:1.45rem; margin-bottom:1rem; }
-  .title-meta, .closing-meta {
-    display:grid; grid-template-columns:minmax(15rem,.72fr) minmax(25rem,1.28fr);
-    gap:.8rem; max-width:62rem; margin:.7rem 0 .55rem;
+  code, pre { font-family:"SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+  code { padding:.05rem .22rem; background:#edf1f2; border-radius:3px; font-size:.92em; }
+  pre {
+    margin:.25rem 0; padding:.8rem 1rem; overflow:auto; white-space:pre-wrap;
+    color:#eef5f7; background:#142b38; border-left:4px solid var(--gold);
+    font-size:1.08rem; line-height:1.32;
   }
-  .person-card {
-    display:flex; flex-direction:column; justify-content:center; min-height:4.8rem;
-    padding:.62rem .86rem; background:rgba(255,255,255,.9); border:1px solid var(--line);
-    border-top:3px solid var(--gold); border-radius:8px; box-shadow:0 2px 10px rgba(0,59,113,.07);
+  a { color:var(--navy); text-underline-offset:.14em; }
+  .content { min-height:0; align-self:start; }
+  .content.middle { align-self:center; width:100%; }
+  .lead { max-width:75rem; color:var(--muted); font-size:1.65rem; line-height:1.35; }
+  .small { color:var(--muted); font-size:1.03rem; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
+  .two.wide-left { grid-template-columns:minmax(0,1.35fr) minmax(22rem,.65fr); }
+  .two.wide-right { grid-template-columns:minmax(24rem,.72fr) minmax(0,1.28fr); }
+  .divide > :last-child { padding-left:2.2rem; border-left:1px solid var(--line); }
+  .plain-block { padding:.55rem 0; border-top:3px solid var(--blue); }
+  .plain-block.gold { border-top-color:var(--gold); }
+  .plain-block.green { border-top-color:var(--green); }
+  .equation {
+    display:block; margin:.5rem 0 1rem; color:#121b21;
+    font-family:Cambria, Georgia, "Times New Roman", serif; font-size:1.66rem; line-height:1.42;
   }
-  .person-card.ta { border-top-color:var(--blue); }
-  .meta-label { color:var(--muted); font-size:.82rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
-  .person-card strong { color:var(--blue-dark); font-size:1.16rem; }
-  .contact-line { color:var(--muted); font-size:1.08rem; margin-top:.08rem; }
-  .contact-line a { color:var(--blue-dark); text-decoration:none; border-bottom:1px solid #a8c7d8; }
-  .contact-line a:hover, .contact-line a:focus-visible { color:var(--orange); }
-  .tag {
-    display:inline-block; color:var(--blue-dark); background:var(--soft-blue); border:1px solid #b9d9ed;
-    border-radius:999px; padding:.25rem .65rem; margin:.12rem .28rem .12rem 0; font-size:1rem; font-weight:700;
-  }
-  .device-emblem {
-    position:absolute; right:4rem; top:50%; transform:translateY(-47%); width:16rem; padding:1.1rem;
-    text-align:center; background:rgba(255,255,255,.92); border:1px solid var(--line);
-    border-top:5px solid var(--gold); border-radius:14px; box-shadow:0 12px 32px rgba(0,59,113,.13);
-  }
-  .emblem-sun { color:var(--gold); font-size:4rem; line-height:1; }
-  .emblem-rays { color:var(--orange); font-size:1.6rem; letter-spacing:.7rem; margin:.2rem 0 .4rem .7rem; }
-  .emblem-cell { overflow:hidden; border:3px solid var(--blue-dark); border-radius:8px; }
-  .cell-layer { display:grid; place-items:center; min-height:3.6rem; font-size:1.25rem; font-weight:800; }
-  .cell-layer.pplus { color:#513b08; background:#f3d788; border-bottom:2px solid var(--blue-dark); }
-  .cell-layer.nbase { color:white; background:#2585b4; min-height:5.7rem; }
-  .emblem-caption { color:var(--muted); font-size:1rem; font-weight:700; margin-top:.55rem; }
-  .closing-loop { display:flex; align-items:center; justify-content:center; gap:1.8rem; margin:.55rem 0; }
-  .closing-loop span { position:relative; color:var(--blue-dark); font-size:1.14rem; font-weight:800; }
-  .closing-loop span:not(:last-child)::after { content:"→"; position:absolute; right:-1.25rem; color:var(--gold-dark); }
-  .closing-slide h1 { font-size:clamp(3rem,5.4vw,5rem); margin-bottom:.6rem; }
-  .closing-slide .subtitle { max-width:58rem; }
-  .closing-slide .takeaway { text-align:left; }
-  .reference-link { color:var(--blue-dark); font-size:1.06rem; font-weight:750; text-decoration:none; border-bottom:1px solid #a8c7d8; }
-  .reference-link:hover, .reference-link:focus-visible { color:var(--orange); }
-  .columns { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:stretch; }
-  .card {
-    background:var(--panel); border:1px solid var(--line); border-radius:8px;
-    padding:.78rem 1rem; box-shadow:0 2px 8px rgba(0,59,113,.06);
-  }
-  .card h3 { margin-top:0; }
-  .card li { font-size:1.3rem; }
-  .storyline { display:grid; grid-template-columns:repeat(5,1fr); gap:.7rem; margin-top:1rem; }
-  .storyline .card { border-top:4px solid var(--blue); text-align:center; }
-  .storyline strong { display:block; color:var(--blue-dark); font-size:1.2rem; margin-bottom:.2rem; }
-  .storyline span { color:var(--muted); font-size:1.12rem; }
-  .formula {
-    display:block; text-align:center; font-family:Cambria, "Times New Roman", serif;
-    background:#fff; border:1px solid var(--line); border-radius:7px;
-    padding:.62rem .72rem; margin:.4rem 0; font-size:1.3rem;
-  }
-  .flow { display:grid; grid-template-columns:repeat(6,1fr); gap:.55rem; margin:.62rem 0; }
-  .flow .step {
-    position:relative; min-height:4.8rem; display:flex; flex-direction:column; justify-content:center;
-    text-align:center; background:var(--panel); border:2px solid var(--blue); border-radius:7px; padding:.42rem;
-  }
-  .flow .step:not(:last-child)::after {
-    content:"→"; position:absolute; right:-.52rem; top:35%; z-index:2;
-    color:#687984; font-weight:800; background:var(--bg);
-  }
-  .flow .step strong { color:var(--blue-dark); font-size:1.08rem; }
-  .flow .step small { color:var(--muted); font-size:1.1rem; margin-top:.18rem; }
-  .fig {
-    max-width:100%; max-height:58vh; object-fit:contain; margin:.2rem auto;
-    border-radius:7px; background:#fff; box-shadow:0 2px 12px rgba(23,36,45,.14); display:block;
-  }
-  .cap { text-align:center; font-size:1.18rem; color:var(--muted); margin:.28rem 0 .38rem; }
-  .takeaway, .prompt, .caution {
-    position:relative; border-radius:7px; padding:.58rem .8rem .58rem 3rem;
-    margin:.38rem 0; font-size:1.28rem;
-  }
-  .takeaway::before, .prompt::before, .caution::before {
-    position:absolute; left:.72rem; top:.55rem; display:inline-grid; place-items:center;
-    width:1.65rem; height:1.65rem; border-radius:50%; color:white;
-    font-size:1.05rem; font-weight:900; line-height:1;
-  }
-  .takeaway::before { content:"✓"; background:var(--blue); }
-  .prompt::before { content:"?"; background:var(--gold-dark); }
-  .caution::before { content:"!"; background:var(--orange); }
-  .takeaway { background:var(--soft-blue); border-left:5px solid var(--blue); }
-  .prompt { background:var(--soft-gold); border-left:5px solid var(--gold); }
-  .caution { background:var(--soft-orange); border-left:5px solid var(--orange); }
-  .visual.active {
-    display:grid; grid-template-columns:minmax(0,2.35fr) minmax(17rem,.72fr);
-    grid-template-rows:auto auto auto minmax(0,1fr); column-gap:1.35rem; align-items:start;
-  }
-  .visual > .kicker, .visual > h2, .visual > pre { grid-column:1 / -1; }
-  .visual > .fig { grid-column:1; grid-row:4; width:100%; max-height:65vh; margin:.08rem 0; align-self:center; }
-  .visual > .side { grid-column:2; grid-row:4; align-self:center; }
-  .full-visual img { display:block; max-width:98%; max-height:65vh; object-fit:contain; margin:.18rem auto; }
-  .full-visual img.algorithm-visual { max-height:49vh; }
-  .print-only { display:none !important; }
-  .structure-layout { display:grid; grid-template-columns:minmax(28rem,1.25fr) minmax(22rem,.75fr); gap:1.5rem; align-items:center; }
-  .structure-card {
-    background:#fff; border:1px solid var(--line); border-radius:12px; padding:1rem 1.6rem 1.15rem;
-    box-shadow:0 5px 18px rgba(0,59,113,.09); text-align:center;
-  }
-  .illumination { color:var(--gold-dark); font-size:1.2rem; font-weight:800; margin-bottom:.35rem; }
-  .illumination b { display:block; color:var(--orange); font-size:1.6rem; letter-spacing:1.4rem; margin-left:1.4rem; }
-  .device-stack { max-width:34rem; margin:0 auto; border:3px solid var(--blue-dark); border-radius:8px; }
-  .device-layer { display:grid; grid-template-columns:1fr auto; align-items:center; gap:1rem; padding:.45rem .9rem; font-size:1.15rem; font-weight:750; }
-  .device-layer span:last-child { font-size:1.1rem; font-weight:650; opacity:.9; }
-  .device-layer.metal { color:white; background:#4b5358; min-height:2.4rem; }
-  .device-layer.emitter { color:#513b08; background:#f3d788; min-height:4.8rem; }
-  .junction-marker {
-    position:relative; z-index:2; height:0; display:flex; justify-content:space-between;
-    border-top:3px dashed var(--blue-dark); color:var(--blue-dark); font-weight:800;
-  }
-  .junction-marker span {
-    transform:translateY(-50%); background:white; padding:.08rem .42rem;
-    font-size:1.05rem;
-  }
-  .device-layer.base { color:white; background:#287ca6; min-height:8.2rem; }
-  .collection-paths { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; max-width:34rem; margin:.72rem auto 0; }
-  .collection-paths span { border-radius:7px; padding:.5rem; font-size:1.05rem; font-weight:800; }
-  .holes { color:#83410f; background:var(--soft-orange); }
-  .electrons { color:var(--blue-dark); background:var(--soft-blue); }
-  .scope-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.85rem; margin-top:.55rem; }
-  .scope-card { background:#fff; border:1px solid var(--line); border-top:4px solid var(--blue); border-radius:8px; padding:.72rem .85rem; }
-  .scope-card:nth-child(2) { border-top-color:var(--gold); }
-  .scope-card:nth-child(3) { border-top-color:var(--green); }
-  .scope-card h3 { margin:0 0 .25rem; }
-  .scope-card p { font-size:1.22rem; }
-  .concept-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem; margin:.55rem 0 .8rem; }
-  .concept-strip > div { position:relative; padding:.62rem .8rem; border-top:3px solid var(--blue); background:#fff; }
-  .concept-strip > div:not(:last-child)::after { content:"→"; position:absolute; right:-1.05rem; top:34%; color:var(--gold-dark); font-weight:850; }
-  .concept-strip strong { display:block; color:var(--blue-dark); font-size:1.18rem; }
-  .concept-strip span { color:var(--muted); font-size:1.08rem; }
-  .comparison-wrap { overflow:hidden; margin:.25rem 0 .45rem; border-top:2px solid var(--blue-dark); border-bottom:1px solid var(--line); }
-  .comparison { width:100%; table-layout:fixed; border-collapse:collapse; background:#fff; }
-  .comparison th, .comparison td { padding:.52rem .72rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); font-size:1.15rem; line-height:1.22; }
-  .comparison th { color:var(--blue-dark); background:var(--soft-blue); font-size:1.2rem; }
-  .comparison th:first-child, .comparison td:first-child { width:18%; color:var(--fg); font-weight:800; }
-  .comparison tr:last-child td { border-bottom:0; }
-  .source-note { color:var(--muted); font-size:1rem; line-height:1.25; margin-top:.35rem; }
-  .source-note a { color:var(--blue-dark); }
-  .setup-layout { display:grid; grid-template-columns:minmax(30rem,1fr) minmax(28rem,1fr); gap:1.35rem; align-items:start; }
-  .setup-layout pre { margin:.1rem 0; font-size:1.2rem; line-height:1.35; }
-  .file-map { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:.38rem .9rem; margin:.08rem 0; }
-  .file-map dt { color:var(--blue-dark); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.05rem; font-weight:800; }
-  .file-map dd { margin:0; color:var(--muted); font-size:1.18rem; line-height:1.25; }
-  .api-flow { grid-template-columns:repeat(6,1fr); }
-  .api-flow code { display:block; margin-top:.18rem; font-size:.82rem; overflow-wrap:anywhere; }
-  .code-lesson { display:grid; grid-template-columns:minmax(32rem,1.18fr) minmax(25rem,.82fr); gap:1.3rem; align-items:start; }
-  .code-lesson pre {
-    margin:.08rem 0; padding:.72rem .9rem; color:#edf6fa; background:#102734;
-    border-left:5px solid var(--gold); font-size:1.08rem; line-height:1.32;
-  }
-  .code-notes { counter-reset:code-note; display:grid; gap:.42rem; }
-  .code-notes li {
-    counter-increment:code-note; min-height:3.05rem; padding:.44rem .55rem .44rem 2.75rem;
-    position:relative; list-style:none; background:#fff; border-bottom:1px solid var(--line);
-    font-size:1.2rem; line-height:1.24;
-  }
-  .code-notes li::before {
-    content:counter(code-note); left:.42rem; top:.38rem; width:1.75rem; height:1.75rem;
-    display:grid; place-items:center; border-radius:50%; color:#fff; background:var(--blue-dark);
-    font-size:.92rem;
-  }
-  .junction-scale { display:grid; grid-template-columns:minmax(27rem,1fr) minmax(29rem,1.15fr); gap:1.25rem; align-items:center; }
-  .derivation { padding:.6rem .85rem; border-left:4px solid var(--blue); background:#fff; }
-  .derivation .formula { border:0; border-radius:0; padding:.42rem .3rem; margin:.15rem 0; text-align:left; }
-  .depletion-bar {
-    --junction-x:26.25%; position:relative; display:grid; grid-template-columns:2.1fr 5.9fr;
-    height:8rem; margin:1rem .5rem 2.2rem; border:2px solid var(--blue-dark);
-  }
-  .depletion-bar .p-side, .depletion-bar .n-side {
-    display:flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap;
-    font-size:1.2rem; font-weight:800;
-  }
-  .depletion-bar .p-side { color:#513b08; background:#f3d788; }
-  .depletion-bar .n-side { color:white; background:#287ca6; }
-  .depletion-bar::before {
-    content:"depletion region, W₀ ≈ 0.109 µm"; position:absolute; left:calc(var(--junction-x) - 3%); top:-1.7rem;
-    width:50%; padding-bottom:.15rem; color:var(--orange); border-bottom:4px solid var(--orange);
-    font-size:1.08rem; font-weight:800; text-align:center;
-  }
-  .depletion-bar::after {
-    content:"metallurgical junction"; position:absolute; left:var(--junction-x); bottom:-1.7rem; transform:translateX(-50%);
-    color:var(--blue-dark); font-size:1.02rem; font-weight:750; white-space:nowrap;
-  }
-  .scale-readout { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; }
-  .scale-readout div { padding:.55rem .7rem; background:var(--soft-blue); border-top:3px solid var(--blue); }
-  .scale-readout strong { display:block; color:var(--blue-dark); font-size:1.28rem; }
-  .scale-readout span { color:var(--muted); font-size:1.1rem; }
-  .circuit-lesson { display:grid; grid-template-columns:minmax(30rem,1.2fr) minmax(25rem,.8fr); gap:1.35rem; align-items:center; }
-  .circuit-panel { background:#fff; border:1px solid var(--line); padding:.55rem .8rem .25rem; }
-  .device-circuit { display:block; width:100%; max-height:56vh; overflow:visible; }
-  .device-circuit .wire, .device-circuit .terminal, .device-circuit .voltage-guide {
-    fill:none; stroke:var(--blue-dark); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke;
-  }
+  .equation.large { font-size:2rem; }
+  .note { margin-top:.9rem; padding:.55rem 0 .55rem 1rem; border-left:4px solid var(--gold); font-size:1.24rem; }
+  .note.warn { border-left-color:var(--rust); }
+  .question { margin-top:1rem; color:var(--navy); font-size:1.34rem; font-weight:700; }
+  .sequence { display:grid; grid-template-columns:repeat(4,1fr); gap:1.6rem; margin-top:2.2rem; }
+  .sequence > div { position:relative; padding-top:.7rem; border-top:4px solid var(--blue); }
+  .sequence > div:nth-child(2) { border-top-color:var(--gold); }
+  .sequence > div:nth-child(3) { border-top-color:var(--green); }
+  .sequence > div:nth-child(4) { border-top-color:var(--rust); }
+  .sequence strong { display:block; margin-bottom:.25rem; color:var(--navy); font-size:1.45rem; }
+  .sequence span { color:var(--muted); font-size:1.18rem; }
+  .simple-table { width:100%; border-collapse:collapse; table-layout:fixed; }
+  .simple-table th, .simple-table td { padding:.62rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); line-height:1.24; }
+  .simple-table th { color:var(--navy); border-top:2px solid var(--navy); background:#f1f5f5; font-size:1.18rem; }
+  .simple-table td { font-size:1.16rem; }
+  .simple-table th:first-child, .simple-table td:first-child { width:18%; font-weight:750; }
+  .code-map { display:grid; grid-template-columns:minmax(34rem,1.15fr) minmax(24rem,.85fr); gap:2.5rem; align-items:start; }
+  .file-map { display:grid; grid-template-columns:max-content 1fr; gap:.42rem 1rem; margin:0; }
+  .file-map dt { color:var(--navy); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.05rem; font-weight:800; }
+  .file-map dd { margin:0; color:var(--muted); font-size:1.18rem; }
+  .circuit-layout { display:grid; grid-template-columns:minmax(32rem,1.18fr) minmax(24rem,.82fr); gap:2.5rem; align-items:center; }
+  .device-circuit { display:block; width:100%; max-height:66vh; overflow:visible; }
+  .device-circuit .wire, .device-circuit .terminal, .device-circuit .voltage-guide { fill:none; stroke:var(--navy); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke; }
   .device-circuit .terminal { stroke-width:3; }
   .device-circuit .voltage-guide { stroke:var(--muted); stroke-width:1.2; }
   .device-circuit .light-ray { stroke:var(--gold); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke; }
-  .device-circuit .svg-main { fill:var(--fg); font-size:17px; font-weight:800; }
+  .device-circuit .svg-main { fill:var(--ink); font-size:17px; font-weight:800; }
   .device-circuit .svg-sub { fill:var(--muted); font-size:14px; font-weight:650; }
   .device-circuit .svg-light { fill:#49370b; }
   .device-circuit .svg-white { fill:white; }
-  .device-circuit .svg-circuit { fill:var(--blue-dark); font-size:15px; font-weight:750; }
-  .numerics-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.85rem; margin:.35rem 0; }
-  .numerics-grid .card { border-top:4px solid var(--blue); }
-  .numerics-grid .card:nth-child(2) { border-top-color:var(--gold); }
-  .numerics-grid .card:nth-child(3) { border-top-color:var(--green); }
-  .numerics-grid p { font-size:1.18rem; }
-  .inverse-layout { display:grid; grid-template-columns:minmax(26rem,.86fr) minmax(34rem,1.14fr); gap:1.25rem; align-items:start; }
-  .inverse-arrow { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:.5rem; margin:.35rem 0 .7rem; }
-  .inverse-arrow > div { min-height:6.2rem; display:grid; place-items:center; padding:.65rem; text-align:center; background:#fff; border:2px solid var(--blue); font-size:1.16rem; }
-  .inverse-arrow > span { color:var(--gold-dark); font-size:2rem; font-weight:850; }
-  .parameter-table { width:100%; border-collapse:collapse; background:#fff; }
-  .parameter-table th, .parameter-table td { padding:.48rem .62rem; border-bottom:1px solid var(--line); text-align:left; font-size:1.1rem; line-height:1.2; }
-  .parameter-table th { color:var(--blue-dark); background:var(--soft-blue); }
-  .parameter-table td:first-child { color:var(--blue-dark); font-family:"SFMono-Regular",Consolas,monospace; font-weight:750; }
-  .status-fit { color:var(--green); font-weight:800; }
-  .status-fixed { color:var(--muted); font-weight:750; }
-  .progress { position:fixed; z-index:20; top:0; left:0; height:5px; background:var(--blue); transition:width .2s ease; }
-  .nav-bar {
-    position:fixed; z-index:20; left:0; right:0; bottom:.35rem; display:flex;
-    justify-content:space-between; align-items:center; padding:0 1rem;
-    pointer-events:none; color:#697780; font-size:.88rem;
+  .device-circuit .svg-circuit { fill:var(--navy); font-size:15px; font-weight:750; }
+  .definition { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2rem; margin-top:.75rem; }
+  .definition > div { padding-top:.6rem; border-top:3px solid var(--blue); }
+  .definition > div:nth-child(2) { border-top-color:var(--gold); }
+  .definition > div:nth-child(3) { border-top-color:var(--green); }
+  .definition p { color:var(--muted); font-size:1.23rem; }
+  .junction { display:grid; grid-template-columns:minmax(28rem,.9fr) minmax(33rem,1.1fr); gap:3rem; align-items:center; }
+  .depletion {
+    --jx:27%; position:relative; display:grid; grid-template-columns:2.15fr 5.85fr;
+    height:9rem; margin:2rem 0 2.8rem; border-top:2px solid var(--navy); border-bottom:2px solid var(--navy);
   }
-  .nav-group { display:flex; align-items:center; gap:.45rem; pointer-events:auto; }
-  .nav-btn { width:2rem; height:1.7rem; border:1px solid #b8c4cc; border-radius:5px; background:rgba(255,255,255,.9); color:var(--blue-dark); cursor:pointer; font-weight:800; }
-  .nav-btn:hover, .nav-btn:focus-visible { background:var(--soft-blue); outline:2px solid var(--blue); }
-  .help { color:var(--muted); }
+  .depletion > div { display:flex; align-items:center; justify-content:center; text-align:center; font-size:1.28rem; font-weight:800; }
+  .depletion .p { color:#49370b; background:#efd88f; }
+  .depletion .n { color:white; background:#3f86ae; }
+  .depletion::before {
+    content:"W₀ ≈ 0.109 µm"; position:absolute; left:calc(var(--jx) - 2%); top:-1.45rem; width:50%;
+    color:var(--rust); border-bottom:4px solid var(--rust); text-align:center; font-size:1.08rem; font-weight:800;
+  }
+  .depletion::after {
+    content:"metallurgical junction"; position:absolute; left:var(--jx); bottom:-2rem; transform:translateX(-50%);
+    color:var(--navy); font-size:1.05rem; font-weight:750; white-space:nowrap;
+  }
+  .number-pair { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .number-pair strong { display:block; color:var(--navy); font-size:1.7rem; }
+  .number-pair span { color:var(--muted); font-size:1.12rem; }
+  .equation-stack { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem 3rem; }
+  .equation-stack > div { padding-top:.45rem; border-top:2px solid var(--line); }
+  .equation-stack p { color:var(--muted); font-size:1.18rem; }
+  .numerics { display:grid; grid-template-columns:repeat(3,1fr); gap:2.4rem; align-items:start; }
+  .numerics > div { padding-top:.65rem; border-top:4px solid var(--blue); }
+  .numerics > div:nth-child(2) { border-top-color:var(--gold); }
+  .numerics > div:nth-child(3) { border-top-color:var(--green); }
+  .numerics p { color:var(--muted); font-size:1.18rem; }
+  .figure-layout { display:grid; grid-template-columns:minmax(0,2.35fr) minmax(20rem,.65fr); gap:2.2rem; min-height:0; align-items:center; }
+  .figure-layout img { display:block; width:100%; max-height:68vh; object-fit:contain; }
+  .figure-layout .explain { padding-left:1.6rem; border-left:1px solid var(--line); }
+  .figure-layout .explain li { font-size:1.22rem; }
+  .command { margin:-.55rem 0 .1rem; color:var(--muted); font-size:1.02rem; font-family:"SFMono-Regular",Consolas,monospace; }
+  .double-figure { display:grid; grid-template-columns:1fr 1fr; gap:2rem; min-height:0; align-items:center; }
+  .double-figure figure { margin:0; }
+  .double-figure img { display:block; width:100%; max-height:59vh; object-fit:contain; }
+  figcaption { margin-top:.35rem; color:var(--muted); font-size:1.05rem; text-align:center; }
+  .parameter-table td:first-child { width:17%; color:var(--navy); font-family:"SFMono-Regular",Consolas,monospace; }
+  .fit { color:var(--green); font-weight:800; }
+  .fixed { color:var(--muted); font-weight:700; }
+  .title-slide { grid-template-rows:1fr; background:linear-gradient(100deg,#fbfcfa 0%,#fbfcfa 68%,#eef4f5 100%); }
+  .title-slide .cover { align-self:center; max-width:86rem; padding-left:1.7rem; border-left:8px solid var(--gold); }
+  .title-slide .subtitle { max-width:65rem; color:var(--muted); font-size:1.65rem; }
+  .meta { display:flex; gap:2.5rem; margin-top:2rem; color:var(--navy); font-size:1.08rem; }
+  .meta span { display:block; color:var(--muted); font-size:.88rem; text-transform:uppercase; letter-spacing:.08em; }
+  .closing { grid-template-rows:1fr; }
+  .closing .content { align-self:center; max-width:84rem; }
+  .closing h2 { border:0; padding-right:0; font-size:3.6rem; }
+  .closing .meta { margin-top:2.5rem; }
+  .nav { position:fixed; z-index:30; left:1rem; bottom:.45rem; display:flex; gap:.35rem; }
+  .nav button { width:2rem; height:1.75rem; border:1px solid var(--line); background:rgba(255,255,255,.88); color:var(--navy); cursor:pointer; }
+  .print-only { display:none !important; }
   @media (min-width:1101px) and (max-height:720px) {
-    .slide { padding:1rem 1.8rem 2.25rem; }
-    .title-slide { padding-right:18.5rem; }
-    .closing-slide { padding-right:1.8rem; }
-    .global-logo { width:8.5rem; top:.4rem; right:.8rem; }
-    .device-emblem { right:1.8rem; width:13.6rem; padding:.68rem; }
-    .emblem-sun { font-size:2.8rem; }
-    .emblem-rays { font-size:1.15rem; margin:.08rem 0 .18rem .7rem; }
-    .cell-layer { min-height:2.6rem; font-size:1.05rem; }
-    .cell-layer.nbase { min-height:3.6rem; }
-    .course-footer { bottom:.3rem; font-size:.78rem; }
-    .kicker { font-size:.86rem; margin-bottom:.14rem; }
-    .kicker::before { width:1.6rem; height:1.6rem; flex-basis:1.6rem; font-size:.7rem; }
-    h1 { font-size:clamp(2.45rem,4.5vw,3.75rem); margin-bottom:.55rem; }
-    h2 { font-size:2.05rem; margin-bottom:.4rem; padding:0 9rem .23rem 0; }
-    h3 { font-size:1.3rem; margin:.3rem 0 .16rem; }
-    p, ul > li { font-size:1.25rem; line-height:1.25; }
-    pre { font-size:1.2rem; padding:.32rem .55rem; margin:0 0 .25rem; }
-    .subtitle { font-size:1.22rem; margin-bottom:.45rem; }
-    .title-meta, .closing-meta { grid-template-columns:minmax(13rem,.72fr) minmax(23rem,1.28fr); gap:.5rem; margin:.35rem 0; }
-    .person-card { min-height:3.65rem; padding:.4rem .62rem; }
-    .tag { font-size:.93rem; padding:.15rem .46rem; }
-    .card { padding:.5rem .68rem; }
-    .card li { font-size:1.2rem; }
-    .storyline { margin-top:.55rem; gap:.5rem; }
-    .storyline strong { font-size:1.08rem; }
-    .storyline span { font-size:1.05rem; }
-    .formula { font-size:1.14rem; padding:.38rem .55rem; margin:.25rem 0; }
-    .flow { gap:.34rem; margin:.35rem 0; }
-    .flow .step { min-height:3.8rem; padding:.25rem; }
-    .flow .step strong { font-size:1.12rem; }
-    .flow .step small { font-size:1.08rem; }
-    .visual.active { grid-template-columns:minmax(0,2.15fr) minmax(16rem,.72fr); column-gap:.9rem; }
-    .visual > .fig { max-height:59vh; }
-    .full-visual img { max-height:59vh; }
-    .full-visual img.algorithm-visual { max-height:42vh; }
-    .cap { font-size:1.1rem; margin:.16rem 0 .22rem; }
-    .takeaway, .prompt, .caution { font-size:1.18rem; padding:.38rem .58rem .38rem 2.65rem; margin:.18rem 0; }
-    .takeaway::before, .prompt::before, .caution::before { left:.58rem; top:.34rem; width:1.5rem; height:1.5rem; }
-    .structure-layout { gap:1rem; }
-    .structure-card { padding:.55rem 1rem .65rem; }
-    .illumination { font-size:1.05rem; margin-bottom:.08rem; }
-    .illumination b { font-size:1.25rem; }
-    .device-layer { padding:.22rem .65rem; font-size:1.15rem; }
-    .device-layer.metal { min-height:1.8rem; }
-    .device-layer.emitter { min-height:3.1rem; }
-    .device-layer.base { min-height:5rem; }
-    .collection-paths { margin-top:.35rem; }
-    .collection-paths span { padding:.28rem; font-size:1.15rem; }
-    .scope-card { padding:.48rem .62rem; }
-    .scope-card p { font-size:1.14rem; }
-    .concept-strip { gap:.9rem; margin:.35rem 0 .5rem; }
-    .concept-strip > div { padding:.4rem .58rem; }
-    .concept-strip strong { font-size:1.08rem; }
-    .concept-strip span { font-size:1rem; }
-    .comparison th, .comparison td { padding:.36rem .52rem; font-size:1.03rem; line-height:1.16; }
-    .comparison th { font-size:1.08rem; }
-    .source-note { font-size:.88rem; margin-top:.2rem; }
-    .setup-layout { grid-template-columns:minmax(27rem,1fr) minmax(24rem,1fr); gap:.8rem; }
-    .setup-layout pre { font-size:1.1rem; line-height:1.24; }
-    .file-map { gap:.26rem .72rem; }
-    .file-map dt { font-size:.95rem; }
-    .file-map dd { font-size:1.08rem; }
-    .api-flow code { font-size:.74rem; }
-    .code-lesson { grid-template-columns:minmax(29rem,1.15fr) minmax(23rem,.85fr); gap:.8rem; }
-    .code-lesson pre { font-size:1rem; line-height:1.22; padding:.48rem .65rem; }
-    .code-notes { gap:.22rem; }
-    .code-notes li { min-height:2.35rem; padding:.3rem .42rem .3rem 2.35rem; font-size:1.08rem; }
-    .code-notes li::before { width:1.5rem; height:1.5rem; top:.25rem; font-size:.82rem; }
-    .junction-scale { grid-template-columns:minmax(24rem,.9fr) minmax(28rem,1.1fr); gap:.8rem; }
-    .depletion-bar { height:6.4rem; margin:.8rem .3rem 1.8rem; }
-    .depletion-bar::before { top:-1.45rem; font-size:.98rem; }
-    .depletion-bar::after { bottom:-1.45rem; font-size:.92rem; }
-    .scale-readout div { padding:.35rem .5rem; }
-    .scale-readout strong { font-size:1.15rem; }
-    .scale-readout span { font-size:1rem; }
-    .circuit-lesson { grid-template-columns:minmax(27rem,1.15fr) minmax(24rem,.85fr); gap:.8rem; }
-    .device-circuit { max-height:49vh; }
-    .circuit-panel { padding:.25rem .45rem .05rem; }
-    .numerics-grid { gap:.5rem; }
-    .numerics-grid p { font-size:1.08rem; }
-    .inverse-layout { grid-template-columns:minmax(24rem,.84fr) minmax(31rem,1.16fr); gap:.8rem; }
-    .inverse-arrow > div { min-height:4.8rem; padding:.4rem; font-size:1.06rem; }
-    .parameter-table th, .parameter-table td { padding:.34rem .46rem; font-size:1rem; }
+    .slide { padding:1.35rem 2.2rem 2.35rem; gap:.65rem; }
+    .global-logo { top:.45rem; right:.8rem; width:8rem; }
+    h1 { font-size:4rem; }
+    h2 { font-size:2.12rem; padding-right:9rem; }
+    h3 { font-size:1.28rem; }
+    p, li, td, th, dd { font-size:1.18rem; }
+    .lead { font-size:1.35rem; }
+    .equation { font-size:1.38rem; margin:.3rem 0 .6rem; }
+    .equation.large { font-size:1.6rem; }
+    pre { font-size:.94rem; line-height:1.24; padding:.5rem .7rem; }
+    .sequence { margin-top:1.1rem; }
+    .sequence strong { font-size:1.25rem; }
+    .sequence span, .definition p, .numerics p, .file-map dd { font-size:1.03rem; }
+    .simple-table th, .simple-table td { padding:.38rem .52rem; font-size:1rem; }
+    .device-circuit { max-height:58vh; }
+    .depletion { height:6.5rem; margin:1.2rem 0 2.1rem; }
+    .figure-layout img { max-height:65vh; }
+    .figure-layout .explain li { font-size:1.08rem; }
+    .double-figure img { max-height:55vh; }
+    .note { font-size:1.1rem; }
   }
   @media (max-width:1100px) {
-    .slide { padding:1.25rem 1.5rem 2.8rem; overflow:auto; }
-    .title-slide, .closing-slide { padding-right:1.5rem; }
-    .global-logo { width:8rem; top:.5rem; right:.7rem; }
-    h2 { padding-right:8.5rem; }
-    .device-emblem { position:relative; right:auto; top:auto; transform:none; align-self:center; width:min(17rem,82%); margin:.55rem auto .2rem; padding:.65rem; }
-    .title-meta, .closing-meta, .columns, .structure-layout, .setup-layout,
-    .code-lesson, .junction-scale, .circuit-lesson, .inverse-layout { grid-template-columns:1fr; }
-    .person-card { min-height:auto; }
-    .visual.active { display:flex; flex-direction:column; }
-    .visual > .fig { max-height:45vh; width:auto; margin:.18rem auto; }
-    .visual > .side { width:100%; }
-    .storyline, .scope-grid, .concept-strip, .numerics-grid { grid-template-columns:1fr 1fr; }
-    .flow { grid-template-columns:repeat(3,1fr); }
-    .nav-bar { background:linear-gradient(transparent,var(--bg) 35%); padding-top:.8rem; }
+    body { overflow:auto; }
+    .slide { min-height:100vh; height:auto; overflow:auto; padding:2.2rem 1.5rem 3.2rem; }
+    .two, .two.wide-left, .two.wide-right, .code-map, .circuit-layout, .junction,
+    .definition, .equation-stack, .numerics, .figure-layout, .double-figure { grid-template-columns:1fr; }
+    .divide > :last-child, .figure-layout .explain { padding-left:0; border-left:0; }
+    .global-logo { width:7.4rem; top:.55rem; right:.6rem; }
+    h2 { padding-right:7.8rem; }
+    .sequence { grid-template-columns:1fr 1fr; }
+    .figure-layout img, .double-figure img { max-height:50vh; }
   }
   @media print {
     @page { size:16in 9in; margin:0; }
-    body { background:white; }
-    .slide, .slide.active { display:flex !important; width:16in; height:9in; overflow:hidden; page-break-after:always; break-after:page; }
-    .visual, .visual.active { display:grid !important; }
-    .title-slide, .closing-slide, .balanced { justify-content:center; }
-    .screen-only { display:none !important; }
-    .print-only { display:block !important; }
-    .progress, .nav-bar { display:none !important; }
-    .global-logo { position:fixed; top:.28in; right:.38in; width:1.7in; }
-    .course-footer { position:fixed; bottom:.16in; font-size:9pt; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .progress { transition:none; }
+    .slide, .slide.active { display:grid !important; width:16in; height:9in; overflow:hidden; page-break-after:always; break-after:page; }
+    .global-logo { position:fixed; top:.25in; right:.3in; width:1.45in; }
+    .course-footer { bottom:.12in; font-size:9pt; }
+    .progress, .nav { display:none !important; }
     .screen-only { display:none !important; }
     .print-only { display:block !important; }
   }
@@ -421,708 +212,580 @@
 <img class="global-logo" src="logo1_HKUSTGZ.png" alt="The Hong Kong University of Science and Technology (Guangzhou)">
 <div class="course-footer">MICS3090 (L01) · Integrated Circuit Devices</div>
 
-<section class="slide title-slide active">
-  <p class="kicker" data-step="01">MICS3090 (L01) · Integrated Circuit Devices</p>
-  <h1>DEVSIM Semiconductor<br>Device Modeling</h1>
-  <p class="subtitle">A silicon solar-cell case study from the physical model and numerical solution to experimental-data calibration.</p>
-  <div>
-    <span class="tag">1D device physics</span>
-    <span class="tag">Poisson + drift–diffusion</span>
-    <span class="tag">J–V &amp; EQE</span>
-    <span class="tag">data calibration</span>
-  </div>
-  <div class="title-meta">
-    <div class="person-card">
-      <span class="meta-label">Instructor</span>
-      <strong>Renjie WANG</strong>
+<section class="slide title-slide active" data-step="01" data-title="DEVSIM Silicon Solar-Cell Modeling">
+  <div class="cover">
+    <p class="small">MICS3090 (L01) · Integrated Circuit Devices</p>
+    <h1>DEVSIM Silicon<br>Solar-Cell Modeling</h1>
+    <p class="subtitle">A p<sup>+</sup>-on-n case study that connects semiconductor equations, numerical solution and experimental calibration.</p>
+    <div class="meta">
+      <div><span>Instructor</span>Renjie WANG</div>
+      <div><span>Teaching Assistant</span>Zhang CHEN · <a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a><br>TA office W2-4F-028</div>
     </div>
-    <div class="person-card ta">
-      <span class="meta-label">Teaching Assistant</span>
-      <strong>Zhang CHEN</strong>
-      <span class="contact-line"><a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a> · TA office W2-4F-028</span>
-    </div>
-  </div>
-  <div class="prompt" style="max-width:62rem"><strong>Guiding question:</strong> what can measured J–V observables tell us—and what remains uncertain?</div>
-  <aside class="device-emblem" aria-label="Front-illuminated p-plus-on-n silicon solar-cell structure">
-    <div class="emblem-sun" aria-hidden="true">☀</div>
-    <div class="emblem-rays" aria-hidden="true">↓ ↓ ↓</div>
-    <div class="emblem-cell">
-      <div class="cell-layer pplus">p⁺ emitter</div>
-      <div class="cell-layer nbase">n-type base</div>
-    </div>
-    <div class="emblem-caption">light → carriers → current</div>
-  </aside>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="02">Session map</p>
-  <h2>Learning Outcomes and Teaching Sequence</h2>
-  <div class="columns">
-    <div class="card">
-      <h3>By the end, you can…</h3>
-      <ul>
-        <li>describe DEVSIM’s role and compare it with a commercial TCAD workflow</li>
-        <li>translate a p<sup>+</sup>-on-n structure into equations, sources and contact conditions</li>
-        <li>connect doping, electric field, band bending and carrier collection</li>
-        <li>explain the finite-volume, Newton and continuation solution sequence</li>
-        <li>extract J<sub>sc</sub>, V<sub>oc</sub>, FF and EQE, then judge whether a calibration is supportable</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Evidence before conclusions</h3>
-      <ul>
-        <li>state geometry, material assumptions and sign convention</li>
-        <li>check internal profiles before trusting terminal curves</li>
-        <li>test sensitivity before fitting a parameter</li>
-        <li>report residuals, uncertainty and model limits</li>
-      </ul>
-    </div>
-  </div>
-  <div class="storyline" aria-label="Teaching sequence">
-    <div class="card"><strong>Tool</strong><span>DEVSIM + comparison</span></div>
-    <div class="card"><strong>Model</strong><span>structure + equations</span></div>
-    <div class="card"><strong>Solve</strong><span>continuation + sweep</span></div>
-    <div class="card"><strong>Validate</strong><span>J–V + EQE</span></div>
-    <div class="card"><strong>Calibrate</strong><span>fit + diagnose</span></div>
   </div>
 </section>
 
-<section class="slide balanced">
-  <p class="kicker" data-step="03">Tool foundation</p>
-  <h2>DEVSIM in the Semiconductor TCAD Workflow</h2>
-  <p>Device TCAD discretizes semiconductor conservation laws on a mesh and predicts internal fields and terminal measurements.</p>
-  <div class="concept-strip" aria-label="TCAD input, solve, and output sequence">
-    <div><strong>Physical inputs</strong><span>geometry, materials, doping, contacts, sources</span></div>
-    <div><strong>Discrete problem</strong><span>mesh, model expressions, equations, boundary conditions</span></div>
-    <div><strong>Predicted outputs</strong><span>potential, carriers, currents, J–V, capacitance</span></div>
-  </div>
-  <div class="columns">
-    <div class="card">
-      <h3>Published DEVSIM capabilities</h3>
-      <ul>
-        <li>finite-volume device simulation in 1D, 2D and 3D</li>
-        <li>Python scripting and user-specified PDEs</li>
-        <li>DC, small-signal AC and transient analyses</li>
-        <li>Apache 2.0 source code with text-based model files</li>
-      </ul>
+<section class="slide" data-step="02" data-title="The modeling question">
+  <h2>The modeling question</h2>
+  <div class="content middle">
+    <p class="lead">Can a transparent one-dimensional model explain the measured behavior of a silicon solar cell, and which parameters can the measurements actually determine?</p>
+    <div class="sequence" aria-label="Lesson sequence">
+      <div><strong>Define</strong><span>device, coordinates, assumptions and terminal signs</span></div>
+      <div><strong>Solve</strong><span>Poisson and carrier continuity on a mesh</span></div>
+      <div><strong>Check</strong><span>profiles, bands, J–V and EQE</span></div>
+      <div><strong>Calibrate</strong><span>sensitive parameters, residuals and model limits</span></div>
     </div>
-    <div class="card">
-      <h3>Why it fits this course</h3>
-      <ul>
-        <li>equations, parameters and solver steps remain visible</li>
-        <li>scripts and results can be version controlled</li>
-        <li>students can inspect spatial fields before terminal curves</li>
-        <li>the 1D model runs on ordinary student computers</li>
-      </ul>
-    </div>
+    <p class="question">Every numerical result must answer a physical question. Every fitted value must be supported by a measured response.</p>
   </div>
-  <div class="caution"><strong>Model responsibility:</strong> DEVSIM supplies numerical infrastructure. The user must define suitable physics, parameters, contacts, mesh and validation checks.</div>
-  <p class="source-note">Sources: <a href="https://github.com/devsim/devsim/blob/main/README.md">DEVSIM project README</a> and <a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a>.</p>
 </section>
 
-<section class="slide balanced">
-  <p class="kicker" data-step="04">Tool selection</p>
+<section class="slide" data-step="03" data-title="DEVSIM in semiconductor TCAD">
+  <h2>DEVSIM in semiconductor TCAD</h2>
+  <div class="content middle two divide">
+    <div>
+      <h3>What DEVSIM provides</h3>
+      <span class="equation large">mesh + model expressions + discrete equations + nonlinear solver</span>
+      <ul>
+        <li>finite-volume simulation in 1D, 2D and 3D</li>
+        <li>Python control of DC, small-signal AC and transient analyses</li>
+        <li>user-defined equations and inspectable internal fields</li>
+        <li>Apache 2.0 source code and text-based model scripts</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What the modeler must provide</h3>
+      <ul>
+        <li>geometry, materials and doping</li>
+        <li>transport, recombination and optical models</li>
+        <li>contact equations, applied sources and sign conventions</li>
+        <li>mesh, solver tolerances and validation tests</li>
+      </ul>
+      <p class="note">DEVSIM solves the equations that we define. A converged solve does not prove that those equations represent the experiment.</p>
+      <p class="small">References: <a href="https://github.com/devsim/devsim/blob/main/README.md">DEVSIM project</a> · <a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="04" data-title="DEVSIM and Crosslight APSYS">
   <h2>DEVSIM and Crosslight APSYS</h2>
-  <p>Both tools solve semiconductor equations. Their published interfaces and packaged capabilities serve different workflows.</p>
-  <div class="comparison-wrap">
-    <table class="comparison" aria-label="Comparison of DEVSIM and Crosslight APSYS">
-      <thead><tr><th>Dimension</th><th>DEVSIM</th><th>Crosslight APSYS</th></tr></thead>
+  <div class="content middle">
+    <p class="lead">Both solve semiconductor device equations. The main teaching difference is how much of the model construction remains visible to the student.</p>
+    <table class="simple-table" aria-label="Comparison of DEVSIM and Crosslight APSYS">
+      <thead><tr><th>Aspect</th><th>DEVSIM</th><th>Crosslight APSYS</th></tr></thead>
       <tbody>
-        <tr><td>Access</td><td>Apache 2.0 source code with a Python interface</td><td>Commercial binary distribution under a license agreement, with vendor tools</td></tr>
-        <tr><td>Discretization</td><td>Finite volume in 1D, 2D and 3D</td><td>Finite element analysis in 2D and 3D</td></tr>
-        <tr><td>Published scope</td><td>User-specified PDEs with DC, AC and transient analysis</td><td>Packaged electrical, optical and thermal models, including advanced compound-semiconductor options</td></tr>
-        <tr><td>Model workflow</td><td>Users expose equations and solver steps in scripts</td><td>Material macro libraries, product modules and dedicated preprocessing and plotting tools</td></tr>
-        <tr><td>Course role</td><td>Transparent implementation of a compact 1D teaching model</td><td>Reference example of a broader commercial device-simulation workflow</td></tr>
+        <tr><td>Access</td><td>Open-source code with a Python interface</td><td>Commercial binary software supplied under a license agreement</td></tr>
+        <tr><td>Discretization</td><td>Finite volume in 1D, 2D and 3D</td><td>Finite-element analysis in 2D and 3D</td></tr>
+        <tr><td>Workflow</td><td>The user exposes equations, models and solver steps in scripts</td><td>Vendor modules, material macros, preprocessing and plotting tools</td></tr>
+        <tr><td>Published scope</td><td>User-defined PDEs with DC, AC and transient analysis</td><td>Integrated electrical, optical and thermal models, including advanced compound-semiconductor options</td></tr>
+        <tr><td>Role here</td><td>Transparent implementation of a compact teaching model</td><td>Example of a broader commercial TCAD workflow</td></tr>
       </tbody>
     </table>
+    <p class="note">This comparison concerns workflow and scope. Accuracy depends on the physical models, parameters, mesh and experimental validation in either tool.</p>
+    <p class="small">Sources: <a href="https://crosslight.com/products/apsys/">Crosslight APSYS</a> · <a href="https://crosslight.com/license-application/">Crosslight licensing</a></p>
   </div>
-  <div class="takeaway"><strong>Interpretation:</strong> this comparison describes workflow and scope. It does not rank numerical accuracy. Either tool requires suitable models, parameters, mesh checks and experimental validation.</div>
-  <p class="source-note">Sources: <a href="https://github.com/devsim/devsim/blob/main/README.md">DEVSIM features and license</a>, <a href="https://crosslight.com/products/apsys/">Crosslight APSYS product description</a>, and <a href="https://crosslight.com/license-application/">Crosslight license terms</a>.</p>
 </section>
 
-<section class="slide balanced">
-  <p class="kicker" data-step="05">First run</p>
-  <h2>Course Installation and Entry Points</h2>
-  <div class="setup-layout">
+<section class="slide" data-step="05" data-title="Running the course model">
+  <h2>Running the course model</h2>
+  <div class="content code-map">
     <div>
-      <h3>Create the validated environment</h3>
+      <h3>Environment and entry points</h3>
       <pre>git clone https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching.git
 cd devsim-silicon-solar-cell-teaching
 conda env create -f environment.yml
 conda activate devsim_solar
-python -c "import devsim; print(devsim.__version__)"</pre>
-      <h3>Run the model and lesson</h3>
-      <pre>python scripts/run_sim.py
+
+python scripts/run_sim.py
 jupyter lab notebooks/tutorial.ipynb</pre>
+      <h3>Core call sequence in <code>model/device.py</code></h3>
+      <pre>create_1d_mesh(...)
+add_1d_mesh_line(...)      # positions and refinement
+add_1d_region(...)
+add_1d_contact(...)
+finalize_mesh(...)
+create_device(...)
+CreateSolution(...)        # Potential, Electrons, Holes
+CreateSiliconDriftDiffusion(...)
+solve(type="dc")           # repeated continuation steps
+get_contact_current(...)   # intrinsic J(V)</pre>
     </div>
     <div>
-      <h3>One source of truth for each concern</h3>
+      <h3>One source of truth</h3>
       <dl class="file-map">
-        <dt>config.py</dt><dd>geometry, physical parameters, sweep and calibration settings</dd>
-        <dt>model/</dt><dd>DEVSIM mesh, equations, contacts, continuation and terminal mapping</dd>
-        <dt>scripts/</dt><dd>reproducible command-line simulations and figures</dd>
-        <dt>data/raw/</dt><dd>immutable instrument exports and measurement evidence</dd>
-        <dt>data/processed/</dt><dd>validated, unit-consistent J–V data</dd>
-        <dt>results/</dt><dd>regenerable simulation, calibration and visualization outputs</dd>
+        <dt>config.py</dt><dd>geometry, physics, solver and calibration settings</dd>
+        <dt>model/</dt><dd>mesh, equations, contacts, illumination and terminal mapping</dd>
+        <dt>scripts/</dt><dd>reproducible simulations and figures</dd>
+        <dt>data/raw/</dt><dd>unchanged instrument exports</dd>
+        <dt>data/processed/</dt><dd>validated tables with consistent units and signs</dd>
+        <dt>results/</dt><dd>outputs that the scripts can regenerate</dd>
       </dl>
-    </div>
-  </div>
-  <div class="caution"><strong>Working rule:</strong> run commands from the repository root. Change model settings in <code>config.py</code> and preserve the original raw measurements.</div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="06">From script to simulator</p>
-  <h2>A Minimal DEVSIM Pattern You Can Read</h2>
-  <div class="code-lesson">
-    <div>
-      <pre># Abridged call sequence from model/device.py
-create_1d_mesh(mesh="solar_mesh")
-add_1d_mesh_line(mesh="solar_mesh", pos=0.0, tag="top", ps=2e-7)
-add_1d_mesh_line(mesh="solar_mesh", pos=5e-5, tag="junction", ps=2e-7)
-add_1d_mesh_line(mesh="solar_mesh", pos=2.5e-2, tag="bottom", ps=1e-6)
-add_1d_contact(mesh="solar_mesh", name="front", tag="top", material="metal")
-add_1d_contact(mesh="solar_mesh", name="rear", tag="bottom", material="metal")
-add_1d_region(mesh="solar_mesh", material="Si", region="bulk",
-              tag1="top", tag2="bottom")
-finalize_mesh(mesh="solar_mesh")
-create_device(mesh="solar_mesh", device="solar_cell")
-
-CreateSolution("solar_cell", "bulk", "Potential")
-CreateSiliconPotentialOnly("solar_cell", "bulk")
-solve(type="dc")
-
-CreateSolution("solar_cell", "bulk", "Electrons")
-CreateSolution("solar_cell", "bulk", "Holes")
-CreateSiliconDriftDiffusion("solar_cell", "bulk")
-solve(type="dc")</pre>
-      <p class="source-note">Abridged for teaching: the project also defines doping, material parameters, contact equations, optical generation and solver tolerances.</p>
-    </div>
-    <ol class="code-notes">
-      <li><strong>Mesh:</strong> positions are in centimetres; tags attach regions and contacts to physical locations.</li>
-      <li><strong>Unknowns:</strong> <code>Potential</code>, <code>Electrons</code> and <code>Holes</code> become degrees of freedom on mesh nodes.</li>
-      <li><strong>Equations:</strong> helper functions register Poisson, continuity, flux and contact residuals.</li>
-      <li><strong>Solve:</strong> DEVSIM assembles the discrete residual and Jacobian, then iterates to a converged state.</li>
-    </ol>
-  </div>
-  <div class="takeaway"><strong>Read every model script in this order:</strong> geometry → parameters → unknowns → equations → boundary conditions → solve → extract outputs.</div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="07">Programming model</p>
-  <h2>Anatomy of This DEVSIM Forward Solve</h2>
-  <div class="flow api-flow" aria-label="DEVSIM API sequence used by the project">
-    <div class="step"><strong>1 · Mesh</strong><code>create_1d_mesh</code><small>lines + tags</small></div>
-    <div class="step"><strong>2 · Device</strong><code>create_device</code><small>region + contacts</small></div>
-    <div class="step"><strong>3 · Unknowns</strong><code>CreateSolution</code><small>ψ, n, p</small></div>
-    <div class="step"><strong>4 · Equations</strong><code>CreateSiliconDriftDiffusion</code><small>Poisson + continuity</small></div>
-    <div class="step"><strong>5 · Solve</strong><code>solve(type="dc")</code><small>Newton iteration</small></div>
-    <div class="step"><strong>6 · Inspect</strong><code>get_contact_current</code><small>node + edge values</small></div>
-  </div>
-  <div class="columns">
-    <div class="card">
-      <h3>Objects in <code>model/device.py</code></h3>
-      <ul>
-        <li>mesh tags locate the front, junction and rear</li>
-        <li>node models define doping, generation and recombination</li>
-        <li>contact equations impose terminal boundary conditions</li>
-        <li>contact currents produce the intrinsic J–V response</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Continuation sequence</h3>
-      <ol style="list-style-position:inside">
-        <li style="font-size:1.3rem;margin-bottom:.35rem">Solve equilibrium Poisson</li>
-        <li style="font-size:1.3rem;margin-bottom:.35rem">Add electron and hole continuity</li>
-        <li style="font-size:1.3rem;margin-bottom:.35rem">Ramp optical generation from dark</li>
-        <li style="font-size:1.3rem">Ramp the front-contact voltage</li>
-      </ol>
-    </div>
-  </div>
-  <div class="takeaway"><strong>Code-to-math map:</strong> a DEVSIM model is a named collection of unknowns, algebraic model expressions, discretized equations and contact equations.</div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="08">Device orientation</p>
-  <h2>Read the p⁺-on-n Cell from Front to Rear</h2>
-  <div class="structure-layout">
-    <figure class="structure-card">
-      <div class="illumination">Front illumination (AM1.5-like teaching input)<b aria-hidden="true">↓ ↓ ↓</b></div>
-      <div class="device-stack">
-        <div class="device-layer metal"><span>front ohmic contact · shading omitted</span><span>x = 0</span></div>
-        <div class="device-layer emitter"><span>p⁺ emitter · N<sub>A</sub> = 10<sup>19</sup> cm<sup>−3</sup></span><span>0–0.5 µm</span></div>
-        <div class="junction-marker"><span>metallurgical junction · boundary, not a layer</span><span>x = 0.5 µm</span></div>
-        <div class="device-layer base"><span>n-type base · N<sub>D</sub> = 10<sup>17</sup> cm<sup>−3</sup></span><span>0.5–250 µm</span></div>
-        <div class="device-layer metal"><span>rear metal contact</span><span>x = 250 µm</span></div>
-      </div>
-      <div class="collection-paths">
-        <span class="holes">holes h⁺ → front contact</span>
-        <span class="electrons">electrons e⁻ → rear contact</span>
-      </div>
-      <figcaption class="cap">Schematic only; vertical layer thicknesses are not to scale.</figcaption>
-    </figure>
-    <div>
-      <ul>
-        <li>Light enters through the shallow p⁺ emitter at x = 0</li>
-        <li>The depletion region extends around the 0.5 µm junction, mostly into the lower-doped n base</li>
-        <li>Electrons are minority carriers in p⁺; holes are minority carriers in the n base</li>
-      </ul>
-      <div class="takeaway"><strong>Direction check:</strong> in the depletion region, the built-in field points from n to p (−x): holes drift toward the front and electrons toward the rear. Diffusion also matters in the quasi-neutral regions.</div>
-      <div class="prompt"><strong>Before solving:</strong> sketch the sign of net doping and electric field.</div>
+      <p class="note">Run every command from the repository root. Change model settings in <code>config.py</code>; do not edit raw measurements.</p>
     </div>
   </div>
 </section>
 
-<section class="slide balanced">
-  <p class="kicker" data-step="09">Junction electrostatics</p>
-  <h2>Estimate the Junction Before Trusting the Solver</h2>
-  <div class="junction-scale">
-    <div class="derivation">
-      <h3>Depletion-approximation check at 300 K</h3>
-      <span class="formula">V<sub>bi</sub> = V<sub>T</sub> ln(N<sub>A</sub>N<sub>D</sub>/n<sub>i</sub><sup>2</sup>) ≈ 0.95 V</span>
-      <span class="formula">W<sub>0</sub> = √{(2ε<sub>Si</sub>/q)(1/N<sub>A</sub> + 1/N<sub>D</sub>)V<sub>bi</sub>} ≈ 0.109 µm</span>
-      <span class="formula">x<sub>p</sub> = W<sub>0</sub>N<sub>D</sub>/(N<sub>A</sub> + N<sub>D</sub>) ≈ 1.1 nm</span>
-      <span class="formula">x<sub>n</sub> = W<sub>0</sub>N<sub>A</sub>/(N<sub>A</sub> + N<sub>D</sub>) ≈ 0.108 µm</span>
-    </div>
-    <div>
-      <div class="depletion-bar" aria-label="Depletion region extends much farther into the n-type base than into the p-plus emitter">
-        <div class="p-side"><span>p⁺ emitter<br>N<sub>A</sub> = 10<sup>19</sup>&nbsp;cm<sup>−3</sup></span></div>
-        <div class="n-side"><span>n-type base<br>N<sub>D</sub> = 10<sup>17</sup>&nbsp;cm<sup>−3</sup></span></div>
-      </div>
-      <p class="source-note" style="text-align:center">Junction-centred schematic, not to scale; use the numerical split below.</p>
-      <div class="scale-readout">
-        <div><strong>≈ 99%</strong><span>of W<sub>0</sub> lies in the lower-doped n base</span></div>
-        <div><strong>2 nm target</strong><span>≪ W<sub>0</sub> but comparable to x<sub>p</sub>; verify by mesh refinement</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="caution"><strong>Terminology:</strong> this ordinary p–n cell has a depletion region produced by the solution. It does not contain a fabricated intrinsic i-layer and is not a p–i–n cell.</div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="10">Physical model</p>
-  <h2>Governing Equations Solved by DEVSIM</h2>
-  <div class="columns">
-    <div class="card">
-      <h3>Electrostatics</h3>
-      <span class="formula">∇·(ε∇ψ) = −q(p − n + N<sub>D</sub> − N<sub>A</sub>)</span>
-      <p>Charge sets potential, band bending and electric field.</p>
-    </div>
-    <div class="card">
-      <h3>Carrier conservation</h3>
-      <span class="formula">∇·J<sub>n</sub> = q(R − G), &nbsp; ∇·J<sub>p</sub> = −q(R − G)</span>
-      <p>G is the optical source; R includes SRH, Auger and effective near-contact loss regions.</p>
-    </div>
-  </div>
-  <span class="formula">J<sub>n</sub> = qµ<sub>n</sub>(nE + V<sub>t</sub>∇n), &nbsp;&nbsp; J<sub>p</sub> = qµ<sub>p</sub>(pE − V<sub>t</sub>∇p)</span>
-  <div class="scope-grid">
-    <div class="scope-card"><h3>Prescribed inputs</h3><p>Geometry, doping, ε, µ, lifetime, T, optical G(x) and the applied contact voltage.</p></div>
-    <div class="scope-card"><h3>Solved unknowns</h3><p>Potential ψ, electron density n and hole density p are coupled and solved self-consistently.</p></div>
-    <div class="scope-card"><h3>Calculated outputs</h3><p>E, J<sub>n</sub>, J<sub>p</sub>, recombination, contact current, J–V and wavelength-by-wavelength EQE.</p></div>
-  </div>
-  <div class="takeaway"><strong>Why self-consistent?</strong> ψ changes carrier transport; n and p change charge; charge changes ψ. Solving these equations independently would break the physical feedback loop.</div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="11">Complete mathematical problem</p>
-  <h2>Boundary Conditions and Model Closure</h2>
-  <div class="columns">
-    <div class="card">
-      <h3>Electrical contacts</h3>
-      <span class="formula">V<sub>back</sub> = 0, &nbsp; V = V<sub>front</sub> − V<sub>back</sub></span>
-      <span class="formula">n|<sub>c</sub> = n<sub>eq,c</sub>, &nbsp; p|<sub>c</sub> = p<sub>eq,c</sub></span>
-      <ul>
-        <li>front and rear use ideal ohmic-contact equations</li>
-        <li>positive V forward biases the p⁺-on-n junction</li>
-        <li>equilibrium contact potentials follow local doping</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Optical source and terminal map</h3>
-      <span class="formula">G<sub>λ</sub>(x) = Φ<sub>λ</sub>(1 − R<sub>f</sub>)α<sub>λ</sub>e<sup>−α<sub>λ</sub>x</sup></span>
-      <span class="formula">J = J<sub>device</sub>(V<sub>j</sub>) − V<sub>j</sub>/R<sub>sh</sub></span>
-      <span class="formula">V<sub>term</sub> = V<sub>j</sub> − JR<sub>s</sub>, &nbsp; I = AJ</span>
-      <ul>
-        <li>light enters at x = 0 with no rear optical reflection</li>
-        <li>R<sub>s</sub>, R<sub>sh</sub> and area are applied outside the PDE solve</li>
-      </ul>
-    </div>
-  </div>
-  <div class="takeaway"><strong>Boundary-condition count:</strong> Poisson and the two steady-state continuity equations need contact conditions at both ends. The ideal contact models close ψ, n and p at the front and rear.</div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="12">From internal solution to measurement</p>
-  <h2>Close the External Circuit: Define V, I and Power</h2>
-  <div class="circuit-lesson">
-    <figure class="circuit-panel">
-      <svg class="device-circuit" viewBox="0 0 460 350" role="img" aria-labelledby="slide-circuit-title slide-circuit-desc">
-        <title id="slide-circuit-title">Illuminated p-plus-on-n solar cell connected to an external load</title>
-        <desc id="slide-circuit-desc">Light enters the p-plus emitter. The front terminal is positive, and conventional current flows through an external load during power delivery.</desc>
+<section class="slide" data-step="06" data-title="Device, coordinates and external circuit">
+  <h2>Device, coordinates and external circuit</h2>
+  <div class="content circuit-layout">
+    <figure style="margin:0">
+      <svg class="device-circuit" viewBox="0 0 460 350" role="img" aria-labelledby="circuit-title circuit-desc">
+        <title id="circuit-title">Front-illuminated p-plus-on-n cell connected to a load</title>
+        <desc id="circuit-desc">The front p-plus terminal is positive during power delivery. Conventional current flows through the load to the rear n terminal.</desc>
         <defs>
-          <marker id="slide-arrow-navy" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#003b71"></path></marker>
-          <marker id="slide-arrow-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#755711"></path></marker>
+          <marker id="arrow-current" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#123b5d"></path></marker>
+          <marker id="arrow-light" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a97b21"></path></marker>
         </defs>
         <g aria-hidden="true">
-          <circle cx="162" cy="20" r="10" fill="#b58b2a"></circle>
+          <circle cx="162" cy="20" r="10" fill="#a97b21"></circle>
           <path class="light-ray" d="M162 2V0 M162 42V39 M143 20H138 M186 20H181 M148 6L144 2 M180 38L176 34 M148 34L144 38 M180 2L176 6"></path>
-          <path class="light-ray" d="M147 49V78 M162 49V78 M177 49V78" marker-end="url(#slide-arrow-gold)"></path>
-          <text x="193" y="66" class="svg-sub">incident light</text>
-          <rect x="25" y="88" width="275" height="62" fill="#efd078" stroke="#003b71" stroke-width="2"></rect>
-          <rect x="25" y="150" width="275" height="128" fill="#0878ae" stroke="#003b71" stroke-width="2"></rect>
+          <path class="light-ray" d="M147 49V78 M162 49V78 M177 49V78" marker-end="url(#arrow-light)"></path>
+          <text x="193" y="66" class="svg-sub">front illumination</text>
+          <rect x="25" y="88" width="275" height="62" fill="#efd88f" stroke="#123b5d" stroke-width="2"></rect>
+          <rect x="25" y="150" width="275" height="128" fill="#3f86ae" stroke="#123b5d" stroke-width="2"></rect>
           <line class="terminal" x1="25" y1="88" x2="300" y2="88"></line>
           <line class="terminal" x1="25" y1="278" x2="300" y2="278"></line>
-          <text x="162.5" y="114" class="svg-main svg-light" text-anchor="middle">p<tspan baseline-shift="super" font-size="12">+</tspan> emitter</text>
-          <text x="162.5" y="135" class="svg-sub svg-light" text-anchor="middle">front contact · x = 0</text>
-          <text x="162.5" y="202" class="svg-main svg-white" text-anchor="middle">n-type base</text>
-          <text x="162.5" y="225" class="svg-sub svg-white" text-anchor="middle">silicon absorber</text>
-          <text x="162.5" y="265" class="svg-sub svg-white" text-anchor="middle">rear contact · x = L</text>
+          <text x="162.5" y="115" class="svg-main svg-light" text-anchor="middle">p<tspan baseline-shift="super" font-size="12">+</tspan> emitter</text>
+          <text x="162.5" y="136" class="svg-sub svg-light" text-anchor="middle">0 ≤ x &lt; 0.5 µm</text>
+          <text x="162.5" y="204" class="svg-main svg-white" text-anchor="middle">n-type base</text>
+          <text x="162.5" y="227" class="svg-sub svg-white" text-anchor="middle">0.5 µm ≤ x ≤ 250 µm</text>
           <path class="wire" d="M300 88H405V138"></path>
-          <rect x="374" y="138" width="62" height="70" rx="3" fill="#f6f8fb" stroke="#003b71" stroke-width="2"></rect>
+          <rect x="374" y="138" width="62" height="70" rx="2" fill="#fbfcfa" stroke="#123b5d" stroke-width="2"></rect>
           <text x="405" y="169" class="svg-circuit" text-anchor="middle">load</text>
           <text x="405" y="191" class="svg-circuit" text-anchor="middle">R<tspan baseline-shift="sub" font-size="11">L</tspan></text>
           <path class="wire" d="M405 208V278H300"></path>
-          <path class="wire" d="M325 88H365" marker-end="url(#slide-arrow-navy)"></path>
-          <circle cx="300" cy="88" r="4" fill="#003b71"></circle>
-          <circle cx="300" cy="278" r="4" fill="#003b71"></circle>
+          <path class="wire" d="M325 88H365" marker-end="url(#arrow-current)"></path>
+          <circle cx="300" cy="88" r="4" fill="#123b5d"></circle>
+          <circle cx="300" cy="278" r="4" fill="#123b5d"></circle>
           <text x="346" y="73" class="svg-circuit" text-anchor="middle">I = AJ</text>
           <text x="312" y="110" class="svg-main">+</text>
           <text x="312" y="274" class="svg-main">−</text>
           <path class="voltage-guide" d="M338 94V273 M332 94H338 M332 273H338"></path>
           <text x="354" y="184" class="svg-circuit" text-anchor="middle" transform="rotate(-90 354 184)">V<tspan baseline-shift="sub" font-size="11">term</tspan> = V<tspan baseline-shift="sub" font-size="11">p</tspan> − V<tspan baseline-shift="sub" font-size="11">n</tspan></text>
-          <text x="230" y="321" class="svg-circuit" text-anchor="middle">P<tspan baseline-shift="sub" font-size="11">out</tspan> = V<tspan baseline-shift="sub" font-size="11">term</tspan>I</text>
+          <text x="230" y="322" class="svg-circuit" text-anchor="middle">P<tspan baseline-shift="sub" font-size="11">out</tspan> = V<tspan baseline-shift="sub" font-size="11">term</tspan>I</text>
         </g>
       </svg>
-      <figcaption class="cap">Closed-loop power delivery; device layers and contacts are not to scale.</figcaption>
+      <figcaption>Schematic, not a scale drawing of the layer thicknesses.</figcaption>
     </figure>
     <div>
-      <h3>What the simulator and experiment exchange</h3>
-      <span class="formula">DEVSIM: &nbsp; V<sub>j</sub> → J<sub>device</sub>(V<sub>j</sub>)</span>
-      <span class="formula">Terminal map: &nbsp; J = J<sub>device</sub> − V<sub>j</sub>/R<sub>sh</sub></span>
-      <span class="formula">V<sub>term</sub> = V<sub>j</sub> − JR<sub>s</sub>, &nbsp; I = AJ</span>
+      <h3>Orientation and signs</h3>
       <ul>
-        <li><strong>Short circuit:</strong> V<sub>term</sub> = 0, current ≈ I<sub>sc</sub></li>
-        <li><strong>Open circuit:</strong> I = 0, voltage = V<sub>oc</sub></li>
-        <li><strong>Maximum power:</strong> choose the point maximizing V<sub>term</sub>I</li>
+        <li>light enters at x = 0 through the p<sup>+</sup> emitter</li>
+        <li>the metallurgical junction lies at x = 0.5 µm</li>
+        <li>the n-type base occupies nearly all of the 250 µm absorber</li>
+        <li>photogenerated holes reach the front; electrons reach the rear</li>
+        <li>generation-positive J gives output power P = V<sub>term</sub>J in the first quadrant</li>
       </ul>
-      <div class="caution"><strong>Do not mix levels:</strong> area, R<sub>s</sub> and R<sub>sh</sub> map internal current density to terminal measurements; they are not silicon PDE regions.</div>
+      <p class="note">The depletion region forms around the junction after electrostatic equilibrium. It is not a separate material layer.</p>
     </div>
   </div>
 </section>
 
-<section class="slide balanced">
-  <p class="kicker" data-step="13">Numerical method</p>
-  <h2>How the Continuous Equations Become a Computable Solve</h2>
-  <div class="numerics-grid">
-    <div class="card">
-      <h3>1 · Finite volume</h3>
-      <span class="formula">∫<sub>Ωᵢ</sub>∇·J dΩ = J<sub>i+½</sub> − J<sub>i−½</sub></span>
-      <p>Integrating each conservation law over a control volume makes current balance explicit at every node.</p>
-    </div>
-    <div class="card">
-      <h3>2 · Edge transport</h3>
-      <span class="formula">J<sub>n,i+½</sub> = (qµ<sub>n</sub>V<sub>T</sub>/Δx)[n<sub>i+1</sub>B(ξ) − n<sub>i</sub>B(−ξ)], &nbsp; ξ = Δψ/V<sub>T</sub></span>
-      <p>The Scharfetter–Gummel Bernoulli form couples drift and diffusion stably across steep potential gradients.</p>
-    </div>
-    <div class="card">
-      <h3>3 · Newton update</h3>
-      <span class="formula">J<sub>F</sub>(u<sup>k</sup>)Δu = −F(u<sup>k</sup>)</span>
-      <p>For u = [ψ, n, p], DEVSIM repeatedly assembles residuals and the Jacobian until the coupled equations converge.</p>
-    </div>
-  </div>
-  <div class="flow" style="grid-template-columns:repeat(4,1fr)">
-    <div class="step"><strong>Equilibrium</strong><small>Poisson only</small></div>
-    <div class="step"><strong>Dark device</strong><small>add n and p</small></div>
-    <div class="step"><strong>Illuminate</strong><small>ramp G gradually</small></div>
-    <div class="step"><strong>Bias sweep</strong><small>reuse prior solution</small></div>
-  </div>
-  <div class="takeaway"><strong>A converged solution is necessary, not sufficient:</strong> also inspect residuals, repeat with a finer mesh and verify that extracted observables change negligibly.</div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="14">Internal physics</p>
-  <h2>One Junction Connects Doping, Field and Carriers</h2>
-  <pre>python scripts/plot_profiles.py --bias near-voc</pre>
-  <img class="fig" src="../results/profiles.png" alt="Four physical profiles across the p-plus-on-n cell: doping, electric field, carriers, and optical generation">
-  <div class="side">
-    <ul>
-      <li>Locate the junction at 0.5 µm in the doping and field panels</li>
-      <li>Compare equilibrium and illuminated carrier densities</li>
-      <li>Generation is strongest at the illuminated front surface</li>
-    </ul>
-    <div class="prompt"><strong>Consistency check:</strong> do the doping transition and negative field peak occur at the same position? Compare band bending on the next slide.</div>
-  </div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="15">Energy bands</p>
-  <h2>Quasi-Fermi-Level Splitting Sets the Photovoltage</h2>
-  <pre>python scripts/plot_band.py --bias near-voc</pre>
-  <img class="fig" src="../results/band.png" alt="Equilibrium and illuminated band diagrams near open circuit">
-  <div class="side">
-    <ul>
-      <li>Equilibrium has one flat Fermi level</li>
-      <li>Illumination creates E<sub>Fn</sub> and E<sub>Fp</sub></li>
-      <li>Contact electrochemical-potential difference divided by q equals the applied V</li>
-    </ul>
-    <div class="takeaway"><strong>Near this plotted open-circuit point:</strong> V ≈ V<sub>oc</sub>, and local E<sub>Fn</sub>−E<sub>Fp</sub> provides a spatial photovoltage diagnostic.</div>
-    <div class="prompt"><strong>Explain:</strong> under open-circuit illumination, why does stronger recombination reduce the splitting and V<sub>oc</sub>?</div>
-  </div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="16">Terminal response</p>
-  <h2>Read an Illuminated J–V Curve</h2>
-  <pre>python scripts/run_sim.py
-python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv</pre>
-  <img class="fig" src="../results/iv_plot.png" alt="Simulated illuminated J–V curve with bundled synthetic reference, Jsc, Voc, and maximum-power point">
-  <div class="side">
-    <ul>
-      <li>J<sub>sc</sub>: current density at V = 0</li>
-      <li>V<sub>oc</sub>: voltage at the J = 0 crossing</li>
-      <li>FF = P<sub>max</sub>/(J<sub>sc</sub>V<sub>oc</sub>) measures the knee</li>
-      <li>Modeled η uses stated P<sub>in</sub>; experimental η requires measured irradiance</li>
-    </ul>
-    <div class="takeaway"><strong>Extract directly from the curve:</strong> identify J<sub>sc</sub>, V<sub>oc</sub>, FF and the MPP from your regenerated result.</div>
-    <div class="prompt"><strong>Sign convention:</strong> J is generation-positive; output power density is P = VJ in the first quadrant.</div>
-  </div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="17">Terminal parasitics</p>
-  <h2>R<sub>s</sub> and R<sub>sh</sub> Distort Different J–V Regions</h2>
-  <pre>python scripts/plot_resistance.py</pre>
-  <img class="fig" src="../results/resistance.png" alt="Series and shunt resistance effects on the solar-cell current-voltage curve">
-  <div class="side">
-    <ul>
-      <li><strong>R<sub>s</sub>:</strong> rounds the high-current knee and mainly lowers FF</li>
-      <li><strong>R<sub>sh</sub>:</strong> tilts the curve near short circuit and lowers V<sub>oc</sub>/FF</li>
-      <li>Both are effective terminal post-processing terms here—not spatial DEVSIM regions</li>
-    </ul>
-    <div class="prompt"><strong>Diagnosis:</strong> does the measured voltage range contain the region needed to infer R<sub>s</sub>?</div>
-  </div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="18">Optical generation</p>
-  <h2>Wavelength Controls Where Photons Are Absorbed</h2>
-  <pre>python scripts/plot_spectrum.py</pre>
-  <img class="fig" src="../results/spectrum.png" alt="Sixteen-bin teaching spectrum and silicon absorption coefficient">
-  <div class="side">
-    <ul>
-      <li>Blue photons: large α, absorbed near the front</li>
-      <li>Near-band-edge photons: small α, penetrate deeply</li>
-      <li>Single-pass absorption: (1 − R)[1 − exp(−αW)]</li>
-    </ul>
-    <div class="caution"><strong>Scope:</strong> 16 above-band-gap bins drive generation; total modeled P<sub>in</sub> is stated separately. This is not precision ASTM G173 input.</div>
-    <div class="prompt"><strong>Predict:</strong> which wavelengths respond most strongly to front near-contact losses?</div>
-  </div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="19">Spectral response</p>
-  <h2>EQE Locates Wavelength-Dependent Losses</h2>
-  <pre>python scripts/plot_eqe.py</pre>
-  <img class="fig" src="../results/eqe.png" alt="Modeled external quantum efficiency and the single-pass absorption reference">
-  <div class="side">
-    <ul>
-      <li>EQE = collected electrons per incident photon</li>
-      <li>Blue loss probes front-region/emitter collection</li>
-      <li>Near-IR loss probes weak absorption and base/rear collection</li>
-      <li>J<sub>sc</sub> = q∫EQE(λ)Φ(λ)dλ</li>
-    </ul>
-    <div class="takeaway"><strong>Cross-check:</strong> integrate the modeled EQE and compare its J<sub>sc</sub> with the all-bin J–V result.</div>
-    <div class="caution"><strong>Data boundary:</strong> no measured EQE is bundled or required. Add an overlay only when a real spectral measurement is available.</div>
-  </div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="20">Forward and inverse problems</p>
-  <h2>Fit Only Parameters the Measurements Can Distinguish</h2>
-  <div class="inverse-layout">
-    <div>
-      <div class="inverse-arrow" aria-label="Forward and inverse problem mapping">
-        <div><strong>Forward problem</strong><br>parameters θ + applied V<br>→ predicted observables</div>
-        <span>⇄</span>
-        <div><strong>Inverse problem</strong><br>measured observables<br>→ plausible θ</div>
+<section class="slide" data-step="07" data-title="The complete mathematical problem">
+  <h2>The complete mathematical problem</h2>
+  <div class="content middle">
+    <span class="equation large">{ψ(x), n(x), p(x)} = S[geometry, doping, material models, G(x), T, contact bias]</span>
+    <div class="definition">
+      <div>
+        <h3>Prescribed inputs</h3>
+        <p>L = 250 µm, emitter depth, N<sub>A</sub>(x), N<sub>D</sub>(x), ε, mobilities, lifetimes, Auger coefficients, optical spectrum, reflectance, T and contact voltages.</p>
       </div>
-      <span class="formula">y<sub>sim</sub> = S(θ), &nbsp;&nbsp; θ* = arg min ‖r(θ)‖²</span>
-      <div class="caution"><strong>Non-uniqueness:</strong> different combinations of lifetime, surface loss and optical scale can produce similar illuminated J–V curves.</div>
+      <div>
+        <h3>Solved fields</h3>
+        <p>Electrostatic potential ψ, electron density n and hole density p at the mesh nodes.</p>
+      </div>
+      <div>
+        <h3>Calculated outputs</h3>
+        <p>Electric field, band energies, electron and hole currents, recombination, contact current, J–V, J<sub>sc</sub>, V<sub>oc</sub>, FF and EQE.</p>
+      </div>
+    </div>
+    <div class="two divide" style="margin-top:1.5rem">
+      <p><strong>Inside DEVSIM:</strong> the one-dimensional silicon PDE system returns intrinsic current density as a function of junction voltage.</p>
+      <p><strong>After the PDE solve:</strong> area, series resistance and shunt resistance map the intrinsic solution to terminal measurements.</p>
+    </div>
+    <p class="note warn">Illuminated area and irradiance are experimental metadata. The present area is 3 cm × 4 cm = 12 cm². The baseline <code>photon_flux</code> is a dimensionless scale, not a measured irradiance.</p>
+  </div>
+</section>
+
+<section class="slide" data-step="08" data-title="Abrupt-junction electrostatics">
+  <h2>Abrupt-junction electrostatics</h2>
+  <div class="content junction">
+    <div>
+      <h3>Depletion-approximation check at 300 K</h3>
+      <span class="equation">V<sub>bi</sub> = V<sub>T</sub> ln(N<sub>A</sub>N<sub>D</sub>/n<sub>i</sub><sup>2</sup>) ≈ 0.95 V</span>
+      <span class="equation">W<sub>0</sub> = √[(2ε<sub>Si</sub>/q)(1/N<sub>A</sub> + 1/N<sub>D</sub>)V<sub>bi</sub>] ≈ 0.109 µm</span>
+      <span class="equation">x<sub>p</sub> = W<sub>0</sub>N<sub>D</sub>/(N<sub>A</sub> + N<sub>D</sub>) ≈ 1.1 nm</span>
+      <span class="equation">x<sub>n</sub> = W<sub>0</sub>N<sub>A</sub>/(N<sub>A</sub> + N<sub>D</sub>) ≈ 0.108 µm</span>
     </div>
     <div>
-      <table class="parameter-table" aria-label="Calibration parameter selection rationale">
-        <thead><tr><th>Parameter</th><th>Status</th><th>Main evidence needed</th><th>Reason</th></tr></thead>
-        <tbody>
-          <tr><td>photon_flux</td><td class="status-fit">fit</td><td>light J–V, J<sub>sc</sub></td><td>sets generation scale; ideally constrained by measured irradiance</td></tr>
-          <tr><td>series_resistance</td><td class="status-fit">fit</td><td>high-current knee</td><td>distinct terminal-voltage distortion when the voltage range is adequate</td></tr>
-          <tr><td>τ<sub>n</sub>, τ<sub>p</sub></td><td class="status-fixed">fixed</td><td>J–V + EQE or lifetime data</td><td>correlated with bulk and surface recombination losses</td></tr>
-          <tr><td>front/back loss</td><td class="status-fixed">fixed</td><td>measured EQE</td><td>front and rear collection cannot be separated by sparse J–V alone</td></tr>
-          <tr><td>R<sub>sh</sub></td><td class="status-fixed">fixed (∞)</td><td>near-J<sub>sc</sub> slope / leakage</td><td>activate only when the data resolve a repeatable shunt signature</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="takeaway"><strong>Why only two fitted parameters?</strong> The model contains more physics than the present measurements can identify. Fixing weakly separated parameters is a deliberate scientific constraint, not missing implementation.</div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="21">Sensitivity before calibration</p>
-  <h2>Sensitivity: Does the Observable Respond?</h2>
-  <pre>python scripts/plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5</pre>
-  <img class="fig" src="../results/sweep.png" alt="Sensitivity of solar-cell metrics to hole lifetime">
-  <div class="side">
-    <ul>
-      <li>τ<sub>p</sub> is region-wide; the response is dominated by minority holes in the n base</li>
-      <li>Longer lifetime improves collection until other losses dominate</li>
-      <li>J<sub>sc</sub> responds strongly; V<sub>oc</sub> changes more weakly</li>
-    </ul>
-    <div class="takeaway"><strong>Calibration rule:</strong> if an observable barely moves, it cannot reliably identify that parameter.</div>
-  </div>
-</section>
-
-<section class="slide full-visual">
-  <p class="kicker" data-step="22">Calibration algorithm · Synthetic demo</p>
-  <h2>Bounded Least Squares Updates Sensitive Parameters</h2>
-  <pre>python scripts/plot_optimization.py --params photon_flux --init photon_flux=0.5 --max-nfev 30 --gif</pre>
-  <span class="formula">θ* = arg min<sub>l ≤ θ ≤ u</sub> ‖r(θ)‖<sup>2</sup>, &nbsp; r<sub>i</sub> = [J<sub>sim</sub>(V<sub>i</sub>; θ) − J<sub>meas,i</sub>]/s<sub>i</sub></span>
-  <img class="screen-only algorithm-visual" src="../results/optimization.gif" alt="Synthetic-data animation showing the simulated J–V curve, residual objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
-  <img class="print-only algorithm-visual" src="../results/optimization.png" alt="Static synthetic-data summary of J–V agreement, objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
-  <p class="cap"><code>lmfit</code> evaluates the forward model, scales the residuals and applies the bounds declared in <code>config.py</code>. This synthetic example varies only <code>photon_flux</code>.</p>
-  <div class="takeaway"><strong>Convergence does not establish model validity:</strong> a converged optimizer may still expose missing physics or parameter trade-offs.</div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="23">Multi-observable calibration</p>
-  <h2>Historical Cell #3: More Observables Expose Model Mismatch</h2>
-  <pre>python scripts/run_calibration.py --joint --sample 3</pre>
-  <img class="fig" src="../results/joint_observables.png" alt="Historical Cell 3 illuminated and dark J–V measurements compared with the joint model and independent short-circuit and open-circuit checks">
-  <div class="side">
-    <span class="formula">r<sub>b</sub> = √(w<sub>b</sub>/N<sub>b</sub>) · [y<sub>sim,b</sub> − y<sub>meas,b</sub>]/σ<sub>b</sub></span>
-    <ul>
-      <li>Joint objective: illuminated J–V + dark J–V + independent J<sub>sc</sub> and V<sub>oc</sub></li>
-      <li>Block size N<sub>b</sub>, weight w<sub>b</sub> and scale σ<sub>b</sub> prevent a dense curve from dominating by point count alone</li>
-      <li>Dark current cross-checks the fixed recombination model</li>
-    </ul>
-    <div class="caution"><strong>Interpretation:</strong> this two-parameter teaching fit is a diagnostic, not a promise of a perfect curve.</div>
-  </div>
-</section>
-
-<section class="slide visual">
-  <p class="kicker" data-step="24">Fit diagnosis</p>
-  <h2>The Quality Gate Fails Before Parameter Trust Begins</h2>
-  <pre>python scripts/run_calibration.py --joint --sample 3</pre>
-  <img class="fig" src="../results/joint_identifiability.png" alt="Local sensitivity and correlation diagnostics for the Cell 3 calibration, marked as failing the fit-quality gate">
-  <div class="side">
-    <span class="formula">Q = Σ<sub>b</sub>w<sub>b</sub>RMS<sub>b</sub>² / Σ<sub>b</sub>w<sub>b</sub> = 15.1 &gt; 4.0</span>
-    <ul>
-      <li>largest mismatch: illuminated J–V block, normalized RMS ≈ 5.0</li>
-      <li>V<sub>oc</sub> check also disagrees by ≈ 4.5 declared scales</li>
-      <li>Q = 4 is a human-set teaching guard: weighted RMS mismatch ≈ 2 scales</li>
-    </ul>
-    <div class="caution"><strong>Consequence:</strong> covariance is only local sensitivity information here—not evidence that the parameters are uniquely identified.</div>
-    <div class="takeaway"><strong>Next scientific action:</strong> inspect residual shape and measurement metadata; do not add many free parameters merely to force Q below the threshold.</div>
-  </div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="25">Measured-data workflow</p>
-  <h2>From Raw Data to a Reproducible Fit</h2>
-  <div class="flow">
-    <div class="step"><strong>1 · Inspect</strong><small>units + sign</small></div>
-    <div class="step"><strong>2 · Convert</strong><small>I → J using area</small></div>
-    <div class="step"><strong>3 · Validate</strong><small>J<sub>sc</sub>, V<sub>oc</sub>, range</small></div>
-    <div class="step"><strong>4 · Sweep</strong><small>sensitivity first</small></div>
-    <div class="step"><strong>5 · Fit</strong><small>few parameters</small></div>
-    <div class="step"><strong>6 · Report</strong><small>residual + uncertainty</small></div>
-  </div>
-  <div class="takeaway"><strong>Trace every transformation:</strong> preserve raw files, record metadata, and keep the exact configuration with the fit outputs.</div>
-</section>
-
-<section class="slide balanced">
-  <p class="kicker" data-step="26">Model limits and defensible claims</p>
-  <h2>Separate Data, Model and Claim</h2>
-  <div class="scope-grid">
-    <div class="scope-card">
-      <h3>Data</h3>
-      <p>Preserve raw files; state units, illuminated area and sign convention. Experimental efficiency requires independently measured irradiance.</p>
-    </div>
-    <div class="scope-card">
-      <h3>Model</h3>
-      <p>1D abrupt junction, Boltzmann statistics, fixed mobility, single-pass Beer–Lambert optics and terminal R<sub>s</sub>/R<sub>sh</sub>; no band-gap narrowing, rear optical reflection, texture or lateral grid.</p>
-    </div>
-    <div class="scope-card">
-      <h3>Claim</h3>
-      <p>Fit only sensitive parameters. Show residuals, uncertainty and cross-observable checks; explain systematic mismatch.</p>
-    </div>
-  </div>
-  <div class="takeaway"><strong>Keep the inverse problem identifiable:</strong> a transparent two-parameter diagnosis is stronger than an elaborate unsupported fit.</div>
-</section>
-
-<section class="slide closing-slide">
-  <p class="kicker" data-step="27">MICS3090 (L01) · Integrated Circuit Devices</p>
-  <h1>Questions &amp; Discussion</h1>
-  <p class="subtitle">A useful model is the simplest one that explains the observations within clearly stated limits.</p>
-  <div class="takeaway" style="max-width:62rem">
-    <strong>Take-home message:</strong> build the p<sup>+</sup>-on-n physics carefully, validate across observables, fit only what the data can identify, and report limitations explicitly.
-  </div>
-  <div class="closing-loop" aria-label="Modeling workflow summary">
-    <span>Structure</span><span>Physics</span><span>Data</span><span>Trust</span>
-  </div>
-  <a class="reference-link" href="https://zenodo.org/records/17328734">DEVSIM Manual · simulator command and API reference ↗</a>
-  <div class="closing-meta">
-    <div class="person-card">
-      <span class="meta-label">Instructor</span>
-      <strong>Renjie WANG</strong>
-    </div>
-    <div class="person-card ta">
-      <span class="meta-label">Teaching Assistant</span>
-      <strong>Zhang CHEN</strong>
-      <span class="contact-line"><a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a> · TA office W2-4F-028</span>
+      <div class="depletion" aria-label="Schematic p-plus and n regions around the junction">
+        <div class="p"><span>p<sup>+</sup> emitter<br>N<sub>A</sub> = 10<sup>19</sup> cm<sup>−3</sup></span></div>
+        <div class="n"><span>n-type base<br>N<sub>D</sub> = 10<sup>17</sup> cm<sup>−3</sup></span></div>
+      </div>
+      <div class="number-pair">
+        <div><strong>≈ 99%</strong><span>of W<sub>0</sub> lies in the lower-doped n-type base</span></div>
+        <div><strong>2 nm mesh target</strong><span>is much smaller than W<sub>0</sub>, but mesh refinement must still verify the result</span></div>
+      </div>
+      <p class="note warn">“Depleted” describes mobile-carrier removal near a junction. It does not mean that this ordinary p–n cell contains intrinsic silicon.</p>
     </div>
   </div>
 </section>
 
-<div class="nav-bar" aria-label="Slide navigation">
-  <div class="nav-group">
-    <button class="nav-btn prev" type="button" aria-label="Previous slide">←</button>
-    <button class="nav-btn next" type="button" aria-label="Next slide">→</button>
-    <span class="counter" aria-live="polite"></span>
+<section class="slide" data-step="09" data-title="Poisson and drift–diffusion equations">
+  <h2>Poisson and drift–diffusion equations</h2>
+  <div class="content middle equation-stack">
+    <div>
+      <h3>Electrostatics</h3>
+      <span class="equation large">d/dx(ε dψ/dx) = −q(p − n + N<sub>D</sub> − N<sub>A</sub>)</span>
+      <p>Charge bends the electrostatic potential. The field follows from E = −dψ/dx.</p>
+    </div>
+    <div>
+      <h3>Carrier currents</h3>
+      <span class="equation">J<sub>n</sub> = qµ<sub>n</sub>(nE + V<sub>T</sub> dn/dx)</span>
+      <span class="equation">J<sub>p</sub> = qµ<sub>p</sub>(pE − V<sub>T</sub> dp/dx)</span>
+      <p>Drift responds to the field. Diffusion responds to concentration gradients.</p>
+    </div>
+    <div>
+      <h3>Steady-state conservation</h3>
+      <span class="equation">dJ<sub>n</sub>/dx = q(R − G)</span>
+      <span class="equation">dJ<sub>p</sub>/dx = −q(R − G)</span>
+      <p>Generation, recombination and current divergence must balance locally.</p>
+    </div>
+    <div>
+      <h3>Self-consistent coupling</h3>
+      <p>Potential changes transport. Carrier densities change charge. Charge then changes potential. DEVSIM solves the coupled residual rather than treating each equation independently.</p>
+      <p class="question">Prediction before simulation: where should the strongest electric field occur, and what sign should it have for x increasing from p<sup>+</sup> to n?</p>
+    </div>
   </div>
-  <span class="help">← → / Space · Home / End · Print to PDF</span>
-</div>
+</section>
 
+<section class="slide" data-step="10" data-title="Generation and recombination">
+  <h2>Generation and recombination</h2>
+  <div class="content middle two divide">
+    <div>
+      <h3>Single-pass optical generation</h3>
+      <span class="equation large">G<sub>λ</sub>(x) = Φ<sub>λ</sub>(1 − R<sub>f</sub>)α<sub>λ</sub> exp(−α<sub>λ</sub>x)</span>
+      <ul>
+        <li>large α at short wavelength gives shallow absorption</li>
+        <li>small α near the band edge gives deep penetration</li>
+        <li>the current model omits rear optical reflection and texture</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Carrier losses</h3>
+      <span class="equation">R<sub>SRH</sub> = (np − n<sub>i</sub><sup>2</sup>)/[τ<sub>p</sub>(n + n<sub>i</sub>) + τ<sub>n</sub>(p + n<sub>i</sub>)]</span>
+      <span class="equation">R<sub>Auger</sub> = (C<sub>n</sub>n + C<sub>p</sub>p)(np − n<sub>i</sub><sup>2</sup>)</span>
+      <p>SRH recombination connects the result to effective carrier lifetime. Auger recombination becomes important at high carrier or doping concentrations.</p>
+      <p class="note warn">The project represents front and rear near-contact loss with thin effective loss regions. <code>front_srv</code> and <code>back_srv</code> are teaching proxies, not Robin surface-recombination boundary conditions.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="11" data-title="Boundary conditions and terminal mapping">
+  <h2>Boundary conditions and terminal mapping</h2>
+  <div class="content middle two divide">
+    <div>
+      <h3>Ideal ohmic contacts</h3>
+      <span class="equation">V<sub>back</sub> = 0, &nbsp; V = V<sub>front</sub> − V<sub>back</sub></span>
+      <span class="equation">n|<sub>contact</sub> = n<sub>eq</sub>, &nbsp; p|<sub>contact</sub> = p<sub>eq</sub></span>
+      <ul>
+        <li>positive V forward-biases the p<sup>+</sup>-on-n junction</li>
+        <li>the contact models close ψ, n and p at both ends</li>
+        <li>equilibrium starts with both external biases at zero</li>
+      </ul>
+    </div>
+    <div>
+      <h3>External terminal model</h3>
+      <span class="equation">J = J<sub>device</sub>(V<sub>j</sub>) − V<sub>j</sub>/R<sub>sh</sub></span>
+      <span class="equation">V<sub>term</sub> = V<sub>j</sub> − JR<sub>s</sub>, &nbsp; I = AJ</span>
+      <ul>
+        <li>R<sub>s</sub> and R<sub>sh</sub> use Ω·cm² because the model works with current density</li>
+        <li>R<sub>sh</sub> = 0 in <code>config.py</code> denotes an infinite shunt resistance</li>
+        <li>area converts J to measured current but does not alter the 1D PDE solution</li>
+      </ul>
+      <p class="note">Short circuit sets V<sub>term</sub> = 0. Open circuit sets I = 0. Maximum power occurs at the J–V point that maximizes V<sub>term</sub>J.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="12" data-title="Numerical solution">
+  <h2>Numerical solution</h2>
+  <div class="content middle">
+    <div class="numerics">
+      <div>
+        <h3>Finite-volume balance</h3>
+        <span class="equation">∫<sub>Ωᵢ</sub> ∇·J dΩ = J<sub>i+½</sub> − J<sub>i−½</sub></span>
+        <p>Each control volume conserves charge through its edge fluxes and local source terms.</p>
+      </div>
+      <div>
+        <h3>Scharfetter–Gummel flux</h3>
+        <span class="equation">J<sub>n,i+½</sub> = (qµ<sub>n</sub>V<sub>T</sub>/Δx)[n<sub>i+1</sub>B(ξ) − n<sub>i</sub>B(−ξ)]</span>
+        <p>ξ = Δψ/V<sub>T</sub>. The Bernoulli edge form treats drift and diffusion together across steep potential changes.</p>
+      </div>
+      <div>
+        <h3>Newton iteration</h3>
+        <span class="equation">J<sub>F</sub>(u<sup>k</sup>)Δu = −F(u<sup>k</sup>)</span>
+        <p>For u = [ψ, n, p], DEVSIM assembles the residual and Jacobian until the coupled system converges.</p>
+      </div>
+    </div>
+    <div class="sequence" style="margin-top:1.5rem">
+      <div><strong>Equilibrium</strong><span>Poisson only</span></div>
+      <div><strong>Dark device</strong><span>add carrier continuity</span></div>
+      <div><strong>Illumination</strong><span>ramp G from zero</span></div>
+      <div><strong>Bias sweep</strong><span>reuse the previous solution</span></div>
+    </div>
+    <p class="note warn">Convergence is one numerical check. Repeat the calculation with a finer mesh and confirm that J<sub>sc</sub>, V<sub>oc</sub> and the internal profiles remain stable.</p>
+  </div>
+</section>
+
+<section class="slide" data-step="13" data-title="Doping, field, carriers and generation">
+  <h2>Doping, field, carriers and generation</h2>
+  <p class="command">python scripts/plot_profiles.py --bias near-voc</p>
+  <div class="content figure-layout">
+    <img src="../results/profiles.png" alt="Doping, electric field, carrier density and optical generation through the p-plus-on-n cell">
+    <div class="explain">
+      <h3>Read the panels in order</h3>
+      <ol>
+        <li>The doping sign changes at 0.5 µm.</li>
+        <li>The negative field peak occurs at the same junction.</li>
+        <li>Illumination raises nonequilibrium carrier densities.</li>
+        <li>Generation is strongest near the illuminated front.</li>
+      </ol>
+      <p class="question">A misplaced field peak would indicate a coordinate, doping-sign or plotting error.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="14" data-title="Band bending and photovoltage">
+  <h2>Band bending and photovoltage</h2>
+  <p class="command">python scripts/plot_band.py --bias near-voc</p>
+  <div class="content figure-layout">
+    <img src="../results/band.png" alt="Equilibrium and illuminated band diagrams near open circuit">
+    <div class="explain">
+      <ul>
+        <li>equilibrium has one spatially constant Fermi level</li>
+        <li>band bending follows the electrostatic potential</li>
+        <li>illumination separates E<sub>Fn</sub> and E<sub>Fp</sub></li>
+        <li>stronger recombination reduces the splitting and V<sub>oc</sub></li>
+      </ul>
+      <span class="equation">local splitting: &nbsp; E<sub>Fn</sub> − E<sub>Fp</sub></span>
+      <p class="note">The contact electrochemical-potential difference divided by q equals the applied terminal bias under the stated contact convention.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="15" data-title="Illuminated J–V characteristics">
+  <h2>Illuminated J–V characteristics</h2>
+  <p class="command">python scripts/run_sim.py &nbsp; · &nbsp; python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv</p>
+  <div class="content figure-layout">
+    <img src="../results/iv_plot.png" alt="Simulated illuminated current-voltage curve with Jsc, Voc and maximum-power point">
+    <div class="explain">
+      <span class="equation">J<sub>sc</sub> = J(0)</span>
+      <span class="equation">J(V<sub>oc</sub>) = 0</span>
+      <span class="equation">FF = P<sub>max</sub>/(J<sub>sc</sub>V<sub>oc</sub>)</span>
+      <ul>
+        <li>J<sub>sc</sub> measures collected photocarriers</li>
+        <li>V<sub>oc</sub> reflects generation–recombination balance</li>
+        <li>FF measures the sharpness of the power-producing knee</li>
+      </ul>
+      <p class="note warn">Experimental efficiency requires measured irradiance. The 0.1 W/cm² model input is an illustrative reporting convention.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="16" data-title="Series and shunt resistance">
+  <h2>Series and shunt resistance</h2>
+  <p class="command">python scripts/plot_resistance.py</p>
+  <div class="content figure-layout">
+    <img src="../results/resistance.png" alt="Effects of series and shunt resistance on the solar-cell J–V curve">
+    <div class="explain">
+      <h3>Different regions carry different information</h3>
+      <p><strong>Series resistance</strong> rounds the high-current knee and mainly reduces fill factor.</p>
+      <p><strong>Shunt resistance</strong> changes the slope near short circuit and can reduce V<sub>oc</sub> and fill factor.</p>
+      <p class="note">The measured voltage range must include the relevant region. A truncated curve cannot identify a resistance merely because the parameter exists in the model.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="17" data-title="Optical spectrum and absorption depth">
+  <h2>Optical spectrum and absorption depth</h2>
+  <p class="command">python scripts/plot_spectrum.py</p>
+  <div class="content figure-layout">
+    <img src="../results/spectrum.png" alt="Teaching photon spectrum and wavelength-dependent silicon absorption coefficient">
+    <div class="explain">
+      <span class="equation">absorption length = 1/α(λ)</span>
+      <ul>
+        <li>blue photons are absorbed near the front surface</li>
+        <li>near-band-edge photons penetrate into the base</li>
+        <li>sixteen above-band-gap bins drive the teaching model</li>
+      </ul>
+      <p class="note warn">The bundled spectrum is an AM1.5-like teaching input. It is not a precision ASTM G173 spectrum, and <code>front_reflectance = 0</code> represents ideal antireflection.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="18" data-title="External quantum efficiency">
+  <h2>External quantum efficiency</h2>
+  <p class="command">python scripts/plot_eqe.py</p>
+  <div class="content figure-layout">
+    <img src="../results/eqe.png" alt="Modeled external quantum efficiency and single-pass absorption reference">
+    <div class="explain">
+      <span class="equation">EQE(λ) = collected electrons / incident photons</span>
+      <span class="equation">J<sub>sc</sub> = q∫EQE(λ)Φ(λ)dλ</span>
+      <ul>
+        <li>short-wavelength loss probes the emitter and front region</li>
+        <li>near-infrared loss probes weak absorption and base or rear collection</li>
+        <li>the integrated EQE current should agree with the all-bin short-circuit result</li>
+      </ul>
+      <p class="note">No measured EQE is bundled. A measured spectrum would add independent information for separating optical and recombination losses.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="19" data-title="Calibration as an inverse problem">
+  <h2>Calibration as an inverse problem</h2>
+  <div class="content middle">
+    <div class="two divide">
+      <div>
+        <h3>Forward calculation</h3>
+        <span class="equation large">θ and applied V &nbsp; ⟼ &nbsp; y<sub>sim</sub> = S(θ)</span>
+        <p>Known model parameters produce predicted J–V curves, scalar observables and internal fields.</p>
+      </div>
+      <div>
+        <h3>Inverse calculation</h3>
+        <span class="equation large">measured y &nbsp; ⟼ &nbsp; plausible θ</span>
+        <p>The inverse direction can be non-unique. Several loss mechanisms may create similar changes in one illuminated J–V curve.</p>
+      </div>
+    </div>
+    <table class="simple-table parameter-table" aria-label="Rationale for calibration parameter selection" style="margin-top:1.3rem">
+      <thead><tr><th>Parameter</th><th>Current status</th><th>Measurement response</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>photon_flux</td><td class="fit">varied</td><td>light J–V and J<sub>sc</sub></td><td>controls the generation scale; measured irradiance should constrain it when available</td></tr>
+        <tr><td>series_resistance</td><td class="fit">varied</td><td>high-current knee</td><td>creates a distinct terminal-voltage distortion over a sufficient voltage range</td></tr>
+        <tr><td>lifetimes</td><td class="fixed">fixed</td><td>J–V, EQE or lifetime data</td><td>bulk lifetime and surface losses are correlated in sparse J–V data</td></tr>
+        <tr><td>front/back loss</td><td class="fixed">fixed</td><td>measured EQE</td><td>wavelength dependence is needed to separate collection regions</td></tr>
+        <tr><td>R<sub>sh</sub></td><td class="fixed">fixed at ∞</td><td>near-J<sub>sc</sub> slope and leakage</td><td>activate only after a repeatable shunt signature appears in the data</td></tr>
+      </tbody>
+    </table>
+    <p class="note">The model contains more parameters than the present measurements can identify. Varying only two parameters protects the interpretation from unsupported freedom.</p>
+  </div>
+</section>
+
+<section class="slide" data-step="20" data-title="Sensitivity before fitting">
+  <h2>Sensitivity before fitting</h2>
+  <p class="command">python scripts/plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5</p>
+  <div class="content figure-layout">
+    <img src="../results/sweep.png" alt="Sensitivity of solar-cell metrics to hole lifetime">
+    <div class="explain">
+      <h3>Question before optimization</h3>
+      <p>Does the measured observable change enough when the parameter changes?</p>
+      <ul>
+        <li>hole lifetime mainly affects minority-carrier collection in the n-type base</li>
+        <li>J<sub>sc</sub> responds until another loss mechanism dominates</li>
+        <li>a weak or correlated response cannot support a unique fitted value</li>
+      </ul>
+      <p class="note warn">An optimizer cannot recover information that the measurements do not contain.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="21" data-title="Bounded least-squares calibration">
+  <h2>Bounded least-squares calibration</h2>
+  <p class="command">python scripts/plot_optimization.py --params photon_flux --init photon_flux=0.5 --max-nfev 30 --gif</p>
+  <div class="content">
+    <span class="equation">θ* = arg min<sub>l ≤ θ ≤ u</sub> ‖r(θ)‖², &nbsp;&nbsp; r<sub>i</sub> = [J<sub>sim</sub>(V<sub>i</sub>;θ) − J<sub>meas,i</sub>]/s<sub>i</sub></span>
+    <img class="screen-only" src="../results/optimization.gif" alt="Synthetic calibration trajectory for the optical generation scale" style="display:block;width:100%;max-height:60vh;object-fit:contain">
+    <img class="print-only" src="../results/optimization.png" alt="Static summary of the synthetic calibration" style="width:100%;max-height:60vh;object-fit:contain">
+    <p class="small" style="text-align:center"><code>lmfit</code> calls the forward model, scales the residuals and respects the bounds in <code>config.py</code>. This synthetic demonstration varies only <code>photon_flux</code>.</p>
+    <p class="note warn">Optimizer convergence reports a numerical result. Residual structure and cross-observable agreement determine whether the result is physically credible.</p>
+  </div>
+</section>
+
+<section class="slide" data-step="22" data-title="Joint calibration of Cell #3">
+  <h2>Joint calibration of Cell #3</h2>
+  <p class="command">python scripts/run_calibration.py --joint --sample 3</p>
+  <div class="content figure-layout">
+    <img src="../results/joint_observables.png" alt="Cell 3 illuminated and dark J–V curves with short-circuit and open-circuit checks">
+    <div class="explain">
+      <span class="equation">r<sub>b</sub> = √(w<sub>b</sub>/N<sub>b</sub>) [y<sub>sim,b</sub> − y<sub>meas,b</sub>]/σ<sub>b</sub></span>
+      <h3>Observable blocks</h3>
+      <ul>
+        <li>illuminated J–V</li>
+        <li>dark J–V</li>
+        <li>independent J<sub>sc</sub></li>
+        <li>independent V<sub>oc</sub></li>
+      </ul>
+      <p>Dividing by N<sub>b</sub> prevents a dense curve from dominating solely because it contains more points. The weights express teaching priorities; the σ values are declared discrepancy scales.</p>
+      <p class="note">Dark current tests the fixed recombination model. It is not expected to become accurate merely by changing the light scale.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-step="23" data-title="Fit quality and parameter trust">
+  <h2>Fit quality and parameter trust</h2>
+  <p class="command">python scripts/run_calibration.py --joint --sample 3</p>
+  <div class="content figure-layout">
+    <img src="../results/joint_identifiability.png" alt="Local covariance and correlation diagnostics for Cell 3 with a failed quality gate">
+    <div class="explain">
+      <span class="equation">Q = Σ<sub>b</sub>w<sub>b</sub>RMS<sub>b</sub><sup>2</sup>/Σ<sub>b</sub>w<sub>b</sub> = 15.1 &gt; 4.0</span>
+      <ul>
+        <li>illuminated J–V has normalized RMS ≈ 5.0</li>
+        <li>the V<sub>oc</sub> check differs by ≈ 4.5 declared scales</li>
+        <li>Q = 4 is a human-set teaching guard, not a reduced χ² threshold</li>
+      </ul>
+      <p class="note warn">The failed gate makes covariance a local sensitivity diagnostic. It does not establish parameter identifiability.</p>
+      <h3>Current model limits</h3>
+      <p>One-dimensional abrupt junction, Boltzmann statistics, fixed low-field mobility, single-pass optics, no band-gap narrowing, no texture and no lateral contact grid.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide closing" data-step="24" data-title="Student workflow">
+  <div class="content">
+    <h2>Student workflow</h2>
+    <p class="lead">Build the forward model first. Check its internal physics. Add experimental data only after units, signs, illuminated area and irradiance are documented.</p>
+    <div class="sequence">
+      <div><strong>1 · Reproduce</strong><span>run the baseline scripts and Notebook</span></div>
+      <div><strong>2 · Explain</strong><span>connect each result to an equation or boundary condition</span></div>
+      <div><strong>3 · Replace data</strong><span>preserve raw files and create validated processed tables</span></div>
+      <div><strong>4 · Calibrate</strong><span>test sensitivity, fit few parameters and report mismatch</span></div>
+    </div>
+    <p class="question">A useful result states what the model explains, what the data constrain and what remains uncertain.</p>
+    <p><a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a> · <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching">Course repository</a></p>
+    <div class="meta">
+      <div><span>Instructor</span>Renjie WANG</div>
+      <div><span>Teaching Assistant</span>Zhang CHEN · <a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a><br>TA office W2-4F-028</div>
+    </div>
+  </div>
+</section>
+
+<nav class="nav" aria-label="Slide navigation">
+  <button class="prev" type="button" aria-label="Previous slide">←</button>
+  <button class="next" type="button" aria-label="Next slide">→</button>
+</nav>
 <script>
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  const counter = document.querySelector('.counter');
-  const progress = document.querySelector('.progress');
-  const hashIndex = () => {
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const progress = document.querySelector(".progress");
+  let index = 0;
+  function requestedIndex() {
     const match = location.hash.match(/^#slide-(\d+)$/);
-    return match ? Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1)) : 0;
-  };
-  let current = hashIndex();
-  function show(index, updateHash = true) {
-    current = Math.min(slides.length - 1, Math.max(0, index));
-    slides.forEach((slide, i) => {
-      slide.classList.toggle('active', i === current);
-      slide.setAttribute('aria-hidden', i === current ? 'false' : 'true');
-    });
-    counter.textContent = `${current + 1} / ${slides.length}`;
-    progress.style.width = `${100 * (current + 1) / slides.length}%`;
-    document.querySelector('.prev').disabled = current === 0;
-    document.querySelector('.next').disabled = current === slides.length - 1;
-    if (updateHash) history.replaceState(null, '', `#slide-${current + 1}`);
+    return match ? Math.max(0, Math.min(slides.length - 1, Number(match[1]) - 1)) : 0;
   }
-  document.addEventListener('keydown', event => {
-    if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'PageDown') {
-      event.preventDefault(); show(current + 1);
-    } else if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
-      event.preventDefault(); show(current - 1);
-    } else if (event.key === 'Home') show(0);
-    else if (event.key === 'End') show(slides.length - 1);
+  function show(next, updateHash = true) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+    progress.style.width = ((index + 1) / slides.length * 100) + "%";
+    document.title = slides[index].dataset.title + " · MICS3090";
+    if (updateHash) history.replaceState(null, "", "#slide-" + (index + 1));
+  }
+  document.querySelector(".prev").addEventListener("click", () => show(index - 1));
+  document.querySelector(".next").addEventListener("click", () => show(index + 1));
+  document.addEventListener("keydown", (event) => {
+    if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    if (event.key === "Home") show(0);
+    if (event.key === "End") show(slides.length - 1);
   });
-  document.querySelector('.prev').addEventListener('click', () => show(current - 1));
-  document.querySelector('.next').addEventListener('click', () => show(current + 1));
-  window.addEventListener('hashchange', () => show(hashIndex(), false));
-  show(current, false);
+  window.addEventListener("hashchange", () => show(requestedIndex(), false));
+  show(requestedIndex(), false);
 </script>
 </body>
 </html>

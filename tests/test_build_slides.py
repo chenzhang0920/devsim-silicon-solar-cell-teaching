@@ -74,9 +74,11 @@ def test_student_deck_matches_build_and_data_contracts():
     assert "python scripts/run_calibration.py --joint --sample 3" in html
     assert "python scripts/plot_profiles.py --bias near-voc" in html
     assert "python scripts/plot_band.py --bias near-voc" in html
-    assert html.index("Spectral response") < html.index("Forward and inverse problems")
+    assert html.index("External quantum efficiency") < \
+        html.index("Calibration as an inverse problem")
     assert "plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5" in html
-    assert html.index("Multi-observable calibration") < html.index("Fit diagnosis")
+    assert html.index("Joint calibration of Cell #3") < \
+        html.index("Fit quality and parameter trust")
     assert "synthetic/eqe.csv" not in html
     assert "overview.png" not in html
     assert "--bias 0.61" not in html
@@ -89,36 +91,35 @@ def test_student_deck_matches_build_and_data_contracts():
     assert html.count("TA office W2-4F-028") == 2
     assert 'class="global-logo" src="logo1_HKUSTGZ.png"' in html
     assert (root / "docs" / "logo1_HKUSTGZ.png").is_file()
-    assert 'class="device-emblem"' in html
     assert "p⁺ emitter" in html
-    assert 'class="slide closing-slide"' in html
-    assert len(re.findall(r'<section class="slide', html)) == 27
+    assert 'class="slide closing"' in html
+    assert len(re.findall(r'<section class="slide', html)) == 24
     assert "@media (min-width:1101px) and (max-height:720px)" in html
-    assert html.count('class="kicker"') == html.count('data-step=') == 27
-    assert re.findall(r'data-step="([0-9]{2})"', html) == [f"{i:02d}" for i in range(1, 28)]
-    assert ".kicker::before" in html
-    assert "p { font-size:1.36rem; }" in html
-    assert "ul > li { font-size:1.36rem;" in html
-    assert "pre {" in html and "font-size:1.2rem;" in html
-    assert "p, ul > li { font-size:1.25rem;" in html
-    assert "pre { font-size:1.2rem;" in html
-    assert '.takeaway::before { content:"✓";' in html
-    assert "DEVSIM in the Semiconductor TCAD Workflow" in html
+    assert html.count("data-step=") == 24
+    assert re.findall(r'data-step="([0-9]{2})"', html) == [
+        f"{i:02d}" for i in range(1, 25)
+    ]
+    assert 'class="kicker"' not in html
+    assert 'class="card"' not in html
+    assert 'class="takeaway"' not in html
+    assert "p, li, td, th, dd { font-size:1.34rem; }" in html
+    assert "font-size:clamp(2.35rem,3.5vw,3.25rem)" in html
+    assert "DEVSIM in semiconductor TCAD" in html
     assert "DEVSIM and Crosslight APSYS" in html
-    assert "Course Installation and Entry Points" in html
-    assert "A Minimal DEVSIM Pattern You Can Read" in html
-    assert "Anatomy of This DEVSIM Forward Solve" in html
-    assert "Estimate the Junction Before Trusting the Solver" in html
-    assert "Boundary Conditions and Model Closure" in html
-    assert "Close the External Circuit: Define V, I and Power" in html
-    assert "How the Continuous Equations Become a Computable Solve" in html
-    assert "Scharfetter–Gummel Bernoulli form" in html
-    assert "Fit Only Parameters the Measurements Can Distinguish" in html
-    assert "Why only two fitted parameters?" in html
-    assert "Bounded Least Squares Updates Sensitive Parameters" in html
+    assert "Running the course model" in html
+    assert "Device, coordinates and external circuit" in html
+    assert "The complete mathematical problem" in html
+    assert "Abrupt-junction electrostatics" in html
+    assert "Poisson and drift–diffusion equations" in html
+    assert "Generation and recombination" in html
+    assert "Boundary conditions and terminal mapping" in html
+    assert "Numerical solution" in html
+    assert "Scharfetter–Gummel flux" in html
+    assert "Calibration as an inverse problem" in html
+    assert "The model contains more parameters than the present measurements can identify" in html
+    assert "Bounded least-squares calibration" in html
     assert "Q = Σ" in html and "15.1 &gt; 4.0" in html
-    assert "From Raw Data to a Reproducible Fit" in html
-    assert "Separate Data, Model and Claim" in html
+    assert "Student workflow" in html
     assert 'href="https://zenodo.org/records/17328734"' in html
 
     refs = set(re.findall(r'src="\.\./results/([^"]+)"', html))
