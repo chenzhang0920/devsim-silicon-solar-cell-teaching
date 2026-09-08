@@ -212,4 +212,7 @@ def test_course_website_preserves_editorial_reading_and_wide_data_layout():
     assert ".section-head { max-width: var(--reader)" in html
     assert ".model-block > h3" in html
     assert ".model-equation-table { overflow-x: auto" in html
-    assert ".gallery { display: grid" in html
+    assert "display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))" in html
+    assert 'grid-template-areas: "profiles eqe" "calibration calibration"' in html
+    assert 'class="figure-calibration"' in html
+    assert html.count("Open full-size figure") == 3

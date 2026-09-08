@@ -110,11 +110,11 @@
     .device-circuit .terminal { stroke-width: 3; }
     .device-circuit .voltage-guide { stroke: var(--muted); stroke-width: 1.2; }
     .device-circuit .light-ray { stroke: var(--gold); stroke-width: 2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-    .device-circuit .svg-main { fill: var(--ink); font-size: 15px; font-weight: 800; }
-    .device-circuit .svg-sub { fill: var(--muted); font-size: 12px; font-weight: 650; }
+    .device-circuit .svg-main { fill: var(--ink); font-size: 17px; font-weight: 800; }
+    .device-circuit .svg-sub { fill: var(--muted); font-size: 14px; font-weight: 650; }
     .device-circuit .svg-light { fill: #49370b; }
     .device-circuit .svg-white { fill: white; }
-    .device-circuit .svg-circuit { fill: var(--navy); font-size: 13px; font-weight: 750; }
+    .device-circuit .svg-circuit { fill: var(--navy); font-size: 15px; font-weight: 750; }
     .device-label { margin: .15rem 0 0; color: var(--muted); text-align: center; font-size: .84rem; font-weight: 650; line-height: 1.45; }
 
     .facts { position: relative; z-index: 2; }
@@ -297,14 +297,25 @@
     .resource a:hover, .resource a:focus-visible { color: var(--orange); text-decoration: underline; }
     .resource.featured { border-top-color: var(--gold); }
 
-    .gallery { display: grid; grid-template-columns: 1fr 1.35fr 1fr; gap: 2rem; align-items: start; }
+    .gallery {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas: "profiles eqe" "calibration calibration";
+      gap: 3rem 2.5rem; align-items: start;
+    }
+    .figure-profiles { grid-area: profiles; }
+    .figure-eqe { grid-area: eqe; }
+    .figure-calibration { grid-area: calibration; }
     figure {
       display: flex; flex-direction: column; margin: 0; overflow: hidden;
       background: white;
     }
-    figure img { width: 100%; height: 300px; object-fit: contain; background: var(--wash); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .figure-link { display: block; background: var(--wash); border: 1px solid var(--line); }
+    .figure-link:hover, .figure-link:focus-visible { border-color: var(--blue); }
+    figure img { width: 100%; height: auto; background: var(--wash); }
     figcaption { padding: .85rem 0 0; color: var(--muted); font-size: .88rem; line-height: 1.5; }
     figcaption strong { display: block; margin-bottom: .2rem; color: var(--ink); font-size: .96rem; }
+    .figure-open { display: inline-block; margin-top: .45rem; font-weight: 750; text-decoration: none; }
+    .figure-open:hover, .figure-open:focus-visible { text-decoration: underline; }
 
     .scope-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 5rem; max-width: 1040px; align-items: start; }
     .scope-box { padding: 1rem 0 1rem 1.2rem; background: transparent; border-left: 2px solid var(--navy); }
@@ -333,8 +344,9 @@
       .fact:nth-child(2) { border-right: 0; }
       .fact:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
       .resources, .gallery { grid-template-columns: 1fr; }
+      .gallery { grid-template-areas: "profiles" "eqe" "calibration"; }
       .gallery { gap: 2.5rem; }
-      figure img { height: auto; max-height: 420px; aspect-ratio: 4 / 3; }
+      figure img { height: auto; }
     }
     @media (max-width: 560px) {
       body { font-size: 16px; }
@@ -415,19 +427,20 @@
               <text x="193" y="70" class="svg-sub" text-anchor="start">incident light</text>
 
               <rect x="25" y="95" width="275" height="62" fill="#efd078" stroke="#003b71" stroke-width="2"></rect>
-              <rect x="25" y="157" width="275" height="128" fill="#2585b4" stroke="#003b71" stroke-width="2"></rect>
+              <rect x="25" y="157" width="275" height="128" fill="#0878ae" stroke="#003b71" stroke-width="2"></rect>
               <line class="terminal" x1="25" y1="95" x2="300" y2="95"></line>
               <line class="terminal" x1="25" y1="285" x2="300" y2="285"></line>
-              <text x="162.5" y="121" class="svg-main svg-light" text-anchor="middle">p<tspan baseline-shift="super" font-size="10">+</tspan> emitter</text>
-              <text x="162.5" y="141" class="svg-sub svg-light" text-anchor="middle">front contact · 0.5 µm</text>
+              <text x="162.5" y="121" class="svg-main svg-light" text-anchor="middle">p<tspan baseline-shift="super" font-size="12">+</tspan> emitter</text>
+              <text x="162.5" y="141" class="svg-sub svg-light" text-anchor="middle">emitter depth · 0.5 µm</text>
               <text x="162.5" y="211" class="svg-main svg-white" text-anchor="middle">n-type base</text>
-              <text x="162.5" y="233" class="svg-sub svg-white" text-anchor="middle">silicon absorber · rear contact below</text>
-              <text x="162.5" y="174" class="svg-sub svg-white" text-anchor="middle">metallurgical junction at x<tspan baseline-shift="sub" font-size="9">e</tspan> = 0.5 µm</text>
+              <text x="162.5" y="235" class="svg-sub svg-white" text-anchor="middle">silicon absorber · 249.5 µm</text>
+              <text x="162.5" y="274" class="svg-sub svg-white" text-anchor="middle">rear contact</text>
+              <text x="162.5" y="176" class="svg-sub svg-white" text-anchor="middle">metallurgical junction at x<tspan baseline-shift="sub" font-size="11">e</tspan> = 0.5 µm</text>
 
               <path class="wire" d="M300 95H405V145"></path>
               <rect x="374" y="145" width="62" height="70" rx="3" fill="#f6f8f9" stroke="#003b71" stroke-width="2"></rect>
               <text x="405" y="175" class="svg-circuit" text-anchor="middle">load</text>
-              <text x="405" y="197" class="svg-circuit" text-anchor="middle">R<tspan baseline-shift="sub" font-size="9">L</tspan></text>
+              <text x="405" y="197" class="svg-circuit" text-anchor="middle">R<tspan baseline-shift="sub" font-size="11">L</tspan></text>
               <path class="wire" d="M405 215V285H300"></path>
               <path class="wire" d="M325 95H365" marker-end="url(#arrow-navy)"></path>
               <circle cx="300" cy="95" r="4" fill="#003b71"></circle>
@@ -436,8 +449,8 @@
               <text x="312" y="115" class="svg-main">+</text>
               <text x="312" y="282" class="svg-main">−</text>
               <path class="voltage-guide" d="M338 100V280 M332 100H338 M332 280H338"></path>
-              <text x="354" y="190" class="svg-circuit" text-anchor="middle" transform="rotate(-90 354 190)">V<tspan baseline-shift="sub" font-size="9">term</tspan> = V<tspan baseline-shift="sub" font-size="9">p</tspan> − V<tspan baseline-shift="sub" font-size="9">n</tspan></text>
-              <text x="230" y="326" class="svg-circuit" text-anchor="middle">P<tspan baseline-shift="sub" font-size="9">out</tspan> = V<tspan baseline-shift="sub" font-size="9">term</tspan>I</text>
+              <text x="354" y="190" class="svg-circuit" text-anchor="middle" transform="rotate(-90 354 190)">V<tspan baseline-shift="sub" font-size="11">term</tspan> = V<tspan baseline-shift="sub" font-size="11">p</tspan> − V<tspan baseline-shift="sub" font-size="11">n</tspan></text>
+              <text x="230" y="326" class="svg-circuit" text-anchor="middle">P<tspan baseline-shift="sub" font-size="11">out</tspan> = V<tspan baseline-shift="sub" font-size="11">term</tspan>I</text>
             </g>
           </svg>
           <p class="device-label">Illuminated p<sup>+</sup>–n cell delivering power to a load · schematic not to scale</p>
@@ -833,9 +846,18 @@
         </div>
         <p class="result-status"><strong>Current Cell #3 snapshot:</strong> the optimizer converged, but Q = 15.1 &gt; 4.0, so the declared quality gate fails. Treat this as a model-adequacy diagnosis—not as a validated extraction of physical parameters.</p>
         <div class="gallery">
-          <figure><img src="results/profiles.png" alt="Doping, electric field, carrier, and optical-generation profiles across the solar cell"><figcaption><strong>Inside the device</strong>Relate structure and equations to fields, carriers, recombination, and generation.</figcaption></figure>
-          <figure><img src="results/joint_observables.png" alt="Measured and simulated illuminated and dark current-voltage data with short-circuit and open-circuit checks"><figcaption><strong>Across compatible observables</strong>Compare illuminated and dark J–V together with independent J<sub>sc</sub> and V<sub>oc</sub> checks.</figcaption></figure>
-          <figure><img src="results/eqe.png" alt="Modeled external quantum efficiency and single-pass absorption reference"><figcaption><strong>Across wavelength</strong>Separate electrical collection from the single-pass optical absorption reference.</figcaption></figure>
+          <figure class="figure-profiles">
+            <a class="figure-link" href="results/profiles.png" aria-label="Open the internal device profiles at full size"><img src="results/profiles.png" alt="Doping, electric field, carrier, and optical-generation profiles across the solar cell"></a>
+            <figcaption><strong>Inside the device</strong>Relate structure and equations to fields, carriers, recombination, and generation.<br><a class="figure-open" href="results/profiles.png">Open full-size figure →</a></figcaption>
+          </figure>
+          <figure class="figure-eqe">
+            <a class="figure-link" href="results/eqe.png" aria-label="Open the modeled EQE figure at full size"><img src="results/eqe.png" alt="Modeled external quantum efficiency and single-pass absorption reference"></a>
+            <figcaption><strong>Across wavelength</strong>Separate electrical collection from the single-pass optical absorption reference.<br><a class="figure-open" href="results/eqe.png">Open full-size figure →</a></figcaption>
+          </figure>
+          <figure class="figure-calibration">
+            <a class="figure-link" href="results/joint_observables.png" aria-label="Open the joint calibration observables at full size"><img src="results/joint_observables.png" alt="Measured and simulated illuminated and dark current-voltage data with short-circuit and open-circuit checks"></a>
+            <figcaption><strong>Across compatible observables</strong>Compare illuminated and dark J–V together with independent J<sub>sc</sub> and V<sub>oc</sub> checks. The full-width layout preserves the residual-block labels used to diagnose the failed quality gate.<br><a class="figure-open" href="results/joint_observables.png">Open full-size figure →</a></figcaption>
+          </figure>
         </div>
       </div>
     </section>
