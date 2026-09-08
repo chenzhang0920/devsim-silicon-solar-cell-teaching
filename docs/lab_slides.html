@@ -238,8 +238,12 @@
     --junction-x:26.25%; position:relative; display:grid; grid-template-columns:2.1fr 5.9fr;
     height:8rem; margin:1rem .5rem 2.2rem; border:2px solid var(--blue-dark);
   }
-  .depletion-bar .p-side { display:grid; place-items:center; color:#513b08; background:#f3d788; font-size:1.2rem; font-weight:800; }
-  .depletion-bar .n-side { display:grid; place-items:center; color:white; background:#287ca6; font-size:1.2rem; font-weight:800; }
+  .depletion-bar .p-side, .depletion-bar .n-side {
+    display:flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap;
+    font-size:1.2rem; font-weight:800;
+  }
+  .depletion-bar .p-side { color:#513b08; background:#f3d788; }
+  .depletion-bar .n-side { color:white; background:#287ca6; }
   .depletion-bar::before {
     content:"depletion region, W₀ ≈ 0.109 µm"; position:absolute; left:calc(var(--junction-x) - 3%); top:-1.7rem;
     width:50%; padding-bottom:.15rem; color:var(--orange); border-bottom:4px solid var(--orange);
