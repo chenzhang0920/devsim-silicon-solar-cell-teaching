@@ -158,7 +158,7 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "shunt_resistance = 0" in html
     assert "Forward problem:" in html and "Inverse problem:" in html
     assert "Baseline forward-model inputs" in html
-    assert "It is not a measured irradiance" in html
+    assert "it is not a measured irradiance" in html
     assert "raw instrument files are not direct PDE inputs" in html
     assert "Area is experimental metadata" in html
     assert "3 cm &times; 4 cm = 12 cm<sup>2</sup>" in html
