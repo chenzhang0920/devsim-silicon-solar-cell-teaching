@@ -138,7 +138,9 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "Zhang CHEN" in html
     assert "zchen758@connect.hkust-gz.edu.cn" in html
     assert 'id="physics"' in html
-    assert "Newton iteration closes this nonlinear loop" in html
+    assert "Follow the five questions in order" in html
+    assert "Question 1 · Junction electrostatics" in html
+    assert "Question 5 · From device solution to measured data" in html
     assert "d<sup>2</sup>&psi;/dx<sup>2</sup>" in html
     assert "J<sub>n</sub> = q&mu;<sub>n</sub>nE" in html
     assert "R<sub>SRH</sub>" in html
