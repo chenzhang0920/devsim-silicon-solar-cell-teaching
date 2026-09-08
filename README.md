@@ -11,6 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/actions/workflows/tests.yml"><img alt="Tests" src="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/actions/workflows/tests.yml/badge.svg"></a>
+  <a href="https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/"><img alt="Course website" src="https://img.shields.io/badge/course-website-0878ae"></a>
   <a href="LICENSE"><img alt="Code license: MIT" src="https://img.shields.io/badge/code-MIT-176b55"></a>
   <a href="LICENSE-CONTENT.md"><img alt="Content license: CC BY 4.0" src="https://img.shields.io/badge/content-CC%20BY%204.0-176b55"></a>
 </p>
@@ -48,14 +49,15 @@ flowchart LR
 
 Student entry points:
 
+- [Course Website](https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/) — the visual landing page for students;
 - [Tutorial Notebook](notebooks/tutorial.ipynb) — the guided, executable lesson;
 - [Student Lab Guide](docs/lab_guide.md) — what to run, submit, and explain;
 - [Experiment Protocol](docs/experiment_protocol.md) — measurement and metadata rules;
 - [Classroom Slides](docs/lab_slides.html) — the projection-ready lesson deck.
 
-GitHub displays the slide file as source. After cloning or downloading the repository,
-open `docs/lab_slides.html` in a browser and use the arrow keys or Space to present it;
-printing from the browser produces a 16:9 PDF handout.
+Open the [classroom slides online](https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/docs/lab_slides.html),
+or open `docs/lab_slides.html` after cloning or downloading the repository. Use the arrow
+keys or Space to present it; printing from the browser produces a 16:9 PDF handout.
 
 ## 🎯 Learning outcomes
 

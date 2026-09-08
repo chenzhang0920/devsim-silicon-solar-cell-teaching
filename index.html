@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MICS3090 teaching project: learn semiconductor device simulation, measurement processing, and calibration with a p+-on-n silicon solar cell in DEVSIM.">
+  <meta name="theme-color" content="#003b71">
+  <link rel="icon" type="image/png" href="docs/logo1_HKUSTGZ.png">
+  <link rel="canonical" href="https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/">
+  <title>DEVSIM Silicon Solar Cell | MICS3090</title>
+  <style>
+    :root {
+      --navy: #003b71;
+      --blue: #0878ae;
+      --gold: #b58b2a;
+      --orange: #a94b10;
+      --ink: #17242d;
+      --muted: #52616c;
+      --paper: #ffffff;
+      --wash: #f4f8fb;
+      --line: #d5e0e7;
+      --shadow: 0 14px 36px rgba(0, 59, 113, .11);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--wash);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    img { display: block; max-width: 100%; }
+    .shell { width: min(1160px, calc(100% - 2.5rem)); margin: 0 auto; }
+    .skip-link {
+      position: fixed; top: .5rem; left: .5rem; z-index: 100;
+      padding: .55rem .8rem; color: white; background: var(--navy);
+      border-radius: 6px; transform: translateY(-160%);
+    }
+    .skip-link:focus { transform: none; }
+
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(255, 255, 255, .94);
+      border-bottom: 1px solid rgba(213, 224, 231, .9);
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      min-height: 76px; display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem;
+    }
+    .brand { display: flex; align-items: center; gap: .9rem; text-decoration: none; }
+    .brand img { width: 142px; height: auto; }
+    .brand span { padding-left: .9rem; border-left: 1px solid var(--line); }
+    .brand strong { display: block; color: var(--navy); line-height: 1.2; }
+    .brand small { color: var(--muted); }
+    nav { display: flex; gap: 1.2rem; font-size: .95rem; font-weight: 700; }
+    nav a { color: var(--navy); text-decoration: none; }
+    nav a:hover, nav a:focus-visible { color: var(--orange); }
+
+    .hero {
+      overflow: hidden; position: relative; padding: 5.4rem 0 4.4rem;
+      background:
+        radial-gradient(circle at 84% 18%, rgba(181, 139, 42, .2), transparent 27%),
+        linear-gradient(135deg, #ffffff 0%, #f3f8fb 62%, #eaf3f8 100%);
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.42fr) minmax(260px, .58fr); gap: 4rem; align-items: center; }
+    .eyebrow {
+      margin: 0 0 .8rem; color: #755711; font-size: .82rem;
+      font-weight: 850; letter-spacing: .14em; text-transform: uppercase;
+    }
+    h1, h2, h3 { color: var(--navy); line-height: 1.15; }
+    h1 { max-width: 780px; margin: 0; font-size: clamp(2.65rem, 5.8vw, 5.2rem); letter-spacing: -.04em; }
+    h2 { margin: 0 0 .8rem; font-size: clamp(1.9rem, 3.2vw, 3rem); letter-spacing: -.025em; }
+    h3 { margin: 0 0 .45rem; font-size: 1.18rem; }
+    .lead { max-width: 760px; margin: 1.3rem 0 1.7rem; color: var(--muted); font-size: clamp(1.08rem, 1.8vw, 1.35rem); }
+    .actions { display: flex; flex-wrap: wrap; gap: .8rem; }
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      min-height: 46px; padding: .7rem 1rem; border: 2px solid var(--navy);
+      border-radius: 9px; color: var(--navy); background: transparent;
+      font-weight: 800; text-decoration: none;
+    }
+    .button.primary { color: white; background: var(--navy); }
+    .button:hover, .button:focus-visible { border-color: var(--orange); color: var(--orange); background: white; }
+    .button.primary:hover, .button.primary:focus-visible { color: white; background: var(--orange); }
+    .hero-note { margin: 1.2rem 0 0; color: var(--muted); font-size: .94rem; }
+
+    .device-card {
+      padding: 1.35rem; background: rgba(255, 255, 255, .94);
+      border: 1px solid var(--line); border-top: 5px solid var(--gold);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .sun { margin-bottom: .75rem; color: var(--gold); font-size: 2.7rem; text-align: center; line-height: 1; }
+    .ray { height: 3px; margin: .4rem auto 1rem; width: 68%; background: repeating-linear-gradient(90deg, var(--orange) 0 16px, transparent 16px 27px); }
+    .layer { display: grid; place-items: center; min-height: 78px; padding: .7rem; text-align: center; font-weight: 850; }
+    .layer span { display: block; font-size: .82rem; font-weight: 600; }
+    .emitter { color: #4d3a0a; background: #f1d27c; border: 3px solid var(--navy); border-radius: 10px 10px 0 0; }
+    .base { min-height: 130px; color: white; background: #2585b4; border: 3px solid var(--navy); border-top: 0; border-radius: 0 0 10px 10px; }
+    .device-label { margin: .8rem 0 0; color: var(--muted); text-align: center; font-size: .9rem; font-weight: 700; }
+
+    .facts { margin-top: -1.7rem; position: relative; z-index: 2; }
+    .fact-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); overflow: hidden;
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 13px; box-shadow: 0 8px 25px rgba(0, 59, 113, .08);
+    }
+    .fact { padding: 1rem 1.15rem; border-right: 1px solid var(--line); }
+    .fact:last-child { border-right: 0; }
+    .fact strong { display: block; color: var(--navy); }
+    .fact span { color: var(--muted); font-size: .9rem; }
+
+    section { padding: 4.6rem 0; }
+    .section-head { max-width: 720px; margin-bottom: 2rem; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 1.08rem; }
+    .steps, .resources { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .step, .resource {
+      min-width: 0; padding: 1.25rem; background: var(--paper);
+      border: 1px solid var(--line); border-radius: 12px;
+    }
+    .step { border-top: 4px solid var(--blue); }
+    .step-number {
+      display: inline-grid; place-items: center; width: 2.15rem; height: 2.15rem;
+      margin-bottom: .9rem; color: white; background: var(--navy);
+      border-radius: 50%; font-size: .82rem; font-weight: 850;
+    }
+    .step p, .resource p { margin: 0; color: var(--muted); font-size: .96rem; }
+
+    .resources-section { background: var(--navy); color: white; }
+    .resources-section h2, .resources-section h3 { color: white; }
+    .resources-section .section-head p { color: #d7e6ef; }
+    .resources { grid-template-columns: repeat(3, 1fr); }
+    .resource { display: flex; flex-direction: column; border-color: rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .09); }
+    .resource p { color: #d7e6ef; }
+    .resource a { margin-top: auto; padding-top: 1rem; color: #f3d788; font-weight: 800; text-decoration: none; }
+    .resource a:hover, .resource a:focus-visible { color: white; text-decoration: underline; }
+    .resource.featured { background: white; }
+    .resource.featured h3 { color: var(--navy); }
+    .resource.featured p { color: var(--muted); }
+    .resource.featured a { color: var(--orange); }
+
+    .gallery { display: grid; grid-template-columns: 1fr 1.35fr 1fr; gap: 1rem; align-items: stretch; }
+    figure {
+      display: flex; flex-direction: column; margin: 0; overflow: hidden;
+      background: white; border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: 0 5px 18px rgba(0, 59, 113, .06);
+    }
+    figure img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: white; }
+    figcaption { padding: .8rem 1rem 1rem; color: var(--muted); font-size: .92rem; }
+    figcaption strong { display: block; margin-bottom: .2rem; color: var(--navy); font-size: 1rem; }
+
+    .scope-grid { display: grid; grid-template-columns: 1.3fr .7fr; gap: 2rem; align-items: start; }
+    .scope-box { padding: 1.3rem 1.45rem; background: #fff7ed; border-left: 5px solid var(--orange); border-radius: 8px; }
+    .scope-box p { margin: 0; }
+    .scope-list { margin: 0; padding-left: 1.25rem; }
+    .scope-list li { margin-bottom: .55rem; }
+
+    footer { padding: 2.5rem 0; color: #d7e6ef; background: #022d53; }
+    .footer-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 2rem; }
+    footer strong { color: white; }
+    footer p { margin: .2rem 0; }
+    footer a { color: #f3d788; }
+    .fine-print { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, .2); font-size: .86rem; }
+
+    @media (max-width: 900px) {
+      nav { display: none; }
+      .hero { padding-top: 3.8rem; }
+      .hero-grid, .scope-grid { grid-template-columns: 1fr; }
+      .device-card { width: min(390px, 100%); }
+      .fact-grid, .steps { grid-template-columns: 1fr 1fr; }
+      .fact:nth-child(2) { border-right: 0; }
+      .fact:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .resources, .gallery { grid-template-columns: 1fr; }
+      figure img { max-height: 420px; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 1.4rem, 1160px); }
+      .header-inner { min-height: 66px; }
+      .brand img { width: 116px; }
+      .brand span { display: none; }
+      .hero { padding: 3rem 0 3.5rem; }
+      .hero-grid { gap: 2.5rem; }
+      .fact-grid, .steps { grid-template-columns: 1fr; }
+      .fact { border-right: 0; border-bottom: 1px solid var(--line); }
+      .fact:last-child { border-bottom: 0; }
+      section { padding: 3.5rem 0; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media print {
+      .site-header, .actions { display: none; }
+      body { background: white; }
+      .hero, section { padding: 2rem 0; }
+      .facts { margin-top: 0; }
+      .resource, .resources-section { color: var(--ink); background: white; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to course content</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="MICS3090 course project home">
+        <img src="docs/logo1_HKUSTGZ.png" alt="HKUST(GZ)">
+        <span><strong>MICS3090 (L01)</strong><small>Integrated Circuit Devices</small></span>
+      </a>
+      <nav aria-label="Course website">
+        <a href="#workflow">Workflow</a>
+        <a href="#resources">Materials</a>
+        <a href="#evidence">Results</a>
+        <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow">Semiconductor simulation · experiment · calibration</p>
+          <h1>Learn device physics through a working solar cell</h1>
+          <p class="lead">Build and solve a one-dimensional p<sup>+</sup>-on-n silicon solar cell in DEVSIM, connect internal physics to terminal measurements, and test what the available data can genuinely calibrate.</p>
+          <div class="actions">
+            <a class="button primary" href="docs/lab_slides.html">Open classroom slides <span aria-hidden="true">→</span></a>
+            <a class="button" href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/notebooks/tutorial.ipynb">View guided Notebook</a>
+          </div>
+          <p class="hero-note">The Notebook includes executed outputs and can be read before installing DEVSIM.</p>
+        </div>
+        <aside class="device-card" aria-label="Front-illuminated p-plus-on-n device structure">
+          <div class="sun" aria-hidden="true">☀</div>
+          <div class="ray" aria-hidden="true"></div>
+          <div class="layer emitter">p<sup>+</sup> emitter <span>front junction and contact</span></div>
+          <div class="layer base">n-type base <span>silicon absorber</span></div>
+          <p class="device-label">Front illumination · ordinary p–n junction</p>
+        </aside>
+      </div>
+    </section>
+
+    <div class="shell facts" aria-label="Project summary">
+      <div class="fact-grid">
+        <div class="fact"><strong>1D device</strong><span>Transparent spatial model</span></div>
+        <div class="fact"><strong>Drift–diffusion</strong><span>Poisson and continuity equations</span></div>
+        <div class="fact"><strong>Measured J–V</strong><span>Dark, illuminated, J<sub>sc</sub>, and V<sub>oc</sub></span></div>
+        <div class="fact"><strong>Small inverse problem</strong><span>Residuals and identifiability</span></div>
+      </div>
+    </div>
+
+    <section id="workflow">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Learning storyline</p>
+          <h2>From physical assumptions to defensible evidence</h2>
+          <p>Each stage produces something students can inspect, challenge, and explain.</p>
+        </div>
+        <div class="steps">
+          <article class="step"><span class="step-number">01</span><h3>Build</h3><p>Define the mesh, p<sup>+</sup> emitter, n-type base, contacts, doping, and optical source.</p></article>
+          <article class="step"><span class="step-number">02</span><h3>Solve</h3><p>Use continuation to reach equilibrium, dark bias, illumination, and the operating J–V curve.</p></article>
+          <article class="step"><span class="step-number">03</span><h3>Measure</h3><p>Convert instrument current to current density with traceable area, polarity, units, and metadata.</p></article>
+          <article class="step"><span class="step-number">04</span><h3>Calibrate</h3><p>Fit a limited parameter set, inspect residual blocks, and decide whether the result is identifiable.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="resources-section" id="resources">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow" style="color:#f3d788">Student entry points</p>
+          <h2>Use the right material at each stage</h2>
+          <p>Start with the slides or Notebook, then use the supporting documents while running the laboratory.</p>
+        </div>
+        <div class="resources">
+          <article class="resource featured"><h3>Classroom slides</h3><p>Projection-ready explanation of the model, solver sequence, observables, and calibration limits.</p><a href="docs/lab_slides.html">Present the lesson →</a></article>
+          <article class="resource"><h3>Tutorial Notebook</h3><p>The executable teaching path with complete calibration plots and saved outputs.</p><a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/notebooks/tutorial.ipynb">Read on GitHub →</a></article>
+          <article class="resource"><h3>Student lab guide</h3><p>Tasks, expected reasoning, commands, and submission structure.</p><a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/docs/lab_guide.md">Open the guide →</a></article>
+          <article class="resource"><h3>Experiment protocol</h3><p>Measurement procedure, file provenance, units, polarity, and metadata requirements.</p><a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/docs/experiment_protocol.md">Prepare measurements →</a></article>
+          <article class="resource"><h3>Assessment rubric</h3><p>Five tasks totaling 100 points, equal to 10% of the course grade.</p><a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/docs/grading.md">Review the rubric →</a></article>
+          <article class="resource"><h3>Source and setup</h3><p>Installation, command-line workflows, data layout, licenses, and reproducibility notes.</p><a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching#readme">Open the repository →</a></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Visual evidence</p>
+          <h2>Interpret more than a single fitted curve</h2>
+          <p>Internal fields, spectral response, multiple electrical observables, and residual structure tell different parts of the story.</p>
+        </div>
+        <div class="gallery">
+          <figure><img src="results/profiles.png" alt="Doping, electric field, carrier, and optical-generation profiles across the solar cell"><figcaption><strong>Inside the device</strong>Relate structure and equations to fields, carriers, recombination, and generation.</figcaption></figure>
+          <figure><img src="results/joint_observables.png" alt="Measured and simulated illuminated and dark current-voltage data with short-circuit and open-circuit checks"><figcaption><strong>Across compatible observables</strong>Compare illuminated and dark J–V together with independent J<sub>sc</sub> and V<sub>oc</sub> checks.</figcaption></figure>
+          <figure><img src="results/eqe.png" alt="Modeled external quantum efficiency and single-pass absorption reference"><figcaption><strong>Across wavelength</strong>Separate electrical collection from the single-pass optical absorption reference.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="scope-title">
+      <div class="shell scope-grid">
+        <div>
+          <p class="eyebrow">Model scope</p>
+          <h2 id="scope-title">Simple enough to learn; explicit enough to critique</h2>
+          <div class="scope-box"><p>This is a transparent teaching model for undergraduate students. It is not an industrial process deck or a claim of fabrication-grade parameter extraction.</p></div>
+        </div>
+        <ul class="scope-list">
+          <li>Ordinary p<sup>+</sup>-on-n junction, not a p–i–n device.</li>
+          <li>One-dimensional transport with stated boundary conditions.</li>
+          <li>Single-pass optical absorption; no rear reflector or light trapping.</li>
+          <li>Only parameters supported by the available observations are fitted.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <div class="footer-grid">
+        <div><strong>MICS3090 (L01) · Integrated Circuit Devices</strong><p>Instructor: Renjie WANG</p><p>Project weight: 10% of the course grade</p></div>
+        <div><strong>Teaching assistant: Zhang CHEN</strong><p><a href="mailto:zchen758@connect.hkust-gz.edu.cn">zchen758@connect.hkust-gz.edu.cn</a></p><p>TA office: W2-4F-028</p></div>
+      </div>
+      <div class="fine-print">Code: MIT License · Teaching content: CC BY 4.0 · DEVSIM is a registered trademark of DEVSIM LLC.</div>
+    </div>
+  </footer>
+</body>
+</html>

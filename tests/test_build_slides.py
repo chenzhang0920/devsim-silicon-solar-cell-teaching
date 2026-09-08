@@ -122,3 +122,22 @@ def test_student_deck_matches_build_and_data_contracts():
         "--param", "hole_lifetime", "--start", "1e-6",
         "--stop", "1e-4", "--n", "5",
     ]
+
+
+def test_course_website_has_valid_local_assets_and_student_entry_points():
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "index.html").read_text(encoding="utf-8")
+
+    assert "MICS3090 (L01)" in html
+    assert "p<sup>+</sup>-on-n" in html
+    assert 'href="docs/lab_slides.html"' in html
+    assert "notebooks/tutorial.ipynb" in html
+    assert "docs/lab_guide.md" in html
+    assert "docs/experiment_protocol.md" in html
+    assert "docs/grading.md" in html
+    assert "Zhang CHEN" in html
+    assert "zchen758@connect.hkust-gz.edu.cn" in html
+
+    local_refs = re.findall(r'(?:href|src)="((?!https?:|mailto:|#)[^"]+)"', html)
+    assert local_refs
+    assert all((root / ref).is_file() for ref in local_refs)
