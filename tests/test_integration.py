@@ -61,6 +61,14 @@ def test_device_is_front_p_plus_on_n_and_field_points_to_front():
     e_field = d["electric_field"]
     assert e_field[int(np.argmax(np.abs(e_field)))] < 0
 
+    # Electron and hole currents vary as carriers are generated and
+    # recombine, but their sum must remain spatially constant in steady state.
+    total_current = d["ill_electron_current"] + d["ill_hole_current"]
+    current_scale = max(float(np.max(np.abs(total_current))), 1e-30)
+    assert np.ptp(total_current) / current_scale < 1e-3
+    equilibrium_total = d["electron_current"] + d["hole_current"]
+    assert np.max(np.abs(equilibrium_total)) < 1e-5
+
     # ``numpy.trapezoid`` was added in NumPy 2.0; keep the test compatible
     # with the project's NumPy >=1.24 environment as well.
     integrate = getattr(np, "trapezoid", np.trapz)

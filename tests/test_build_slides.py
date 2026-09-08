@@ -1,4 +1,5 @@
 """Tests for generated-asset planning and classroom-slide contracts."""
+import json
 import re
 from pathlib import Path
 
@@ -140,10 +141,15 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert 'id="model"' in html
     assert "Begin with the complete mathematical problem" in html
     assert "Problem statement." in html
+    assert "Solved self-consistently" in html
+    assert "Prescribed model inputs" in html
+    assert "Calculated after the PDE solve" in html
     assert "{&psi;(x), n(x), p(x)} = S(" in html
     assert "Unknowns</strong><span>&psi;(x), n(x), and p(x)" in html
     assert "Boltzmann statistics, complete dopant ionization" in html
     assert "band-gap narrowing and Fermi–Dirac degeneracy" in html
+    assert "it does not mean an intrinsic silicon layer" in html
+    assert "V<sub>bi</sub> &asymp; 0.95 V" in html
     assert "the solver uses cm–V–s units" in html
     assert "Which equations are solved in the silicon?" in html
     assert "Core PDE system" in html
@@ -152,6 +158,7 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "What is imposed at x = 0 and x = L?" in html
     assert "n(0) = n<sub>c,front</sub>" in html
     assert "Boundary-condition count" in html
+    assert "V<sub>j</sub> &gt; 0 is forward bias" in html
     assert "Thermal equilibrium" in html and "Dark J–V" in html and "EQE" in html
     assert "V<sub>back</sub> = 0 is the electrical reference" in html
     assert "R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions" in html
@@ -162,6 +169,7 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "raw instrument files are not direct PDE inputs" in html
     assert "Area is experimental metadata" in html
     assert "3 cm &times; 4 cm = 12 cm<sup>2</sup>" in html
+    assert "0.1 W/cm<sup>2</sup> input-power value is an illustrative reporting convention" in html
     assert "Solve equilibrium Poisson with both external contact biases at zero" in html
     assert "J<sub>n</sub> &asymp; J<sub>p</sub> &asymp; 0" in html
     assert 'id="physics"' in html
@@ -174,6 +182,13 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "V<sub>term</sub> = V<sub>j</sub>" in html
     assert "illuminated J–V, dark J–V, independent J<sub>sc</sub>" in html
     assert "Only s (<code>photon_flux</code>) and R<sub>s</sub> vary" in html
+    assert "not a reduced &chi;<sup>2</sup> test" in html
+
+    metrics = json.loads((root / "results" / "joint_metrics.json").read_text(encoding="utf-8"))
+    objective = metrics["joint_objective"]
+    assert f"Q = {objective['normalized_block_score']:.1f}" in html
+    assert f"&gt; {objective['quality_warning_threshold']:.1f}" in html
+    assert "the declared quality gate fails" in html
 
     local_refs = re.findall(r'(?:href|src)="((?!https?:|mailto:|#)[^"]+)"', html)
     assert local_refs

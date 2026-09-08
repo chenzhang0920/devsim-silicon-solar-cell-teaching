@@ -28,7 +28,7 @@ def simulate(p: SolarCellParams,
 
 
 def profiles(p: SolarCellParams, bias: float = 0.0) -> dict:
-    """Return equilibrium and illuminated internal profiles."""
+    """Return equilibrium and illuminated node fields and edge currents."""
 
     from .device import profiles as _profiles
 

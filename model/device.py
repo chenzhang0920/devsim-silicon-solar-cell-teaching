@@ -554,20 +554,20 @@ def simulate_eqe(p: SolarCellParams, wavelength_index: int) -> float:
 
 @_quiet_sim
 def profiles(p: SolarCellParams, bias: float = 0.0) -> dict:
-    """Return equilibrium and illuminated internal profiles at a selected bias."""
+    """Return equilibrium and illuminated node fields and edge currents."""
     if not np.isfinite(bias):
         raise ValueError(f"bias must be finite; received {bias!r}")
     _setup_device(p)
 
     eq = _grab("x", "Potential", "Electrons", "Holes",
                "NetDoping", "Donors", "Acceptors")
-    eq_edges = _grab_edges("ElectricField")
+    eq_edges = _grab_edges("ElectricField", "ElectronCurrent", "HoleCurrent")
 
     _illuminate(p)
     if bias:
         _ramp_bias(bias)
     ill = _grab("Potential", "Electrons", "Holes", "OpticalGeneration")
-    ill_edges = _grab_edges("ElectricField")
+    ill_edges = _grab_edges("ElectricField", "ElectronCurrent", "HoleCurrent")
 
     return {
         "x": eq["x"],
@@ -579,9 +579,13 @@ def profiles(p: SolarCellParams, bias: float = 0.0) -> dict:
         "acceptors": eq["Acceptors"],
         "field_x": 0.5 * (eq["x"][:-1] + eq["x"][1:]),
         "electric_field": eq_edges["ElectricField"],
+        "electron_current": eq_edges["ElectronCurrent"],
+        "hole_current": eq_edges["HoleCurrent"],
         "ill_potential": ill["Potential"],
         "ill_electrons": ill["Electrons"],
         "ill_holes": ill["Holes"],
         "ill_electric_field": ill_edges["ElectricField"],
+        "ill_electron_current": ill_edges["ElectronCurrent"],
+        "ill_hole_current": ill_edges["HoleCurrent"],
         "generation": ill["OpticalGeneration"],
     }

@@ -135,6 +135,13 @@
       font-family: Cambria, Georgia, serif; font-size: 1.14rem; line-height: 1.75; white-space: nowrap;
     }
     .contract-equation span { display: block; }
+    .model-ledger {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+      max-width: 1040px; margin: 0 auto 3.8rem;
+    }
+    .model-ledger div { padding-top: .85rem; border-top: 2px solid var(--navy); }
+    .model-ledger h3 { margin-bottom: .45rem; font-size: 1.02rem; }
+    .model-ledger p { margin: 0; color: var(--muted); font-size: .92rem; }
     .assumption-grid {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: .55rem 1.6rem;
       max-width: 980px; margin: 1.35rem auto 0; padding: 0; list-style: none;
@@ -144,6 +151,13 @@
     .model-overview div { padding-top: .75rem; border-top: 2px solid var(--navy); }
     .model-overview strong { display: block; color: var(--ink); }
     .model-overview span { color: var(--muted); font-size: .92rem; }
+    .sanity-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+      max-width: 980px; margin: 1.5rem auto;
+    }
+    .sanity-grid div { padding-top: .75rem; border-top: 1px solid var(--line); }
+    .sanity-grid strong { display: block; color: var(--navy); font-family: Cambria, Georgia, serif; font-size: 1.08rem; }
+    .sanity-grid span { color: var(--muted); font-size: .9rem; }
     .model-equation-table { overflow-x: auto; margin: 1.55rem auto; border-top: 1px solid var(--line); }
     .model-equation-table table { width: 100%; min-width: 780px; border-collapse: collapse; background: white; }
     .model-equation-table th, .model-equation-table td { padding: .9rem 1rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
@@ -249,6 +263,10 @@
     .parameter-map td { color: var(--muted); font-size: .9rem; }
     .parameter-map td:first-child { color: var(--navy); font-weight: 800; }
     .fit-note { max-width: var(--reader); margin: 1.25rem auto 0; color: var(--muted); font-size: .94rem; }
+    .result-status {
+      max-width: var(--reader); margin: 0 auto 2rem; padding: .75rem 0 .75rem 1rem;
+      color: var(--ink); border-left: 2px solid var(--orange); font-size: .94rem;
+    }
 
     .section-head { max-width: var(--reader); margin: 0 auto 3.3rem; }
     .section-head p:last-child { margin: 0; color: var(--muted); font-size: 1.08rem; }
@@ -299,7 +317,7 @@
       .hero-grid, .scope-grid { grid-template-columns: 1fr; }
       .device-card { width: min(390px, 100%); }
       .fact-grid, .steps { grid-template-columns: 1fr 1fr; }
-      .model-overview, .boundary-grid, .io-grid, .assumption-grid { grid-template-columns: 1fr; }
+      .model-ledger, .model-overview, .boundary-grid, .io-grid, .assumption-grid, .sanity-grid { grid-template-columns: 1fr; }
       .core-system { grid-template-columns: 1fr; }
       .coupling-path { grid-template-columns: 1fr 1fr; gap: .8rem; }
       .coupling-node:not(:last-child)::after { display: none; }
@@ -372,8 +390,8 @@
         <aside class="device-card" aria-label="Front-illuminated p-plus-on-n device structure">
           <div class="sun" aria-hidden="true">☀</div>
           <div class="ray" aria-hidden="true"></div>
-          <div class="layer emitter"><strong>p<sup>+</sup> emitter</strong><span>front junction and contact</span></div>
-          <div class="layer base"><strong>n-type base</strong><span>silicon absorber</span></div>
+          <div class="layer emitter"><strong>p<sup>+</sup> emitter</strong><span>front contact · 0.5 &micro;m thick</span></div>
+          <div class="layer base"><strong>n-type base</strong><span>junction at upper edge · silicon absorber</span></div>
           <p class="device-label">Front illumination · ordinary p–n junction</p>
         </aside>
       </div>
@@ -405,6 +423,12 @@
           Here S is the coupled DEVSIM drift–diffusion solve and T is the explicit per-unit-area terminal mapping. This separation prevents circuit parameters from being mistaken for material physics.
         </div>
 
+        <div class="model-ledger" aria-label="Model implementation layers">
+          <div><h3>Solved self-consistently</h3><p>DEVSIM solves &psi;, n, and p from Poisson and carrier continuity. Scharfetter–Gummel edge currents couple the three fields.</p></div>
+          <div><h3>Prescribed model inputs</h3><p>Geometry, abrupt doping, mobilities, lifetimes, Auger coefficients, optical bins, reflectance, and effective dead-layer losses are supplied rather than inferred.</p></div>
+          <div><h3>Calculated after the PDE solve</h3><p>R<sub>s</sub>/R<sub>sh</sub> terminal mapping, J–V metrics, measurement residuals, and the quality gate do not alter the intrinsic device equations.</p></div>
+        </div>
+
         <article class="model-block">
           <p class="equation-label">0 · Domain, unknowns, and assumptions</p>
           <h3>What exactly does DEVSIM solve—and under which assumptions?</h3>
@@ -415,7 +439,13 @@
             <div><strong>Fixed charge</strong><span>N<sub>A</sub> = 10<sup>19</sup> cm<sup>&minus;3</sup> in the p<sup>+</sup> emitter and N<sub>D</sub> = 10<sup>17</sup> cm<sup>&minus;3</sup> in the n-type base.</span></div>
           </div>
           <p class="model-note"><strong>Abrupt doping input:</strong> N<sub>A</sub>(x) = N<sub>A0</sub>H(x<sub>e</sub>&minus;x) and N<sub>D</sub>(x) = N<sub>D0</sub>[1&minus;H(x<sub>e</sub>&minus;x)], where H is the step function.</p>
-          <p class="model-note"><strong>Geometry note:</strong> the depletion region is a solution of Poisson’s equation around x<sub>e</sub>, not a third material layer. The device is an ordinary p–n junction, not a p–i–n structure.</p>
+          <p class="model-note"><strong>Geometry note:</strong> the depletion region is a solution of Poisson’s equation around x<sub>e</sub>, not a third material layer. “Depleted” means that mobile carriers are scarce while ionized dopants remain; it does not mean an intrinsic silicon layer. The device is an ordinary p–n junction, not a p–i–n structure.</p>
+          <div class="sanity-grid" aria-label="Abrupt-junction hand estimates">
+            <div><strong>V<sub>T</sub> &asymp; 25.9 mV</strong><span>Thermal voltage at the supported temperature T = 300 K.</span></div>
+            <div><strong>V<sub>bi</sub> &asymp; 0.95 V</strong><span>From V<sub>T</sub>ln(N<sub>A</sub>N<sub>D</sub>/n<sub>i</sub><sup>2</sup>) using the same Boltzmann approximation as the model.</span></div>
+            <div><strong>W<sub>0</sub> &asymp; 0.109 &micro;m</strong><span>Zero-bias depletion estimate: about 0.108 &micro;m in the n base and 1.1 nm in the p<sup>+</sup> emitter.</span></div>
+          </div>
+          <p class="model-note"><strong>Use these estimates as checks, not measurements:</strong> they explain why the junction is strongly one-sided. The nominal 10<sup>19</sup> cm<sup>&minus;3</sup> emitter is also where the omitted degeneracy and band-gap-narrowing physics matter most.</p>
           <ul class="assumption-grid" aria-label="Model assumptions">
             <li><strong>Steady state and isothermal:</strong> no time derivatives; T = 300 K throughout.</li>
             <li><strong>One dimensional:</strong> lateral current spreading, fingers, busbars, and edge leakage are omitted.</li>
@@ -481,7 +511,7 @@
               <p class="boundary-equation">n<sub>c</sub>p<sub>c</sub> = n<sub>i</sub><sup>2</sup>, &nbsp; n<sub>c</sub> &minus; p<sub>c</sub> = N<sub>D</sub> &minus; N<sub>A</sub></p>
               <p class="boundary-equation">n(0) = n<sub>c,front</sub>, &nbsp; p(0) = p<sub>c,front</sub></p>
               <p class="boundary-equation">&psi;<sub>c</sub> = V<sub>front</sub> &minus; V<sub>T</sub>ln(p<sub>c</sub>/n<sub>i</sub>)</p>
-              <p>V<sub>front</sub> = V<sub>j</sub>. Illumination enters only from this side.</p>
+              <p>V<sub>front</sub> = V<sub>j</sub>. Illumination enters only from this side. V<sub>j</sub> &gt; 0 is forward bias and lowers the equilibrium junction barrier.</p>
             </div>
             <div class="boundary-column">
               <h4>Rear n contact · x = L</h4>
@@ -499,7 +529,7 @@
                 <tr><td>Thermal equilibrium</td><td>V<sub>front</sub> = V<sub>back</sub> = 0</td><td>s = 0</td><td>Establish the built-in potential; J<sub>n</sub> &asymp; J<sub>p</sub> &asymp; 0.</td></tr>
                 <tr><td>Dark J–V</td><td>V<sub>front</sub> = V<sub>j</sub>, V<sub>back</sub> = 0</td><td>s = 0</td><td>Probe diode transport and recombination without photogeneration.</td></tr>
                 <tr><td>Illuminated J–V</td><td>V<sub>front</sub> = V<sub>j</sub>, V<sub>back</sub> = 0</td><td>G = sG<sub>0</sub>(x)</td><td>Obtain J<sub>sc</sub>, V<sub>oc</sub>, maximum power, and fill factor.</td></tr>
-                <tr><td>EQE</td><td>V<sub>j</sub> = 0</td><td>Activate one wavelength bin at a time</td><td>Compute collected electrons per incident photon versus wavelength.</td></tr>
+                <tr><td>EQE</td><td>V<sub>j</sub> = 0; intrinsic R<sub>s</sub>/R<sub>sh</sub> disabled</td><td>Activate one wavelength bin at a time</td><td>Compute EQE<sub>i</sub> = J<sub>sc,i</sub>/(qs&Phi;<sub>i</sub>): collected electrons per incident photon in bin i.</td></tr>
               </tbody>
             </table>
           </div>
@@ -542,9 +572,9 @@
             <div class="io-group">
               <h4>Forward-model outputs</h4>
               <ul>
-                <li>internal doping, &psi;, E, n, p, and G profiles;</li>
+                <li>internal doping, &psi;, E, n, p, G, J<sub>n</sub>, and J<sub>p</sub> profiles;</li>
                 <li>dark and illuminated terminal J–V curves;</li>
-                <li>J<sub>sc</sub>, V<sub>oc</sub>, maximum power, fill factor, and illustrative efficiency;</li>
+                <li>J<sub>sc</sub>, V<sub>oc</sub>, maximum power, fill factor, and a clearly labeled illustrative efficiency;</li>
                 <li>wavelength-resolved EQE and its integrated-J<sub>sc</sub> consistency check.</li>
               </ul>
             </div>
@@ -567,6 +597,7 @@
           </div>
           <p class="model-note"><strong>Data boundary:</strong> raw instrument files are not direct PDE inputs. They are standardized first into voltage, current density, polarity, sample identity, illuminated area, and measurement conditions; only then are compatible observables compared with the model.</p>
           <p class="model-note"><strong>Area is experimental metadata:</strong> the bundled Cell #3 data use A = 3 cm &times; 4 cm = 12 cm<sup>2</sup>, with J = I/A and P<sub>total</sub> = AVJ. Area does not enter the one-dimensional per-unit-area PDE solve.</p>
+          <p class="model-note"><strong>Efficiency boundary:</strong> the code’s 0.1 W/cm<sup>2</sup> input-power value is an illustrative reporting convention, not a value derived from the compact 16-bin spectrum and not a measurement of the laboratory irradiance. Experimental efficiency requires an independently calibrated cell-plane irradiance.</p>
         </article>
 
         <article class="model-block">
@@ -705,7 +736,8 @@
               </tbody>
             </table>
           </div>
-          <p class="fit-note">The Cell #3 joint objective uses illuminated J–V, dark J–V, independent J<sub>sc</sub>, and independent V<sub>oc</sub>. Only s (<code>photon_flux</code>) and R<sub>s</sub> vary so the undergraduate exercise remains interpretable and does not claim information the measurements cannot support. A failed residual block is evidence of model discrepancy, not permission to fit every parameter.</p>
+          <p class="fit-note">The Cell #3 joint objective uses illuminated J–V, dark J–V, independent J<sub>sc</sub>, and independent V<sub>oc</sub>. Only s (<code>photon_flux</code>) and R<sub>s</sub> vary so the exercise remains interpretable and does not claim information the measurements cannot support. Dark J–V is therefore both a constraint on R<sub>s</sub> at larger forward current and, more importantly, an out-of-sample check on the fixed transport/recombination assumptions.</p>
+          <p class="fit-note"><strong>Quality score:</strong> Q = [&Sigma;<sub>b</sub>w<sub>b</sub> mean(r<sub>b</sub><sup>2</sup>)]/&Sigma;<sub>b</sub>w<sub>b</sub>, where each r<sub>b</sub> is normalized by its declared model–data discrepancy scale. The threshold Q = 4 is an instructor-defined teaching gate, equivalent to a weighted aggregate normalized RMS &radic;Q = 2; it is not a reduced &chi;<sup>2</sup> test or confidence level. A failed block is evidence of model discrepancy, not permission to vary every parameter.</p>
         </div>
       </div>
     </section>
@@ -751,6 +783,7 @@
           <h2>Interpret more than a single fitted curve</h2>
           <p>Internal fields, spectral response, multiple electrical observables, and residual structure tell different parts of the story.</p>
         </div>
+        <p class="result-status"><strong>Current Cell #3 snapshot:</strong> the optimizer converged, but Q = 15.1 &gt; 4.0, so the declared quality gate fails. Treat this as a model-adequacy diagnosis—not as a validated extraction of physical parameters.</p>
         <div class="gallery">
           <figure><img src="results/profiles.png" alt="Doping, electric field, carrier, and optical-generation profiles across the solar cell"><figcaption><strong>Inside the device</strong>Relate structure and equations to fields, carriers, recombination, and generation.</figcaption></figure>
           <figure><img src="results/joint_observables.png" alt="Measured and simulated illuminated and dark current-voltage data with short-circuit and open-circuit checks"><figcaption><strong>Across compatible observables</strong>Compare illuminated and dark J–V together with independent J<sub>sc</sub> and V<sub>oc</sub> checks.</figcaption></figure>
