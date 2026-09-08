@@ -178,3 +178,16 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     local_refs = re.findall(r'(?:href|src)="((?!https?:|mailto:|#)[^"]+)"', html)
     assert local_refs
     assert all((root / ref).is_file() for ref in local_refs)
+
+
+def test_course_website_preserves_editorial_reading_and_wide_data_layout():
+    """Keep prose readable while allowing equations, tables, and figures to use the viewport."""
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "index.html").read_text(encoding="utf-8")
+
+    assert "--reader: 780px" in html
+    assert "--wide: 1240px" in html
+    assert ".section-head { max-width: var(--reader)" in html
+    assert ".model-block > h3" in html
+    assert ".model-equation-table { overflow-x: auto" in html
+    assert ".gallery { display: grid" in html
