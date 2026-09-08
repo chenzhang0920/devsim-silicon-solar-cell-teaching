@@ -72,8 +72,8 @@
       background: #fff;
     }
     .hero-grid {
-      display: grid; grid-template-columns: minmax(0, 820px) minmax(250px, 310px);
-      justify-content: space-between; gap: 5rem; align-items: center;
+      display: grid; grid-template-columns: minmax(0, 760px) minmax(350px, 430px);
+      justify-content: space-between; gap: 3rem; align-items: center;
     }
     .eyebrow {
       margin: 0 0 .9rem; color: #755711; font-size: .76rem;
@@ -97,17 +97,25 @@
     .hero-note { max-width: 680px; margin: 1.25rem 0 0; color: var(--muted); font-size: .9rem; }
 
     .device-card {
-      padding: 1rem 0; background: transparent;
+      width: 100%; margin-inline: auto; padding: .5rem 0; background: transparent;
       border: 0;
     }
-    .sun { margin-bottom: .7rem; color: var(--gold); font-size: 2.45rem; text-align: center; line-height: 1; }
-    .ray { height: 1px; margin: .4rem auto 1.1rem; width: 55%; background: var(--navy); opacity: .45; }
-    .layer { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70px; padding: .7rem; text-align: center; font-weight: 800; }
-    .layer strong { display: block; }
-    .layer span { display: block; font-size: .82rem; font-weight: 600; }
-    .emitter { color: #4d3a0a; background: #efd078; border: 2px solid var(--navy); }
-    .base { min-height: 125px; color: white; background: #2585b4; border: 2px solid var(--navy); border-top: 0; }
-    .device-label { margin: .8rem 0 0; color: var(--muted); text-align: center; font-size: .86rem; font-weight: 650; }
+    .device-circuit { display: block; width: 100%; height: auto; overflow: visible; }
+    .device-circuit .wire,
+    .device-circuit .terminal,
+    .device-circuit .voltage-guide {
+      fill: none; stroke: var(--navy); stroke-width: 2.2;
+      stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
+    }
+    .device-circuit .terminal { stroke-width: 3; }
+    .device-circuit .voltage-guide { stroke: var(--muted); stroke-width: 1.2; }
+    .device-circuit .light-ray { stroke: var(--gold); stroke-width: 2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+    .device-circuit .svg-main { fill: var(--ink); font-size: 15px; font-weight: 800; }
+    .device-circuit .svg-sub { fill: var(--muted); font-size: 12px; font-weight: 650; }
+    .device-circuit .svg-light { fill: #49370b; }
+    .device-circuit .svg-white { fill: white; }
+    .device-circuit .svg-circuit { fill: var(--navy); font-size: 13px; font-weight: 750; }
+    .device-label { margin: .15rem 0 0; color: var(--muted); text-align: center; font-size: .84rem; font-weight: 650; line-height: 1.45; }
 
     .facts { position: relative; z-index: 2; }
     .fact-grid {
@@ -315,7 +323,7 @@
       nav { display: none; }
       .hero { padding-top: 4.5rem; }
       .hero-grid, .scope-grid { grid-template-columns: 1fr; }
-      .device-card { width: min(390px, 100%); }
+      .device-card { width: min(460px, 100%); }
       .fact-grid, .steps { grid-template-columns: 1fr 1fr; }
       .model-ledger, .model-overview, .boundary-grid, .io-grid, .assumption-grid, .sanity-grid { grid-template-columns: 1fr; }
       .core-system { grid-template-columns: 1fr; }
@@ -387,12 +395,52 @@
           </div>
           <p class="hero-note">The Notebook includes executed outputs and can be read before installing DEVSIM.</p>
         </div>
-        <aside class="device-card" aria-label="Front-illuminated p-plus-on-n device structure">
-          <div class="sun" aria-hidden="true">☀</div>
-          <div class="ray" aria-hidden="true"></div>
-          <div class="layer emitter"><strong>p<sup>+</sup> emitter</strong><span>front contact · 0.5 &micro;m thick</span></div>
-          <div class="layer base"><strong>n-type base</strong><span>junction at upper edge · silicon absorber</span></div>
-          <p class="device-label">Front illumination · ordinary p–n junction</p>
+        <aside class="device-card">
+          <svg class="device-circuit" viewBox="0 0 460 365" role="img" aria-labelledby="device-circuit-title device-circuit-desc">
+            <title id="device-circuit-title">Illuminated p-plus-on-n solar cell connected to an external load</title>
+            <desc id="device-circuit-desc">Light enters the p-plus front emitter. During power-generating operation, the front terminal is positive relative to the rear terminal and positive conventional current flows through an external load.</desc>
+            <defs>
+              <marker id="arrow-navy" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#003b71"></path>
+              </marker>
+              <marker id="arrow-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#826014"></path>
+              </marker>
+            </defs>
+
+            <g aria-hidden="true">
+              <circle cx="162" cy="22" r="10" fill="#b18a21"></circle>
+              <path class="light-ray" d="M162 3V0 M162 44V41 M143 22H138 M186 22H181 M148 8L144 4 M180 40L176 36 M148 36L144 40 M180 4L176 8"></path>
+              <path class="light-ray" d="M147 52V84 M162 52V84 M177 52V84" marker-end="url(#arrow-gold)"></path>
+              <text x="193" y="70" class="svg-sub" text-anchor="start">incident light</text>
+
+              <rect x="25" y="95" width="275" height="62" fill="#efd078" stroke="#003b71" stroke-width="2"></rect>
+              <rect x="25" y="157" width="275" height="128" fill="#2585b4" stroke="#003b71" stroke-width="2"></rect>
+              <line class="terminal" x1="25" y1="95" x2="300" y2="95"></line>
+              <line class="terminal" x1="25" y1="285" x2="300" y2="285"></line>
+              <text x="162.5" y="121" class="svg-main svg-light" text-anchor="middle">p<tspan baseline-shift="super" font-size="10">+</tspan> emitter</text>
+              <text x="162.5" y="141" class="svg-sub svg-light" text-anchor="middle">front contact · 0.5 µm</text>
+              <text x="162.5" y="211" class="svg-main svg-white" text-anchor="middle">n-type base</text>
+              <text x="162.5" y="233" class="svg-sub svg-white" text-anchor="middle">silicon absorber · rear contact below</text>
+              <text x="162.5" y="174" class="svg-sub svg-white" text-anchor="middle">metallurgical junction at x<tspan baseline-shift="sub" font-size="9">e</tspan> = 0.5 µm</text>
+
+              <path class="wire" d="M300 95H405V145"></path>
+              <rect x="374" y="145" width="62" height="70" rx="3" fill="#f6f8f9" stroke="#003b71" stroke-width="2"></rect>
+              <text x="405" y="175" class="svg-circuit" text-anchor="middle">load</text>
+              <text x="405" y="197" class="svg-circuit" text-anchor="middle">R<tspan baseline-shift="sub" font-size="9">L</tspan></text>
+              <path class="wire" d="M405 215V285H300"></path>
+              <path class="wire" d="M325 95H365" marker-end="url(#arrow-navy)"></path>
+              <circle cx="300" cy="95" r="4" fill="#003b71"></circle>
+              <circle cx="300" cy="285" r="4" fill="#003b71"></circle>
+              <text x="346" y="80" class="svg-circuit" text-anchor="middle">I = AJ</text>
+              <text x="312" y="115" class="svg-main">+</text>
+              <text x="312" y="282" class="svg-main">−</text>
+              <path class="voltage-guide" d="M338 100V280 M332 100H338 M332 280H338"></path>
+              <text x="354" y="190" class="svg-circuit" text-anchor="middle" transform="rotate(-90 354 190)">V<tspan baseline-shift="sub" font-size="9">term</tspan> = V<tspan baseline-shift="sub" font-size="9">p</tspan> − V<tspan baseline-shift="sub" font-size="9">n</tspan></text>
+              <text x="230" y="326" class="svg-circuit" text-anchor="middle">P<tspan baseline-shift="sub" font-size="9">out</tspan> = V<tspan baseline-shift="sub" font-size="9">term</tspan>I</text>
+            </g>
+          </svg>
+          <p class="device-label">Illuminated p<sup>+</sup>–n cell delivering power to a load · schematic not to scale</p>
         </aside>
       </div>
     </section>

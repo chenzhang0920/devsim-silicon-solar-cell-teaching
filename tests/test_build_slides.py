@@ -139,6 +139,10 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "Zhang CHEN" in html
     assert "zchen758@connect.hkust-gz.edu.cn" in html
     assert 'id="model"' in html
+    assert 'id="device-circuit-title"' in html
+    assert "flows through an external load" in html
+    assert "I = AJ" in html
+    assert "schematic not to scale" in html
     assert "Begin with the complete mathematical problem" in html
     assert "Problem statement." in html
     assert "Solved self-consistently" in html
