@@ -144,6 +144,8 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "Solved self-consistently" in html
     assert "Prescribed model inputs" in html
     assert "Calculated after the PDE solve" in html
+    assert "solve the internal one-dimensional silicon PDE model" in html
+    assert "solve the intrinsic one-dimensional silicon device" not in html
     assert "{&psi;(x), n(x), p(x)} = S(" in html
     assert "Unknowns</strong><span>&psi;(x), n(x), and p(x)" in html
     assert "Boltzmann statistics, complete dopant ionization" in html
@@ -162,6 +164,7 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "Thermal equilibrium" in html and "Dark J–V" in html and "EQE" in html
     assert "V<sub>back</sub> = 0 is the electrical reference" in html
     assert "R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions" in html
+    assert "external R<sub>s</sub>/R<sub>sh</sub> mapping disabled" in html
     assert "shunt_resistance = 0" in html
     assert "Forward problem:" in html and "Inverse problem:" in html
     assert "Baseline forward-model inputs" in html

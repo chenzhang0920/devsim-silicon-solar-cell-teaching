@@ -415,7 +415,7 @@
         </div>
 
         <div class="model-contract">
-          <strong>Problem statement.</strong> For a specified junction bias V<sub>j</sub> and illumination scale s, solve the intrinsic one-dimensional silicon device for electrostatic potential and carrier densities. Then calculate contact current and apply the external terminal model.
+          <strong>Problem statement.</strong> For a specified junction bias V<sub>j</sub> and illumination scale s, solve the internal one-dimensional silicon PDE model for electrostatic potential and carrier densities. Then calculate contact current and apply the external terminal model.
           <span class="contract-equation">
             <span>{&psi;(x), n(x), p(x)} = S(&theta;<sub>device</sub>; V<sub>j</sub>, s)</span>
             <span>J<sub>device</sub> = &minus;[J<sub>n</sub>(0)+J<sub>p</sub>(0)] &nbsp;&rarr;&nbsp; {V<sub>term</sub>, J} = T(J<sub>device</sub>; R<sub>s</sub>, R<sub>sh</sub>)</span>
@@ -426,7 +426,7 @@
         <div class="model-ledger" aria-label="Model implementation layers">
           <div><h3>Solved self-consistently</h3><p>DEVSIM solves &psi;, n, and p from Poisson and carrier continuity. Scharfetter–Gummel edge currents couple the three fields.</p></div>
           <div><h3>Prescribed model inputs</h3><p>Geometry, abrupt doping, mobilities, lifetimes, Auger coefficients, optical bins, reflectance, and effective dead-layer losses are supplied rather than inferred.</p></div>
-          <div><h3>Calculated after the PDE solve</h3><p>R<sub>s</sub>/R<sub>sh</sub> terminal mapping, J–V metrics, measurement residuals, and the quality gate do not alter the intrinsic device equations.</p></div>
+          <div><h3>Calculated after the PDE solve</h3><p>R<sub>s</sub>/R<sub>sh</sub> terminal mapping, J–V metrics, measurement residuals, and the quality gate do not alter the semiconductor PDE equations.</p></div>
         </div>
 
         <article class="model-block">
@@ -529,12 +529,12 @@
                 <tr><td>Thermal equilibrium</td><td>V<sub>front</sub> = V<sub>back</sub> = 0</td><td>s = 0</td><td>Establish the built-in potential; J<sub>n</sub> &asymp; J<sub>p</sub> &asymp; 0.</td></tr>
                 <tr><td>Dark J–V</td><td>V<sub>front</sub> = V<sub>j</sub>, V<sub>back</sub> = 0</td><td>s = 0</td><td>Probe diode transport and recombination without photogeneration.</td></tr>
                 <tr><td>Illuminated J–V</td><td>V<sub>front</sub> = V<sub>j</sub>, V<sub>back</sub> = 0</td><td>G = sG<sub>0</sub>(x)</td><td>Obtain J<sub>sc</sub>, V<sub>oc</sub>, maximum power, and fill factor.</td></tr>
-                <tr><td>EQE</td><td>V<sub>j</sub> = 0; intrinsic R<sub>s</sub>/R<sub>sh</sub> disabled</td><td>Activate one wavelength bin at a time</td><td>Compute EQE<sub>i</sub> = J<sub>sc,i</sub>/(qs&Phi;<sub>i</sub>): collected electrons per incident photon in bin i.</td></tr>
+                <tr><td>EQE</td><td>V<sub>j</sub> = 0; external R<sub>s</sub>/R<sub>sh</sub> mapping disabled</td><td>Activate one wavelength bin at a time</td><td>Compute EQE<sub>i</sub> = J<sub>sc,i</sub>/(qs&Phi;<sub>i</sub>): collected electrons per incident photon in bin i.</td></tr>
               </tbody>
             </table>
           </div>
           <p class="model-note"><strong>Sign convention:</strong> V = V<sub>front</sub>(p) &minus; V<sub>back</sub>(n), and J<sub>out</sub> = &minus;(J<sub>n</sub>+J<sub>p</sub>) at the front contact. Therefore illuminated J<sub>sc</sub> is positive and forward dark current is negative.</p>
-          <p class="model-note"><strong>External terminal model:</strong> R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions. After the intrinsic DEVSIM solve, J = J<sub>device</sub>(V<sub>j</sub>) &minus; V<sub>j</sub>/R<sub>sh</sub> and V<sub>term</sub> = V<sub>j</sub> &minus; JR<sub>s</sub>. In the configuration, <code>shunt_resistance = 0</code> is an explicit sentinel for R<sub>sh</sub> = &infin;, not a physical zero-ohm shunt.</p>
+          <p class="model-note"><strong>External terminal model:</strong> R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions. After the internal DEVSIM solve, J = J<sub>device</sub>(V<sub>j</sub>) &minus; V<sub>j</sub>/R<sub>sh</sub> and V<sub>term</sub> = V<sub>j</sub> &minus; JR<sub>s</sub>. In the configuration, <code>shunt_resistance = 0</code> is an explicit sentinel for R<sub>sh</sub> = &infin;, not a physical zero-ohm shunt.</p>
         </article>
 
         <article class="model-block">
@@ -609,7 +609,7 @@
             <li>Introduce n and p and converge the dark drift–diffusion system.</li>
             <li>Add generation and recombination, then ramp illumination from zero to the requested scale.</li>
             <li>Ramp the front-contact junction bias with hidden continuation steps no larger than 0.05 V.</li>
-            <li>Read the contact currents, apply the generation-positive sign convention, and map the intrinsic curve through R<sub>s</sub>/R<sub>sh</sub>.</li>
+            <li>Read the contact currents, apply the generation-positive sign convention, and map the internal-device curve through R<sub>s</sub>/R<sub>sh</sub>.</li>
           </ol>
           <p class="model-note"><strong>Why continuation?</strong> each converged state initializes the next nearby nonlinear problem. This is a numerical strategy, not an additional physical equation.</p>
           <div class="model-equation-table" aria-label="Required solution checks">
@@ -711,7 +711,7 @@
                   <span>J = J<sub>device</sub>(V<sub>j</sub>) &minus; V<sub>j</sub>/R<sub>sh</sub></span>
                   <span>V<sub>term</sub> = V<sub>j</sub> &minus; JR<sub>s</sub></span>
                 </div>
-                <p>DEVSIM provides the intrinsic junction response. The terminal mapping then adds area-normalized R<sub>s</sub> and R<sub>sh</sub> in &Omega;&middot;cm<sup>2</sup>. This site uses generation-positive output: illuminated J<sub>sc</sub> is positive, while forward dark-diode current is negative.</p>
+                <p>DEVSIM provides the internal junction response. The terminal mapping then adds area-normalized R<sub>s</sub> and R<sub>sh</sub> in &Omega;&middot;cm<sup>2</sup>. This site uses generation-positive output: illuminated J<sub>sc</sub> is positive, while forward dark-diode current is negative.</p>
               </div>
               <div class="operating-points" aria-label="Observable operating points">
                 <div class="operating-point"><strong>Short circuit</strong><span>V<sub>term</sub> = 0; J<sub>sc</sub> tests photocarrier collection.</span></div>
