@@ -53,7 +53,9 @@ Student entry points:
 - [Tutorial Notebook](notebooks/tutorial.ipynb) — the guided, executable lesson;
 - [Student Lab Guide](docs/lab_guide.md) — what to run, submit, and explain;
 - [Experiment Protocol](docs/experiment_protocol.md) — measurement and metadata rules;
-- [Classroom Slides](docs/lab_slides.html) — the projection-ready lesson deck.
+- [Classroom Slides](docs/lab_slides.html) — the projection-ready lesson deck;
+- [DEVSIM Manual (v2.10.0)](https://zenodo.org/records/17328734) — the
+  authoritative command and API reference for the simulator.
 
 Open the [classroom slides online](https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/docs/lab_slides.html),
 or open `docs/lab_slides.html` after cloning or downloading the repository. Use the arrow

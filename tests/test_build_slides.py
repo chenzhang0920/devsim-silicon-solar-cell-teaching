@@ -105,6 +105,7 @@ def test_student_deck_matches_build_and_data_contracts():
     assert '.takeaway::before { content:"✓";' in html
     assert "From Raw Data to a Reproducible Fit" in html
     assert "Separate Data, Model and Claim" in html
+    assert 'href="https://zenodo.org/records/17328734"' in html
 
     refs = set(re.findall(r'src="\.\./results/([^"]+)"', html))
     declared = {
@@ -136,6 +137,7 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "docs/lab_guide.md" in html
     assert "docs/experiment_protocol.md" in html
     assert "docs/grading.md" in html
+    assert 'href="https://zenodo.org/records/17328734"' in html
     assert "Zhang CHEN" in html
     assert "zchen758@connect.hkust-gz.edu.cn" in html
     assert 'id="model"' in html

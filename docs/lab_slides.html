@@ -105,6 +105,8 @@
   .closing-slide h1 { font-size:clamp(3rem,5.4vw,5rem); margin-bottom:.6rem; }
   .closing-slide .subtitle { max-width:58rem; }
   .closing-slide .takeaway { text-align:left; }
+  .reference-link { color:var(--blue-dark); font-size:1.06rem; font-weight:750; text-decoration:none; border-bottom:1px solid #a8c7d8; }
+  .reference-link:hover, .reference-link:focus-visible { color:var(--orange); }
   .columns { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:stretch; }
   .card {
     background:var(--panel); border:1px solid var(--line); border-radius:8px;
@@ -610,6 +612,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
   <div class="closing-loop" aria-label="Modeling workflow summary">
     <span>Structure</span><span>Physics</span><span>Data</span><span>Trust</span>
   </div>
+  <a class="reference-link" href="https://zenodo.org/records/17328734">DEVSIM Manual · simulator command and API reference ↗</a>
   <div class="closing-meta">
     <div class="person-card">
       <span class="meta-label">Instructor</span>

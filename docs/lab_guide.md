@@ -22,6 +22,9 @@ python -c "import devsim; print('DEVSIM:', devsim.__version__)"
 
 Run commands from the repository root. Model and calibration settings belong in
 `config.py`; do not duplicate parameter values inside scripts or the Notebook.
+Use the [DEVSIM Manual (v2.10.0)](https://zenodo.org/records/17328734) as the
+authoritative reference for simulator commands and API syntax; follow this repository
+for the course workflow and validated configuration.
 
 Keep these conventions visible in every figure and table:
 
