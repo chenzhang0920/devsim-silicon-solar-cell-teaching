@@ -114,7 +114,7 @@
   }
   .card h3 { margin-top:0; }
   .card li { font-size:1.3rem; }
-  .storyline { display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem; margin-top:1rem; }
+  .storyline { display:grid; grid-template-columns:repeat(5,1fr); gap:.7rem; margin-top:1rem; }
   .storyline .card { border-top:4px solid var(--blue); text-align:center; }
   .storyline strong { display:block; color:var(--blue-dark); font-size:1.2rem; margin-bottom:.2rem; }
   .storyline span { color:var(--muted); font-size:1.12rem; }
@@ -162,6 +162,7 @@
   .visual > .fig { grid-column:1; grid-row:4; width:100%; max-height:65vh; margin:.08rem 0; align-self:center; }
   .visual > .side { grid-column:2; grid-row:4; align-self:center; }
   .full-visual img { display:block; max-width:98%; max-height:65vh; object-fit:contain; margin:.18rem auto; }
+  .full-visual img.algorithm-visual { max-height:49vh; }
   .print-only { display:none !important; }
   .structure-layout { display:grid; grid-template-columns:minmax(28rem,1.25fr) minmax(22rem,.75fr); gap:1.5rem; align-items:center; }
   .structure-card {
@@ -194,6 +195,26 @@
   .scope-card:nth-child(3) { border-top-color:var(--green); }
   .scope-card h3 { margin:0 0 .25rem; }
   .scope-card p { font-size:1.22rem; }
+  .concept-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem; margin:.55rem 0 .8rem; }
+  .concept-strip > div { position:relative; padding:.62rem .8rem; border-top:3px solid var(--blue); background:#fff; }
+  .concept-strip > div:not(:last-child)::after { content:"→"; position:absolute; right:-1.05rem; top:34%; color:var(--gold-dark); font-weight:850; }
+  .concept-strip strong { display:block; color:var(--blue-dark); font-size:1.18rem; }
+  .concept-strip span { color:var(--muted); font-size:1.08rem; }
+  .comparison-wrap { overflow:hidden; margin:.25rem 0 .45rem; border-top:2px solid var(--blue-dark); border-bottom:1px solid var(--line); }
+  .comparison { width:100%; table-layout:fixed; border-collapse:collapse; background:#fff; }
+  .comparison th, .comparison td { padding:.52rem .72rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); font-size:1.15rem; line-height:1.22; }
+  .comparison th { color:var(--blue-dark); background:var(--soft-blue); font-size:1.2rem; }
+  .comparison th:first-child, .comparison td:first-child { width:18%; color:var(--fg); font-weight:800; }
+  .comparison tr:last-child td { border-bottom:0; }
+  .source-note { color:var(--muted); font-size:1rem; line-height:1.25; margin-top:.35rem; }
+  .source-note a { color:var(--blue-dark); }
+  .setup-layout { display:grid; grid-template-columns:minmax(30rem,1fr) minmax(28rem,1fr); gap:1.35rem; align-items:start; }
+  .setup-layout pre { margin:.1rem 0; font-size:1.2rem; line-height:1.35; }
+  .file-map { margin:.08rem 0; }
+  .file-map dt { float:left; clear:left; width:8.3rem; color:var(--blue-dark); font-family:"SFMono-Regular",Consolas,monospace; font-size:1.05rem; font-weight:800; }
+  .file-map dd { margin:0 0 .43rem 8.7rem; color:var(--muted); font-size:1.18rem; line-height:1.25; }
+  .api-flow { grid-template-columns:repeat(6,1fr); }
+  .api-flow code { display:block; margin-top:.18rem; font-size:.82rem; overflow-wrap:anywhere; }
   .progress { position:fixed; z-index:20; top:0; left:0; height:5px; background:var(--blue); transition:width .2s ease; }
   .nav-bar {
     position:fixed; z-index:20; left:0; right:0; bottom:.35rem; display:flex;
@@ -239,6 +260,7 @@
     .visual.active { grid-template-columns:minmax(0,2.15fr) minmax(16rem,.72fr); column-gap:.9rem; }
     .visual > .fig { max-height:59vh; }
     .full-visual img { max-height:59vh; }
+    .full-visual img.algorithm-visual { max-height:42vh; }
     .cap { font-size:1.1rem; margin:.16rem 0 .22rem; }
     .takeaway, .prompt, .caution { font-size:1.18rem; padding:.38rem .58rem .38rem 2.65rem; margin:.18rem 0; }
     .takeaway::before, .prompt::before, .caution::before { left:.58rem; top:.34rem; width:1.5rem; height:1.5rem; }
@@ -254,6 +276,18 @@
     .collection-paths span { padding:.28rem; font-size:1.15rem; }
     .scope-card { padding:.48rem .62rem; }
     .scope-card p { font-size:1.14rem; }
+    .concept-strip { gap:.9rem; margin:.35rem 0 .5rem; }
+    .concept-strip > div { padding:.4rem .58rem; }
+    .concept-strip strong { font-size:1.08rem; }
+    .concept-strip span { font-size:1rem; }
+    .comparison th, .comparison td { padding:.36rem .52rem; font-size:1.03rem; line-height:1.16; }
+    .comparison th { font-size:1.08rem; }
+    .source-note { font-size:.88rem; margin-top:.2rem; }
+    .setup-layout { grid-template-columns:minmax(27rem,1fr) minmax(24rem,1fr); gap:.8rem; }
+    .setup-layout pre { font-size:1.1rem; line-height:1.24; }
+    .file-map dt { width:7.5rem; font-size:.95rem; }
+    .file-map dd { margin-left:7.9rem; margin-bottom:.26rem; font-size:1.08rem; }
+    .api-flow code { font-size:.74rem; }
   }
   @media (max-width:1100px) {
     .slide { padding:1.25rem 1.5rem 2.8rem; overflow:auto; }
@@ -261,12 +295,12 @@
     .global-logo { width:8rem; top:.5rem; right:.7rem; }
     h2 { padding-right:8.5rem; }
     .device-emblem { position:relative; right:auto; top:auto; transform:none; align-self:center; width:min(17rem,82%); margin:.55rem auto .2rem; padding:.65rem; }
-    .title-meta, .closing-meta, .columns, .structure-layout { grid-template-columns:1fr; }
+    .title-meta, .closing-meta, .columns, .structure-layout, .setup-layout { grid-template-columns:1fr; }
     .person-card { min-height:auto; }
     .visual.active { display:flex; flex-direction:column; }
     .visual > .fig { max-height:45vh; width:auto; margin:.18rem auto; }
     .visual > .side { width:100%; }
-    .storyline, .scope-grid { grid-template-columns:1fr 1fr; }
+    .storyline, .scope-grid, .concept-strip { grid-template-columns:1fr 1fr; }
     .flow { grid-template-columns:repeat(3,1fr); }
     .nav-bar { background:linear-gradient(transparent,var(--bg) 35%); padding-top:.8rem; }
   }
@@ -296,8 +330,8 @@
 
 <section class="slide title-slide active">
   <p class="kicker" data-step="01">MICS3090 (L01) · Integrated Circuit Devices</p>
-  <h1>Silicon Solar Cell<br>Device Modeling</h1>
-  <p class="subtitle">From a front-illuminated <strong>p<sup>+</sup>-on-n junction</strong> to a solved J–V curve—and then to defensible parameter calibration.</p>
+  <h1>DEVSIM Semiconductor<br>Device Modeling</h1>
+  <p class="subtitle">A silicon solar-cell case study from the physical model and numerical solution to experimental-data calibration.</p>
   <div>
     <span class="tag">1D device physics</span>
     <span class="tag">Poisson + drift–diffusion</span>
@@ -328,12 +362,13 @@
 </section>
 
 <section class="slide balanced">
-  <p class="kicker" data-step="02">Start with the destination</p>
-  <h2>Learning Outcomes &amp; Today’s Story</h2>
+  <p class="kicker" data-step="02">Session map</p>
+  <h2>Learning Outcomes and Teaching Sequence</h2>
   <div class="columns">
     <div class="card">
       <h3>By the end, you can…</h3>
       <ul>
+        <li>describe DEVSIM’s role and compare it with a commercial TCAD workflow</li>
         <li>translate a p<sup>+</sup>-on-n structure into a 1D DEVSIM model</li>
         <li>connect doping, electric field, band bending and carrier collection</li>
         <li>extract J<sub>sc</sub>, V<sub>oc</sub>, FF and EQE</li>
@@ -351,7 +386,8 @@
     </div>
   </div>
   <div class="storyline" aria-label="Teaching sequence">
-    <div class="card"><strong>Build</strong><span>structure + equations</span></div>
+    <div class="card"><strong>Tool</strong><span>DEVSIM + comparison</span></div>
+    <div class="card"><strong>Model</strong><span>structure + equations</span></div>
     <div class="card"><strong>Solve</strong><span>continuation + sweep</span></div>
     <div class="card"><strong>Validate</strong><span>J–V + EQE</span></div>
     <div class="card"><strong>Calibrate</strong><span>fit + diagnose</span></div>
@@ -359,7 +395,124 @@
 </section>
 
 <section class="slide balanced">
-  <p class="kicker" data-step="03">Device orientation</p>
+  <p class="kicker" data-step="03">Tool foundation</p>
+  <h2>DEVSIM in the Semiconductor TCAD Workflow</h2>
+  <p>Device TCAD discretizes semiconductor conservation laws on a mesh and predicts internal fields and terminal measurements.</p>
+  <div class="concept-strip" aria-label="TCAD input, solve, and output sequence">
+    <div><strong>Physical inputs</strong><span>geometry, materials, doping, contacts, sources</span></div>
+    <div><strong>Discrete problem</strong><span>mesh, model expressions, equations, boundary conditions</span></div>
+    <div><strong>Predicted outputs</strong><span>potential, carriers, currents, J–V, capacitance</span></div>
+  </div>
+  <div class="columns">
+    <div class="card">
+      <h3>Published DEVSIM capabilities</h3>
+      <ul>
+        <li>finite-volume device simulation in 1D, 2D and 3D</li>
+        <li>Python scripting and user-specified PDEs</li>
+        <li>DC, small-signal AC and transient analyses</li>
+        <li>Apache 2.0 source code with text-based model files</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Why it fits this course</h3>
+      <ul>
+        <li>equations, parameters and solver steps remain visible</li>
+        <li>scripts and results can be version controlled</li>
+        <li>students can inspect spatial fields before terminal curves</li>
+        <li>the 1D model runs on ordinary student computers</li>
+      </ul>
+    </div>
+  </div>
+  <div class="caution"><strong>Model responsibility:</strong> DEVSIM supplies numerical infrastructure. The user must define suitable physics, parameters, contacts, mesh and validation checks.</div>
+  <p class="source-note">Sources: <a href="https://github.com/devsim/devsim/blob/main/README.md">DEVSIM project README</a> and <a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a>.</p>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="04">Tool selection</p>
+  <h2>DEVSIM and Crosslight APSYS</h2>
+  <p>Both tools solve semiconductor equations. Their published interfaces and packaged capabilities serve different workflows.</p>
+  <div class="comparison-wrap">
+    <table class="comparison" aria-label="Comparison of DEVSIM and Crosslight APSYS">
+      <thead><tr><th>Dimension</th><th>DEVSIM</th><th>Crosslight APSYS</th></tr></thead>
+      <tbody>
+        <tr><td>Access</td><td>Apache 2.0 source code with a Python interface</td><td>Commercial binary distribution under a license agreement, with vendor tools</td></tr>
+        <tr><td>Discretization</td><td>Finite volume in 1D, 2D and 3D</td><td>Finite element analysis in 2D and 3D</td></tr>
+        <tr><td>Published scope</td><td>User-specified PDEs with DC, AC and transient analysis</td><td>Packaged electrical, optical and thermal models, including advanced compound-semiconductor options</td></tr>
+        <tr><td>Model workflow</td><td>Users expose equations and solver steps in scripts</td><td>Material macro libraries, product modules and dedicated preprocessing and plotting tools</td></tr>
+        <tr><td>Course role</td><td>Transparent implementation of a compact 1D teaching model</td><td>Reference example of a broader commercial device-simulation workflow</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="takeaway"><strong>Interpretation:</strong> this comparison describes workflow and scope. It does not rank numerical accuracy. Either tool requires suitable models, parameters, mesh checks and experimental validation.</div>
+  <p class="source-note">Sources: <a href="https://github.com/devsim/devsim/blob/main/README.md">DEVSIM features and license</a>, <a href="https://crosslight.com/products/apsys/">Crosslight APSYS product description</a>, and <a href="https://crosslight.com/license-application/">Crosslight license terms</a>.</p>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="05">First run</p>
+  <h2>Course Installation and Entry Points</h2>
+  <div class="setup-layout">
+    <div>
+      <h3>Create the validated environment</h3>
+      <pre>git clone https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching.git
+cd devsim-silicon-solar-cell-teaching
+conda env create -f environment.yml
+conda activate devsim_solar
+python -c "import devsim; print(devsim.__version__)"</pre>
+      <h3>Run the model and lesson</h3>
+      <pre>python scripts/run_sim.py
+jupyter lab notebooks/tutorial.ipynb</pre>
+    </div>
+    <div>
+      <h3>One source of truth for each concern</h3>
+      <dl class="file-map">
+        <dt>config.py</dt><dd>geometry, physical parameters, sweep and calibration settings</dd>
+        <dt>model/</dt><dd>DEVSIM mesh, equations, contacts, continuation and terminal mapping</dd>
+        <dt>scripts/</dt><dd>reproducible command-line simulations and figures</dd>
+        <dt>data/raw/</dt><dd>immutable instrument exports and measurement evidence</dd>
+        <dt>data/processed/</dt><dd>validated, unit-consistent J–V data</dd>
+        <dt>results/</dt><dd>regenerable simulation, calibration and visualization outputs</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="caution"><strong>Working rule:</strong> run commands from the repository root. Change model settings in <code>config.py</code> and preserve the original raw measurements.</div>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="06">Programming model</p>
+  <h2>Anatomy of This DEVSIM Forward Solve</h2>
+  <div class="flow api-flow" aria-label="DEVSIM API sequence used by the project">
+    <div class="step"><strong>1 · Mesh</strong><code>create_1d_mesh</code><small>lines + tags</small></div>
+    <div class="step"><strong>2 · Device</strong><code>create_device</code><small>region + contacts</small></div>
+    <div class="step"><strong>3 · Unknowns</strong><code>CreateSolution</code><small>ψ, n, p</small></div>
+    <div class="step"><strong>4 · Equations</strong><code>CreateSiliconDriftDiffusion</code><small>Poisson + continuity</small></div>
+    <div class="step"><strong>5 · Solve</strong><code>solve(type="dc")</code><small>Newton iteration</small></div>
+    <div class="step"><strong>6 · Inspect</strong><code>get_contact_current</code><small>node + edge values</small></div>
+  </div>
+  <div class="columns">
+    <div class="card">
+      <h3>Objects in <code>model/device.py</code></h3>
+      <ul>
+        <li>mesh tags locate the front, junction and rear</li>
+        <li>node models define doping, generation and recombination</li>
+        <li>contact equations impose terminal boundary conditions</li>
+        <li>contact currents produce the intrinsic J–V response</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Continuation sequence</h3>
+      <ol style="list-style-position:inside">
+        <li style="font-size:1.3rem;margin-bottom:.35rem">Solve equilibrium Poisson</li>
+        <li style="font-size:1.3rem;margin-bottom:.35rem">Add electron and hole continuity</li>
+        <li style="font-size:1.3rem;margin-bottom:.35rem">Ramp optical generation from dark</li>
+        <li style="font-size:1.3rem">Ramp the front-contact voltage</li>
+      </ol>
+    </div>
+  </div>
+  <div class="takeaway"><strong>Code-to-math map:</strong> a DEVSIM model is a named collection of unknowns, algebraic model expressions, discretized equations and contact equations.</div>
+</section>
+
+<section class="slide balanced">
+  <p class="kicker" data-step="07">Device orientation</p>
   <h2>Read the p⁺-on-n Cell from Front to Rear</h2>
   <div class="structure-layout">
     <figure class="structure-card">
@@ -390,7 +543,7 @@
 </section>
 
 <section class="slide balanced">
-  <p class="kicker" data-step="04">Physics → numerics</p>
+  <p class="kicker" data-step="08">Physical model</p>
   <h2>Governing Equations Solved by DEVSIM</h2>
   <div class="columns">
     <div class="card">
@@ -405,19 +558,44 @@
     </div>
   </div>
   <span class="formula">J<sub>n</sub> = qµ<sub>n</sub>(nE + V<sub>t</sub>∇n), &nbsp;&nbsp; J<sub>p</sub> = qµ<sub>p</sub>(pE − V<sub>t</sub>∇p)</span>
-  <div class="flow">
-    <div class="step"><strong>1 · Structure</strong><small>doping + geometry</small></div>
-    <div class="step"><strong>2 · Mesh</strong><small>nodes + edges</small></div>
-    <div class="step"><strong>3 · Models</strong><small>ψ, n, p, G, R</small></div>
-    <div class="step"><strong>4 · Solve</strong><small>Newton iteration</small></div>
-    <div class="step"><strong>5 · Sweep</strong><small>terminal bias</small></div>
-    <div class="step"><strong>6 · Extract</strong><small>J–V + profiles</small></div>
+  <div class="scope-grid">
+    <div class="scope-card"><h3>Unknown fields</h3><p>Potential ψ, electron density n and hole density p are solved self-consistently.</p></div>
+    <div class="scope-card"><h3>Constitutive relations</h3><p>E = −∇ψ. Drift and diffusion connect carrier densities to current.</p></div>
+    <div class="scope-card"><h3>Source terms</h3><p>G is optical generation. R includes SRH, Auger and effective near-contact losses.</p></div>
   </div>
   <div class="caution"><strong>Numerical habit:</strong> solve equilibrium first, add illumination gradually, then ramp voltage. This continuation sequence stabilizes the nonlinear solve.</div>
 </section>
 
+<section class="slide balanced">
+  <p class="kicker" data-step="09">Complete mathematical problem</p>
+  <h2>Boundary Conditions and Model Closure</h2>
+  <div class="columns">
+    <div class="card">
+      <h3>Electrical contacts</h3>
+      <span class="formula">V<sub>back</sub> = 0, &nbsp; V = V<sub>front</sub> − V<sub>back</sub></span>
+      <span class="formula">n|<sub>c</sub> = n<sub>eq,c</sub>, &nbsp; p|<sub>c</sub> = p<sub>eq,c</sub></span>
+      <ul>
+        <li>front and rear use ideal ohmic-contact equations</li>
+        <li>positive V forward biases the p⁺-on-n junction</li>
+        <li>equilibrium contact potentials follow local doping</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Optical source and terminal map</h3>
+      <span class="formula">G<sub>λ</sub>(x) = Φ<sub>λ</sub>(1 − R<sub>f</sub>)α<sub>λ</sub>e<sup>−α<sub>λ</sub>x</sup></span>
+      <span class="formula">J = J<sub>device</sub>(V<sub>j</sub>) − V<sub>j</sub>/R<sub>sh</sub></span>
+      <span class="formula">V<sub>term</sub> = V<sub>j</sub> − JR<sub>s</sub>, &nbsp; I = AJ</span>
+      <ul>
+        <li>light enters at x = 0 with no rear optical reflection</li>
+        <li>R<sub>s</sub>, R<sub>sh</sub> and area are applied outside the PDE solve</li>
+      </ul>
+    </div>
+  </div>
+  <div class="takeaway"><strong>Boundary-condition count:</strong> the three second-order or conservation fields require conditions at both ends. The ideal contact models close ψ, n and p at the front and rear.</div>
+</section>
+
 <section class="slide visual">
-  <p class="kicker" data-step="05">Task 2 · Internal physics</p>
+  <p class="kicker" data-step="10">Task 2 · Internal physics</p>
   <h2>One Junction Connects Doping, Field and Carriers</h2>
   <pre>python scripts/plot_profiles.py --bias near-voc</pre>
   <img class="fig" src="../results/profiles.png" alt="Four physical profiles across the p-plus-on-n cell: doping, electric field, carriers, and optical generation">
@@ -432,7 +610,7 @@
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="06">Tasks 1–2 · Band diagram</p>
+  <p class="kicker" data-step="11">Tasks 1–2 · Band diagram</p>
   <h2>Quasi-Fermi-Level Splitting Sets the Photovoltage</h2>
   <pre>python scripts/plot_band.py --bias near-voc</pre>
   <img class="fig" src="../results/band.png" alt="Equilibrium and illuminated band diagrams near open circuit">
@@ -448,7 +626,7 @@
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="07">Task 2 · Terminal behavior</p>
+  <p class="kicker" data-step="12">Task 2 · Terminal behavior</p>
   <h2>Read an Illuminated J–V Curve</h2>
   <pre>python scripts/run_sim.py
 python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv</pre>
@@ -466,7 +644,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="08">Task 2 · Terminal non-idealities</p>
+  <p class="kicker" data-step="13">Task 2 · Terminal non-idealities</p>
   <h2>R<sub>s</sub> and R<sub>sh</sub> Distort Different J–V Regions</h2>
   <pre>python scripts/plot_resistance.py</pre>
   <img class="fig" src="../results/resistance.png" alt="Series and shunt resistance effects on the solar-cell current-voltage curve">
@@ -481,7 +659,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="09">Task 2 · Optical input</p>
+  <p class="kicker" data-step="14">Task 2 · Optical input</p>
   <h2>Wavelength Controls Where Photons Are Absorbed</h2>
   <pre>python scripts/plot_spectrum.py</pre>
   <img class="fig" src="../results/spectrum.png" alt="Sixteen-bin teaching spectrum and silicon absorption coefficient">
@@ -497,7 +675,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="10">Task 2 · Spectral response</p>
+  <p class="kicker" data-step="15">Task 2 · Spectral response</p>
   <h2>EQE Locates Wavelength-Dependent Losses</h2>
   <pre>python scripts/plot_eqe.py</pre>
   <img class="fig" src="../results/eqe.png" alt="Modeled external quantum efficiency and the single-pass absorption reference">
@@ -514,7 +692,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="11">Task 3 · Before fitting</p>
+  <p class="kicker" data-step="16">Task 3 · Before fitting</p>
   <h2>Sensitivity: Does the Observable Respond?</h2>
   <pre>python scripts/plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5</pre>
   <img class="fig" src="../results/sweep.png" alt="Sensitivity of solar-cell metrics to hole lifetime">
@@ -529,32 +707,34 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide full-visual">
-  <p class="kicker" data-step="12">Calibration mechanics · Synthetic demo</p>
-  <h2>Watch a One-Parameter Optimizer Converge</h2>
+  <p class="kicker" data-step="17">Calibration mechanics · Synthetic demo</p>
+  <h2>Bounded Least Squares Updates Sensitive Parameters</h2>
   <pre>python scripts/plot_optimization.py --params photon_flux --init photon_flux=0.5 --max-nfev 30 --gif</pre>
-  <img class="screen-only" src="../results/optimization.gif" alt="Synthetic-data animation showing the simulated J–V curve, residual objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
-  <img class="print-only" src="../results/optimization.png" alt="Static synthetic-data summary of J–V agreement, objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
-  <p class="cap"><strong>Hardware-free example:</strong> J–V agreement, objective reduction and the fitted generation-scale trajectory are shown in the same panel order.</p>
+  <span class="formula">θ* = arg min<sub>l ≤ θ ≤ u</sub> ‖r(θ)‖<sup>2</sup>, &nbsp; r<sub>i</sub> = [J<sub>sim</sub>(V<sub>i</sub>; θ) − J<sub>meas,i</sub>]/s<sub>i</sub></span>
+  <img class="screen-only algorithm-visual" src="../results/optimization.gif" alt="Synthetic-data animation showing the simulated J–V curve, residual objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
+  <img class="print-only algorithm-visual" src="../results/optimization.png" alt="Static synthetic-data summary of J–V agreement, objective, and fitted generation scale" style="border-radius:7px; box-shadow:0 2px 12px rgba(23,36,45,.14);">
+  <p class="cap"><code>lmfit</code> evaluates the forward model, scales the residuals and applies the bounds declared in <code>config.py</code>. This synthetic example varies only <code>photon_flux</code>.</p>
   <div class="takeaway"><strong>Convergence does not establish model validity:</strong> a converged optimizer may still expose missing physics or parameter trade-offs.</div>
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="13">Task 4 · Historical measured data</p>
+  <p class="kicker" data-step="18">Task 4 · Historical measured data</p>
   <h2>Historical Cell #3: More Observables Expose Model Mismatch</h2>
   <pre>python scripts/run_calibration.py --joint --sample 3</pre>
   <img class="fig" src="../results/joint_observables.png" alt="Historical Cell 3 illuminated and dark J–V measurements compared with the joint model and independent short-circuit and open-circuit checks">
   <div class="side">
+    <span class="formula">r<sub>b</sub> = √(w<sub>b</sub>/N<sub>b</sub>) · [y<sub>sim,b</sub> − y<sub>meas,b</sub>]/σ<sub>b</sub></span>
     <ul>
       <li>Joint objective: illuminated J–V + dark J–V + independent J<sub>sc</sub> and V<sub>oc</sub></li>
-      <li>Dark forward current cross-checks the model; lifetime and near-contact loss parameters stay fixed</li>
-      <li>Read each block's normalized RMS and objective share before the total score</li>
+      <li>Block size N<sub>b</sub>, weight w<sub>b</sub> and scale σ<sub>b</sub> prevent a dense curve from dominating by point count alone</li>
+      <li>Dark current cross-checks the fixed recombination model</li>
     </ul>
     <div class="caution"><strong>Interpretation:</strong> this two-parameter teaching fit is a diagnostic, not a promise of a perfect curve.</div>
   </div>
 </section>
 
 <section class="slide visual">
-  <p class="kicker" data-step="14">Task 5 · Trust the parameter?</p>
+  <p class="kicker" data-step="19">Task 5 · Trust the parameter?</p>
   <h2>Parameter Trust Requires Fit Quality First</h2>
   <pre>python scripts/run_calibration.py --joint --sample 3</pre>
   <img class="fig" src="../results/joint_identifiability.png" alt="Gate-qualified local covariance sensitivity and correlation matrix for the Cell 3 joint calibration">
@@ -569,7 +749,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide balanced">
-  <p class="kicker" data-step="15">Task 4 · Reproducible fitting</p>
+  <p class="kicker" data-step="20">Task 4 · Reproducible fitting</p>
   <h2>From Raw Data to a Reproducible Fit</h2>
   <div class="flow">
     <div class="step"><strong>1 · Inspect</strong><small>units + sign</small></div>
@@ -583,7 +763,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide balanced">
-  <p class="kicker" data-step="16">Task 5 · Defensible claims</p>
+  <p class="kicker" data-step="21">Task 5 · Defensible claims</p>
   <h2>Separate Data, Model and Claim</h2>
   <div class="scope-grid">
     <div class="scope-card">
@@ -603,7 +783,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
 </section>
 
 <section class="slide closing-slide">
-  <p class="kicker" data-step="17">MICS3090 (L01) · Integrated Circuit Devices</p>
+  <p class="kicker" data-step="22">MICS3090 (L01) · Integrated Circuit Devices</p>
   <h1>Questions &amp; Discussion</h1>
   <p class="subtitle">A useful model is the simplest one that explains the observations within clearly stated limits.</p>
   <div class="takeaway" style="max-width:62rem">

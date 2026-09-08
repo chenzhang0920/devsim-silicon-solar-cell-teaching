@@ -93,9 +93,9 @@ def test_student_deck_matches_build_and_data_contracts():
     assert 'class="device-emblem"' in html
     assert "p⁺ emitter" in html
     assert 'class="slide closing-slide"' in html
-    assert len(re.findall(r'<section class="slide', html)) == 17
+    assert len(re.findall(r'<section class="slide', html)) == 22
     assert "@media (min-width:1101px) and (max-height:720px)" in html
-    assert html.count('class="kicker"') == html.count('data-step=') == 17
+    assert html.count('class="kicker"') == html.count('data-step=') == 22
     assert ".kicker::before" in html
     assert "p { font-size:1.36rem; }" in html
     assert "ul > li { font-size:1.36rem;" in html
@@ -103,6 +103,12 @@ def test_student_deck_matches_build_and_data_contracts():
     assert "p, ul > li { font-size:1.25rem;" in html
     assert "pre { font-size:1.2rem;" in html
     assert '.takeaway::before { content:"✓";' in html
+    assert "DEVSIM in the Semiconductor TCAD Workflow" in html
+    assert "DEVSIM and Crosslight APSYS" in html
+    assert "Course Installation and Entry Points" in html
+    assert "Anatomy of This DEVSIM Forward Solve" in html
+    assert "Boundary Conditions and Model Closure" in html
+    assert "Bounded Least Squares Updates Sensitive Parameters" in html
     assert "From Raw Data to a Reproducible Fit" in html
     assert "Separate Data, Model and Claim" in html
     assert 'href="https://zenodo.org/records/17328734"' in html
