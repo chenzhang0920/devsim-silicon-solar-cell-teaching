@@ -234,8 +234,9 @@ def test_course_website_preserves_editorial_reading_and_wide_data_layout():
     root = Path(__file__).resolve().parents[1]
     html = (root / "index.html").read_text(encoding="utf-8")
 
-    assert "--reader: 780px" in html
-    assert "--wide: 1240px" in html
+    assert "--reader: 840px" in html
+    assert "--wide: 1440px" in html
+    assert "Recommended path:" in html
     assert ".section-head { max-width: var(--reader)" in html
     assert ".model-block > h3" in html
     assert ".model-equation-table { overflow-x: auto" in html
