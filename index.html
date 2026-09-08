@@ -115,6 +115,21 @@
     .model-block { max-width: 1040px; padding: 1.45rem 0; border-top: 1px solid var(--line); }
     .model-block h3 { margin-bottom: .7rem; font-size: 1.35rem; }
     .model-block > p { max-width: 900px; }
+    .model-contract {
+      max-width: 1040px; margin: 0 0 1.6rem; padding: 1rem 1.1rem;
+      background: white; border: 1px solid var(--line); border-left: 4px solid var(--navy);
+    }
+    .model-contract strong { color: var(--navy); }
+    .contract-equation {
+      display: block; overflow-x: auto; margin: .45rem 0;
+      font-family: Cambria, Georgia, serif; font-size: 1.12rem; white-space: nowrap;
+    }
+    .contract-equation span { display: block; }
+    .assumption-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: .55rem 1.6rem;
+      margin: .9rem 0 0; padding: 0; list-style: none;
+    }
+    .assumption-grid li { padding-left: 1rem; border-left: 2px solid var(--line); color: var(--muted); }
     .model-overview { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 1.4rem; }
     .model-overview div { padding-left: .8rem; border-left: 3px solid var(--navy); }
     .model-overview strong { display: block; color: var(--navy); }
@@ -128,6 +143,13 @@
     .model-equation-table td:last-child { color: var(--muted); font-size: .92rem; }
     .model-formula { color: var(--ink); font-family: Cambria, Georgia, serif; font-size: 1.04rem; line-height: 1.7; }
     .model-formula span { display: block; white-space: nowrap; }
+    .core-system {
+      display: grid; grid-template-columns: minmax(170px, .28fr) minmax(0, .72fr);
+      margin: .9rem 0 1rem; background: white; border: 1px solid var(--line);
+    }
+    .core-system-label { padding: 1rem; color: white; background: var(--navy); font-weight: 800; }
+    .core-system-equations { padding: .8rem 1rem; font-family: Cambria, Georgia, serif; font-size: 1.08rem; line-height: 1.8; }
+    .core-system-equations span { display: block; overflow-x: auto; white-space: nowrap; }
     .boundary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: .8rem; }
     .boundary-column { padding-left: 1rem; border-left: 3px solid var(--navy); }
     .boundary-column h4 { margin: 0 0 .45rem; color: var(--navy); font-size: 1.02rem; }
@@ -273,7 +295,8 @@
       .hero-grid, .scope-grid { grid-template-columns: 1fr; }
       .device-card { width: min(390px, 100%); }
       .fact-grid, .steps { grid-template-columns: 1fr 1fr; }
-      .model-overview, .boundary-grid, .io-grid { grid-template-columns: 1fr; }
+      .model-overview, .boundary-grid, .io-grid, .assumption-grid { grid-template-columns: 1fr; }
+      .core-system { grid-template-columns: 1fr; }
       .coupling-path { grid-template-columns: 1fr 1fr; gap: .8rem; }
       .coupling-node:not(:last-child)::after { display: none; }
       .terminal-layout { grid-template-columns: 1fr; }
@@ -364,9 +387,18 @@
           <p>Before interpreting a curve, identify the domain, unknowns, equations, boundary conditions, inputs, and outputs. These statements define what the simulation does—and what it cannot claim.</p>
         </div>
 
+        <div class="model-contract">
+          <strong>Problem statement.</strong> For a specified junction bias V<sub>j</sub> and illumination scale s, solve the intrinsic one-dimensional silicon device for electrostatic potential and carrier densities. Then calculate contact current and apply the external terminal model.
+          <span class="contract-equation">
+            <span>{&psi;(x), n(x), p(x)} = S(&theta;<sub>device</sub>; V<sub>j</sub>, s)</span>
+            <span>J<sub>device</sub> = &minus;[J<sub>n</sub>(0)+J<sub>p</sub>(0)] &nbsp;&rarr;&nbsp; {V<sub>term</sub>, J} = T(J<sub>device</sub>; R<sub>s</sub>, R<sub>sh</sub>)</span>
+          </span>
+          Here S is the coupled DEVSIM drift–diffusion solve and T is the explicit per-unit-area terminal mapping. This separation prevents circuit parameters from being mistaken for material physics.
+        </div>
+
         <article class="model-block">
-          <p class="equation-label">0 · Domain and unknowns</p>
-          <h3>What exactly does DEVSIM solve?</h3>
+          <p class="equation-label">0 · Domain, unknowns, and assumptions</p>
+          <h3>What exactly does DEVSIM solve—and under which assumptions?</h3>
           <p>The device is one silicon region on the depth coordinate 0 &le; x &le; L. Light enters at x = 0 through the front p<sup>+</sup> emitter; the n-type base extends to the rear contact at x = L.</p>
           <div class="model-overview">
             <div><strong>Domain</strong><span>L = 250 &micro;m; metallurgical junction x<sub>e</sub> = 0.5 &micro;m.</span></div>
@@ -375,35 +407,48 @@
           </div>
           <p class="model-note"><strong>Abrupt doping input:</strong> N<sub>A</sub>(x) = N<sub>A0</sub>H(x<sub>e</sub>&minus;x) and N<sub>D</sub>(x) = N<sub>D0</sub>[1&minus;H(x<sub>e</sub>&minus;x)], where H is the step function.</p>
           <p class="model-note"><strong>Geometry note:</strong> the depletion region is a solution of Poisson’s equation around x<sub>e</sub>, not a third material layer. The device is an ordinary p–n junction, not a p–i–n structure.</p>
+          <ul class="assumption-grid" aria-label="Model assumptions">
+            <li><strong>Steady state and isothermal:</strong> no time derivatives; T = 300 K throughout.</li>
+            <li><strong>One dimensional:</strong> lateral current spreading, fingers, busbars, and edge leakage are omitted.</li>
+            <li><strong>Semiconductor statistics:</strong> Boltzmann statistics, complete dopant ionization, and DEVSIM’s 300 K silicon constants.</li>
+            <li><strong>Transport:</strong> constant low-field mobilities with the Einstein relation; no field- or doping-dependent mobility.</li>
+            <li><strong>Optics:</strong> prescribed 16-bin, front-only, single-pass Beer–Lambert absorption; no rear reflection or light trapping.</li>
+            <li><strong>High-doping limitation:</strong> band-gap narrowing and Fermi–Dirac degeneracy in the nominal p<sup>+</sup> emitter are not modeled.</li>
+          </ul>
+          <p class="model-note"><strong>Unit convention:</strong> the solver uses cm–V–s units: densities in cm<sup>&minus;3</sup>, electric field in V/cm, G and R in cm<sup>&minus;3</sup>s<sup>&minus;1</sup>, and current density in A/cm<sup>2</sup>.</p>
         </article>
 
         <article class="model-block">
           <p class="equation-label">1 · Governing equations</p>
           <h3>Which equations are solved in the silicon?</h3>
-          <p>The steady-state model couples electrostatics, carrier transport, conservation, optical generation, and recombination. DEVSIM discretizes these equations with a finite-volume formulation; the continuum form below is the physical model students should recognize.</p>
+          <p>There are three unknown fields and three coupled conservation equations. After the current laws, generation, and recombination relations are substituted, these equations form the nonlinear boundary-value problem solved at every operating point.</p>
+          <div class="core-system" aria-label="Three coupled governing equations">
+            <div class="core-system-label">Core PDE system</div>
+            <div class="core-system-equations">
+              <span>d/dx(&varepsilon;<sub>Si</sub>d&psi;/dx) = &minus;q(p &minus; n + N<sub>D</sub><sup>+</sup> &minus; N<sub>A</sub><sup>&minus;</sup>)</span>
+              <span>dJ<sub>n</sub>/dx = q(R &minus; G)</span>
+              <span>dJ<sub>p</sub>/dx = &minus;q(R &minus; G)</span>
+            </div>
+          </div>
+          <p>DEVSIM discretizes this continuum system with a one-dimensional finite-volume formulation and solves &psi;, n, and p self-consistently. Carrier currents use the stable <a href="https://github.com/devsim/devsim/blob/main/python_packages/simple_dd.py">Scharfetter–Gummel Bernoulli edge form</a>; the equations shown here are the continuum laws it represents. The following constitutive and source relations close the system.</p>
           <div class="model-equation-table">
             <table>
-              <thead><tr><th>Part of model</th><th>Equation</th><th>What it determines</th></tr></thead>
+              <thead><tr><th>Closure relation</th><th>Equation used in this project</th><th>Physical role</th></tr></thead>
               <tbody>
                 <tr>
-                  <td>Poisson</td>
-                  <td class="model-formula"><span>d<sup>2</sup>&psi;/dx<sup>2</sup> = &minus;(q/&varepsilon;<sub>Si</sub>)(p &minus; n + N<sub>D</sub><sup>+</sup> &minus; N<sub>A</sub><sup>&minus;</sup>)</span><span>E = &minus;d&psi;/dx</span></td>
-                  <td>Potential, band bending, depletion charge, and electric field.</td>
+                  <td>Charge and field</td>
+                  <td class="model-formula"><span>&rho; = q(p &minus; n + N<sub>D</sub><sup>+</sup> &minus; N<sub>A</sub><sup>&minus;</sup>)</span><span>E = &minus;d&psi;/dx</span><span>N<sub>D</sub><sup>+</sup> &asymp; N<sub>D</sub>, &nbsp; N<sub>A</sub><sup>&minus;</sup> &asymp; N<sub>A</sub></span></td>
+                  <td>Couples mobile and fixed charge to potential, band bending, depletion charge, and electric field.</td>
                 </tr>
                 <tr>
                   <td>Drift–diffusion currents</td>
                   <td class="model-formula"><span>J<sub>n</sub> = q&mu;<sub>n</sub>nE + qD<sub>n</sub>dn/dx</span><span>J<sub>p</sub> = q&mu;<sub>p</sub>pE &minus; qD<sub>p</sub>dp/dx</span><span>D<sub>n,p</sub> = &mu;<sub>n,p</sub>V<sub>T</sub></span></td>
-                  <td>Electron and hole current driven by electric field and concentration gradients.</td>
-                </tr>
-                <tr>
-                  <td>Steady-state continuity</td>
-                  <td class="model-formula"><span>dJ<sub>n</sub>/dx = q(R &minus; G)</span><span>dJ<sub>p</sub>/dx = &minus;q(R &minus; G)</span></td>
-                  <td>Local conservation of each carrier species.</td>
+                  <td>Defines electron and hole transport by electric-field drift and density-gradient diffusion.</td>
                 </tr>
                 <tr>
                   <td>Optical generation</td>
                   <td class="model-formula"><span>G(x) = s(1 &minus; R<sub>f</sub>) &Sigma;<sub>i</sub>&Phi;<sub>i</sub>&alpha;<sub>i</sub>e<sup>&minus;&alpha;<sub>i</sub>x</sup></span></td>
-                  <td>Electron–hole-pair generation from a 16-bin, single-pass Beer–Lambert spectrum.</td>
+                  <td>Prescribes electron–hole-pair generation from 350–1100 nm using 16 single-pass Beer–Lambert bins.</td>
                 </tr>
                 <tr>
                   <td>Recombination and loss</td>
@@ -413,7 +458,8 @@
               </tbody>
             </table>
           </div>
-          <p class="model-note"><strong>Implementation note:</strong> R<sub>front</sub><sup>eff</sup> and R<sub>back</sub><sup>eff</sup> are source terms within 0.2 &micro;m near-contact layers. They are teaching proxies, not interface boundary conditions.</p>
+          <p class="model-note"><strong>Definitions:</strong> V<sub>T</sub> = k<sub>B</sub>T/q; n<sub>1</sub> and p<sub>1</sub> are the SRH trap reference densities (both equal n<sub>i</sub> in the baseline); p<sub>p+</sub> and n<sub>n</sub> are the local equilibrium majority-carrier densities in the emitter and base; and &delta; = 0.2 &micro;m is the effective loss-layer thickness.</p>
+          <p class="model-note"><strong>Implementation boundary:</strong> R<sub>front</sub><sup>eff</sup> and R<sub>back</sub><sup>eff</sup> are volumetric source terms, not interface boundary conditions. The optical field is prescribed and is not solved self-consistently with the carrier equations.</p>
         </article>
 
         <article class="model-block">
@@ -424,23 +470,56 @@
             <div class="boundary-column">
               <h4>Front p<sup>+</sup> contact · x = 0</h4>
               <p class="boundary-equation">n<sub>c</sub>p<sub>c</sub> = n<sub>i</sub><sup>2</sup>, &nbsp; n<sub>c</sub> &minus; p<sub>c</sub> = N<sub>D</sub> &minus; N<sub>A</sub></p>
+              <p class="boundary-equation">n(0) = n<sub>c,front</sub>, &nbsp; p(0) = p<sub>c,front</sub></p>
               <p class="boundary-equation">&psi;<sub>c</sub> = V<sub>front</sub> &minus; V<sub>T</sub>ln(p<sub>c</sub>/n<sub>i</sub>)</p>
               <p>V<sub>front</sub> = V<sub>j</sub>. Illumination enters only from this side.</p>
             </div>
             <div class="boundary-column">
               <h4>Rear n contact · x = L</h4>
               <p class="boundary-equation">n<sub>c</sub>p<sub>c</sub> = n<sub>i</sub><sup>2</sup>, &nbsp; n<sub>c</sub> &minus; p<sub>c</sub> = N<sub>D</sub> &minus; N<sub>A</sub></p>
+              <p class="boundary-equation">n(L) = n<sub>c,rear</sub>, &nbsp; p(L) = p<sub>c,rear</sub></p>
               <p class="boundary-equation">&psi;<sub>c</sub> = V<sub>back</sub> + V<sub>T</sub>ln(n<sub>c</sub>/n<sub>i</sub>)</p>
               <p>V<sub>back</sub> = 0 is the electrical reference. No rear optical incidence or reflection is modeled.</p>
             </div>
           </div>
+          <p class="model-note"><strong>Boundary-condition count:</strong> &psi;, n, and p are each constrained at both contacts. These six Dirichlet conditions close the three second-order equations obtained after substituting the drift–diffusion current relations.</p>
+          <div class="model-equation-table" aria-label="Operating cases">
+            <table>
+              <thead><tr><th>Operating case</th><th>Electrical condition</th><th>Optical condition</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Thermal equilibrium</td><td>V<sub>front</sub> = V<sub>back</sub> = 0</td><td>s = 0</td><td>Establish the built-in potential; J<sub>n</sub> &asymp; J<sub>p</sub> &asymp; 0.</td></tr>
+                <tr><td>Dark J–V</td><td>V<sub>front</sub> = V<sub>j</sub>, V<sub>back</sub> = 0</td><td>s = 0</td><td>Probe diode transport and recombination without photogeneration.</td></tr>
+                <tr><td>Illuminated J–V</td><td>V<sub>front</sub> = V<sub>j</sub>, V<sub>back</sub> = 0</td><td>G = sG<sub>0</sub>(x)</td><td>Obtain J<sub>sc</sub>, V<sub>oc</sub>, maximum power, and fill factor.</td></tr>
+                <tr><td>EQE</td><td>V<sub>j</sub> = 0</td><td>Activate one wavelength bin at a time</td><td>Compute collected electrons per incident photon versus wavelength.</td></tr>
+              </tbody>
+            </table>
+          </div>
           <p class="model-note"><strong>Sign convention:</strong> V = V<sub>front</sub>(p) &minus; V<sub>back</sub>(n), and J<sub>out</sub> = &minus;(J<sub>n</sub>+J<sub>p</sub>) at the front contact. Therefore illuminated J<sub>sc</sub> is positive and forward dark current is negative.</p>
-          <p class="model-note"><strong>External terminal model:</strong> R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions. After the intrinsic DEVSIM solve, J = J<sub>device</sub>(V<sub>j</sub>) &minus; V<sub>j</sub>/R<sub>sh</sub> and V<sub>term</sub> = V<sub>j</sub> &minus; JR<sub>s</sub>.</p>
+          <p class="model-note"><strong>External terminal model:</strong> R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions. After the intrinsic DEVSIM solve, J = J<sub>device</sub>(V<sub>j</sub>) &minus; V<sub>j</sub>/R<sub>sh</sub> and V<sub>term</sub> = V<sub>j</sub> &minus; JR<sub>s</sub>. In the configuration, <code>shunt_resistance = 0</code> is an explicit sentinel for R<sub>sh</sub> = &infin;, not a physical zero-ohm shunt.</p>
         </article>
 
         <article class="model-block">
           <p class="equation-label">3 · Input/output contract</p>
           <h3>What goes into the model, and what comes out?</h3>
+          <div class="model-contract">
+            <strong>Forward problem:</strong> parameters and controlled operating conditions are known; fields and observables are predicted.
+            <span class="contract-equation">(&theta;<sub>fixed</sub>, V<sub>j</sub>, s) &nbsp;&rarr;&nbsp; {&psi;(x), n(x), p(x), J<sub>device</sub>} &nbsp;&rarr;&nbsp; {V<sub>term</sub>, J, J<sub>sc</sub>, V<sub>oc</sub>, FF, EQE}</span>
+            <strong>Inverse problem:</strong> selected parameters are unknown; measurements constrain them through residuals.
+            <span class="contract-equation">&theta;<sub>fit</sub> = arg min<sub>&theta;</sub> &Sigma;<sub>b</sub> w<sub>b</sub> mean[((&#375;<sub>b</sub>(&theta;) &minus; y<sub>b</sub>)/&sigma;<sub>b</sub>)<sup>2</sup>]</span>
+          </div>
+          <div class="model-equation-table" aria-label="Baseline forward-model inputs">
+            <table>
+              <thead><tr><th>Input group</th><th>Baseline used here</th><th>Interpretation</th></tr></thead>
+              <tbody>
+                <tr><td>Geometry</td><td>L = 250 &micro;m; x<sub>e</sub> = 0.5 &micro;m</td><td>One-dimensional depth and abrupt-junction location.</td></tr>
+                <tr><td>Doping</td><td>N<sub>A0</sub> = 10<sup>19</sup> cm<sup>&minus;3</sup>; N<sub>D0</sub> = 10<sup>17</sup> cm<sup>&minus;3</sup></td><td>Nominal p<sup>+</sup> emitter and n-type base concentrations.</td></tr>
+                <tr><td>Transport</td><td>&mu;<sub>n</sub> = 1417, &mu;<sub>p</sub> = 471 cm<sup>2</sup>/(V&middot;s); &tau;<sub>n</sub> = &tau;<sub>p</sub> = 10 &micro;s</td><td>Constant teaching values over the complete silicon region.</td></tr>
+                <tr><td>Bulk and near-contact loss</td><td>C<sub>n</sub> = 2.8&times;10<sup>&minus;31</sup>, C<sub>p</sub> = 9.9&times;10<sup>&minus;32</sup> cm<sup>6</sup>/s; S<sub>f</sub> = 10<sup>4</sup>, S<sub>b</sub> = 10<sup>6</sup> cm/s</td><td>Auger coefficients and effective dead-layer loss velocities.</td></tr>
+                <tr><td>Optical source</td><td>16 bins, 350–1100 nm; s = 1; R<sub>f</sub> = 0</td><td>s scales the baseline teaching spectrum; it is not a measured irradiance or an automatic “sun” unit. R<sub>f</sub> = 0 is an idealized zero-reflection front, not bare silicon.</td></tr>
+                <tr><td>Terminal parasitics</td><td>R<sub>s</sub> = 0 &Omega;&middot;cm<sup>2</sup>; R<sub>sh</sub> = &infin;</td><td>Ideal baseline terminals; fitted values are added outside the PDE solve.</td></tr>
+              </tbody>
+            </table>
+          </div>
           <div class="io-grid">
             <div class="io-group">
               <h4>Forward-model inputs</h4>
@@ -477,7 +556,8 @@
               </ul>
             </div>
           </div>
-          <p class="model-note"><strong>Area is experimental metadata:</strong> the bundled Cell #3 data use a 3 cm &times; 4 cm = 12 cm<sup>2</sup> illuminated area to convert current I into current density J and total power. Area does not enter the one-dimensional per-unit-area PDE solve.</p>
+          <p class="model-note"><strong>Data boundary:</strong> raw instrument files are not direct PDE inputs. They are standardized first into voltage, current density, polarity, sample identity, illuminated area, and measurement conditions; only then are compatible observables compared with the model.</p>
+          <p class="model-note"><strong>Area is experimental metadata:</strong> the bundled Cell #3 data use A = 3 cm &times; 4 cm = 12 cm<sup>2</sup>, with J = I/A and P<sub>total</sub> = AVJ. Area does not enter the one-dimensional per-unit-area PDE solve.</p>
         </article>
 
         <article class="model-block">
@@ -492,6 +572,18 @@
             <li>Read the contact currents, apply the generation-positive sign convention, and map the intrinsic curve through R<sub>s</sub>/R<sub>sh</sub>.</li>
           </ol>
           <p class="model-note"><strong>Why continuation?</strong> each converged state initializes the next nearby nonlinear problem. This is a numerical strategy, not an additional physical equation.</p>
+          <div class="model-equation-table" aria-label="Required solution checks">
+            <table>
+              <thead><tr><th>Required check</th><th>Expected relation</th><th>What failure means</th></tr></thead>
+              <tbody>
+                <tr><td>Equilibrium current</td><td>J<sub>n</sub> &asymp; J<sub>p</sub> &asymp; 0</td><td>Contact, sign, initialization, or convergence problem.</td></tr>
+                <tr><td>Steady-state current</td><td>d(J<sub>n</sub>+J<sub>p</sub>)/dx &asymp; 0</td><td>Continuity or numerical-residual problem.</td></tr>
+                <tr><td>Operating points</td><td>J(V<sub>oc</sub>) = 0; P = VJ is maximal at MPP</td><td>Interpolation, sweep-range, or sign-convention problem.</td></tr>
+                <tr><td>Spectral consistency</td><td>J<sub>sc</sub> &asymp; qs&Sigma;<sub>i</sub>&Phi;<sub>i</sub>EQE<sub>i</sub></td><td>Photon normalization or EQE implementation problem.</td></tr>
+                <tr><td>Experiment conversion</td><td>I = AJ with one declared polarity convention</td><td>Area, unit, or instrument-polarity problem.</td></tr>
+              </tbody>
+            </table>
+          </div>
           <p class="model-note"><strong>Source map:</strong> <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/config.py"><code>config.py</code></a> defines the baseline inputs; <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/model/device.py"><code>model/device.py</code></a> builds the mesh, equations, contacts, and source terms; <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/model/__init__.py"><code>model/__init__.py</code></a> applies the external terminal mapping.</p>
         </article>
       </div>

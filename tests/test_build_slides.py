@@ -139,14 +139,31 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "zchen758@connect.hkust-gz.edu.cn" in html
     assert 'id="model"' in html
     assert "Begin with the complete mathematical problem" in html
+    assert "Problem statement." in html
+    assert "{&psi;(x), n(x), p(x)} = S(" in html
     assert "Unknowns</strong><span>&psi;(x), n(x), and p(x)" in html
+    assert "Boltzmann statistics, complete dopant ionization" in html
+    assert "band-gap narrowing and Fermi–Dirac degeneracy" in html
+    assert "the solver uses cm–V–s units" in html
     assert "Which equations are solved in the silicon?" in html
+    assert "Core PDE system" in html
+    assert "three unknown fields and three coupled conservation equations" in html
+    assert "Scharfetter–Gummel Bernoulli edge form" in html
     assert "What is imposed at x = 0 and x = L?" in html
+    assert "n(0) = n<sub>c,front</sub>" in html
+    assert "Boundary-condition count" in html
+    assert "Thermal equilibrium" in html and "Dark J–V" in html and "EQE" in html
     assert "V<sub>back</sub> = 0 is the electrical reference" in html
     assert "R<sub>s</sub> and R<sub>sh</sub> are not PDE boundary conditions" in html
+    assert "shunt_resistance = 0" in html
+    assert "Forward problem:" in html and "Inverse problem:" in html
+    assert "Baseline forward-model inputs" in html
+    assert "It is not a measured irradiance" in html
+    assert "raw instrument files are not direct PDE inputs" in html
     assert "Area is experimental metadata" in html
     assert "3 cm &times; 4 cm = 12 cm<sup>2</sup>" in html
     assert "Solve equilibrium Poisson with both external contact biases at zero" in html
+    assert "J<sub>n</sub> &asymp; J<sub>p</sub> &asymp; 0" in html
     assert 'id="physics"' in html
     assert "Now interpret the model one mechanism at a time" in html
     assert "Question 1 · Junction electrostatics" in html
