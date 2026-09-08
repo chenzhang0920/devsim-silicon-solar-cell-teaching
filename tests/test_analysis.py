@@ -1,4 +1,4 @@
-'Utilities for tests/test_analysis.py.'
+"""Unit tests for analysis, parameter validation, and calibration helpers."""
 import numpy as np
 import pytest
 import lmfit
@@ -147,13 +147,12 @@ def test_check_params_accepts_valid():
 
 
 def test_config_covers_every_device_parameter():
-    'Test config covers every device parameter.'
     assert set(MODEL_PARAMS) == VALID_FIELDS
+    assert MODEL_PARAMS == vars(SolarCellParams())
     assert set(CALIBRATION["params"]) <= VALID_FIELDS
 
 
 def test_public_partial_override_inherits_current_config(monkeypatch):
-    'Test public partial override inherits current config.'
     captured = {}
 
     def fake_simulate(p, voltages):
@@ -179,7 +178,6 @@ def test_configured_voltage_grid_rejects_a_changed_step(monkeypatch):
 
 
 def test_terminal_internal_solve_explicitly_disables_config_resistances(monkeypatch):
-    'Test terminal internal solve explicitly disables config resistances.'
     seen = []
 
     def fake_run(params=None, voltages=None):

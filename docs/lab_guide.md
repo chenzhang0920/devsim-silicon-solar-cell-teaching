@@ -100,8 +100,9 @@ python scripts/make_demo_data.py
 python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv
 ```
 
-`plot_eqe.py` compares the modeled EQE with the optical absorption limit. It uses the
-project's 16-bin teaching spectrum and may take about 30 seconds.
+`plot_eqe.py` compares the modeled EQE with the model's single-pass absorption
+reference. It uses the project's 16-bin teaching spectrum and may take about 30
+seconds. Rear optical reflection and light trapping are not included.
 
 Those bins approximate above-band-gap photons used for generation. The illustrative
 modeled efficiency uses a separately stated total input of 100 mW/cm², including omitted
@@ -130,7 +131,8 @@ The CSV must contain increasing wavelength values and columns `wavelength_nm` (o
 
 1. How do generation, recombination, and diode current shape the illuminated J–V curve?
 2. What does quasi-Fermi-level splitting mean, and how is it related to terminal voltage?
-3. Why can the modeled EQE differ from the absorption limit at short and long wavelengths?
+3. Why can the modeled EQE differ from the single-pass absorption reference at short
+   and long wavelengths?
 4. Under what experimental condition may efficiency be reported?
 
 ---
@@ -186,7 +188,7 @@ wiring mode, units, sweep settings, and sign convention.
 First reproduce the canonical bundled Cell #3 workflow:
 
 ```bash
-python scripts/prepare_keithley.py --area 4.0
+python scripts/prepare_keithley.py --area 12.0
 python scripts/run_calibration.py --joint --sample 3
 ```
 
@@ -196,7 +198,7 @@ directory, use a unique numeric sample ID, convert it with that session's area a
 and calibrate that sample. For example:
 
 ```bash
-python scripts/prepare_keithley.py --data data/raw/group01 --area 4.0
+python scripts/prepare_keithley.py --data data/raw/group01 --area 12.0
 python scripts/run_calibration.py --joint --sample 101
 ```
 
@@ -240,7 +242,7 @@ For a generic two-column **illuminated I–V sweep**, convert raw I–V to proce
 explicitly:
 
 ```bash
-python scripts/prepare_data.py data/raw/my_light_iv.csv --area 4.0 --current-unit mA --out data/processed/measured_iv.csv --plot
+python scripts/prepare_data.py data/raw/my_light_iv.csv --area 12.0 --current-unit mA --out data/processed/measured_iv.csv --plot
 ```
 
 This generic converter supports the light-only workflow; it does not create dark-I–V,

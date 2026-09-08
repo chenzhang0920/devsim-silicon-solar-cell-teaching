@@ -1,4 +1,4 @@
-'Utilities for tests/conftest.py.'
+"""Shared pytest path setup."""
 import sys
 from pathlib import Path
 

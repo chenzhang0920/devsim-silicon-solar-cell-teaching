@@ -1,4 +1,4 @@
-'Utilities for tests/test_device_validation.py.'
+"""Validation tests for low-level DEVSIM device entry points."""
 import sys
 import types
 

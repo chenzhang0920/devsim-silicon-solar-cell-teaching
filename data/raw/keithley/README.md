@@ -11,10 +11,12 @@ and short-circuit (`ishort`) measurements for Cell #3 and Cell #4. Raw filenames
 the instrument's `voc` label, but the dark reading is an offset diagnostic, not photovoltaic
 `Voc`.
 
-Convert all exports to standard voltage/current-density files with:
+The bundled cells use the recorded illuminated dimensions of 3 cm × 4 cm,
+corresponding to a current-density normalization area of 12.0 cm². Convert all
+exports to standard voltage/current-density files with:
 
 ```bash
-python scripts/prepare_keithley.py --area 4.0
+python scripts/prepare_keithley.py --area 12.0
 ```
 
 If a calibrated reference cell established the incident irradiance, pass it explicitly,

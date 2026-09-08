@@ -1,4 +1,4 @@
-'Utilities for tests/test_integration.py.'
+"""Slow integration tests for the DEVSIM device model."""
 import numpy as np
 import pytest
 
@@ -26,7 +26,6 @@ def test_forward_simulation_is_physical():
 
 @pytest.mark.slow
 def test_solar_metrics_matches_direct_extraction():
-    'Test solar metrics matches direct extraction.'
     V, J = run_simulation(params=MODEL_PARAMS)
     m = solar_metrics(V, J)
 
@@ -39,10 +38,8 @@ def test_solar_metrics_matches_direct_extraction():
 
 @pytest.mark.slow
 def test_device_is_front_p_plus_on_n_and_field_points_to_front():
-    'Test device is front p plus on n and field points to front.'
     p = SolarCellParams(**MODEL_PARAMS)
     d = profiles(p)
-
 
     assert d["net_doping"][0] == pytest.approx(-p.emitter_doping)
     assert d["net_doping"][-1] == pytest.approx(p.base_doping)
@@ -61,10 +58,8 @@ def test_device_is_front_p_plus_on_n_and_field_points_to_front():
     vbi_analytic = vt * np.log(p.emitter_doping * p.base_doping / 1e20)
     assert vbi_numeric == pytest.approx(vbi_analytic, abs=0.01)
 
-
     e_field = d["electric_field"]
     assert e_field[int(np.argmax(np.abs(e_field)))] < 0
-
 
     # ``numpy.trapezoid`` was added in NumPy 2.0; keep the test compatible
     # with the project's NumPy >=1.24 environment as well.

@@ -56,7 +56,6 @@ def main() -> None:
     ap.add_argument("--out", default="results/eqe.png", help="Output PNG path")
     args = ap.parse_args()
 
-
     p = check_params({**MODEL_PARAMS, "series_resistance": 0.0,
                       "shunt_resistance": 0.0})
     if p.photon_flux <= 0:
@@ -76,7 +75,6 @@ def main() -> None:
         print(f"  lambda={wl:4.0f} nm  Jsc={jsc*1e3:8.4f} mA/cm^2  EQE={eqe[-1]:.3f}")
     eqe = np.asarray(eqe)
 
-
     jsc_from_eqe = Q * p.photon_flux * np.sum(
         eqe * np.array([bin_photon_flux(i) for i in range(len(lam))]))
     _, j_all = run_simulation(params=dict(vars(p)), voltages=np.array([0.0]))
@@ -88,7 +86,14 @@ def main() -> None:
     fig, ax = plt.subplots(figsize=(10.2, 5.8))
     ax.axvspan(float(lam.min()), 500, color=C_ORANGE, alpha=0.06)
     ax.axvspan(950, float(lam.max()), color=C_BLUE, alpha=0.06)
-    ax.plot(lam, ideal, color=C_GRAY, lw=1.8, ls="--", label="Absorption-only limit")
+    ax.plot(
+        lam,
+        ideal,
+        color=C_GRAY,
+        lw=1.8,
+        ls="--",
+        label="Single-pass absorption reference",
+    )
     ax.plot(lam, eqe, color=C_BLUE, lw=2.2, marker="o", ms=5,
             label="DEVSIM monochromatic simulation")
     if args.data:

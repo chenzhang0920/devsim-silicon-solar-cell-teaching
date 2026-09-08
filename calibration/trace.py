@@ -200,8 +200,10 @@ def _draw_trace_frame(k, ax1, ax2, ax3, trace, names, v_meas, j_meas,
         label="synthetic reference",
     )
     ax1.axhline(0, color="#888888", lw=0.8)
-    ax1.set_xlim(*x_lim); ax1.set_ylim(*j_lim)
-    ax1.set_xlabel("Voltage (V)"); ax1.set_ylabel("Current density (mA/cm²)")
+    ax1.set_xlim(*x_lim)
+    ax1.set_ylim(*j_lim)
+    ax1.set_xlabel("Voltage (V)")
+    ax1.set_ylabel("Current density (mA/cm²)")
     ax1.set_title(f"iteration {k}   objective = {snap['chisq']:.4f}")
     ax1.legend(loc="upper left", fontsize=13, ncol=2, frameon=False)
     ax1.grid(alpha=0.3)
@@ -215,8 +217,10 @@ def _draw_trace_frame(k, ax1, ax2, ax3, trace, names, v_meas, j_meas,
 
     ax2.semilogy(range(N), chi, "-", color="#cccccc", lw=1.2)
     ax2.scatter([k], [snap["chisq"]], color=C_BLUE, zorder=3)
-    ax2.set_xlim(0, N - 1); ax2.set_ylim(*chi_lim)
-    ax2.set_xlabel("iteration"); ax2.set_ylabel("Objective  Σr²")
+    ax2.set_xlim(0, N - 1)
+    ax2.set_ylim(*chi_lim)
+    ax2.set_xlabel("iteration")
+    ax2.set_ylabel("Objective  Σr²")
     ax2.set_title("Fit convergence")
     ax2.grid(alpha=0.3)
 

@@ -1,4 +1,4 @@
-'Utilities for tests/test_build_slides.py.'
+"""Tests for generated-asset planning and classroom-slide contracts."""
 import re
 from pathlib import Path
 

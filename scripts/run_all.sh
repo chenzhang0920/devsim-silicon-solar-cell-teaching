@@ -38,8 +38,8 @@ Examples:
   bash scripts/run_all.sh full
   bash scripts/run_all.sh quick
   bash scripts/run_all.sh simulation --dry-run
-  bash scripts/run_all.sh keithley --area 4.0
-  bash scripts/run_all.sh keithley --area 4.0 --prune  # complete input bundle only
+  bash scripts/run_all.sh keithley --area 12.0
+  bash scripts/run_all.sh keithley --area 12.0 --prune  # complete input bundle only
   bash scripts/run_all.sh joint --sample 3
 EOF
 }
@@ -50,7 +50,7 @@ run_notebook() {
         --to notebook \
         --execute \
         --inplace notebooks/tutorial.ipynb \
-        --ExecutePreprocessor.timeout=600 \
+        --ExecutePreprocessor.timeout=1200 \
         --ExecutePreprocessor.kernel_name=python3 \
         --ExecutePreprocessor.record_timing=False \
         --ClearMetadataPreprocessor.enabled=True \

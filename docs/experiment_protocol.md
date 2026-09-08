@@ -133,7 +133,7 @@ and standardized experimental tables derived from them under `data/processed/`.
 For a CSV containing one illuminated voltage/current sweep, run a command such as:
 
 ```bash
-python scripts/prepare_data.py data/raw/my_light_iv.csv --area 4.0 --current-unit mA --out data/processed/measured_iv.csv --plot
+python scripts/prepare_data.py data/raw/my_light_iv.csv --area 12.0 --current-unit mA --out data/processed/measured_iv.csv --plot
 ```
 
 Replace the example area and unit with recorded values. Use `--voltage-unit`, `--columns`,
@@ -171,7 +171,7 @@ group's data. Use a unique numeric sample ID in all four filenames; for example,
 could use `data/raw/group01/` and sample `101`. Then run:
 
 ```bash
-python scripts/prepare_keithley.py --data data/raw/group01 --area 4.0
+python scripts/prepare_keithley.py --data data/raw/group01 --area 12.0
 python scripts/run_calibration.py --joint --sample 101
 ```
 
@@ -201,7 +201,7 @@ behavior is part of another assignment, prepare and label that dataset separatel
 If irradiance was independently measured, pass the measured value in W/cm², for example:
 
 ```bash
-python scripts/prepare_keithley.py --area 4.0 --irradiance 0.1
+python scripts/prepare_keithley.py --area 12.0 --irradiance 0.1
 ```
 
 The numerical value above is the conventional 100 mW/cm² reference; use it only if that

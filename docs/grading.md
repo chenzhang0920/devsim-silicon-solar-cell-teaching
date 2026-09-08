@@ -34,7 +34,7 @@ not receive full credit.
 |---|---:|
 | Presents a readable J–V plot and correctly reports `Jsc`, `Voc`, FF, and `Pmax` with units | 6 |
 | Uses internal profiles and the illuminated band panel to explain generation, transport, and quasi-Fermi-level splitting, and relates recombination qualitatively to the observed losses | 6 |
-| Presents the modeled EQE and interprets its relationship to the absorption limit and integrated `Jsc` | 5 |
+| Presents the modeled EQE and interprets its relationship to the single-pass absorption reference and integrated `Jsc` | 5 |
 | Applies the voltage/current sign convention and states correctly whether efficiency may be reported | 3 |
 | **Task 2 total** | **20** |
 

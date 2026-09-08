@@ -487,7 +487,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
     <ul>
       <li>Blue photons: large α, absorbed near the front</li>
       <li>Near-band-edge photons: small α, penetrate deeply</li>
-      <li>Absorption limit: (1 − R)[1 − exp(−αW)]</li>
+      <li>Single-pass absorption: (1 − R)[1 − exp(−αW)]</li>
     </ul>
     <div class="caution"><strong>Scope:</strong> 16 above-band-gap bins drive generation; total modeled P<sub>in</sub> is stated separately. This is not precision ASTM G173 input.</div>
     <div class="prompt"><strong>Predict:</strong> which wavelengths respond most strongly to front near-contact losses?</div>
@@ -498,7 +498,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
   <p class="kicker" data-step="10">Task 2 · Spectral response</p>
   <h2>EQE Locates Wavelength-Dependent Losses</h2>
   <pre>python scripts/plot_eqe.py</pre>
-  <img class="fig" src="../results/eqe.png" alt="Modeled external quantum efficiency and the absorption-only limit">
+  <img class="fig" src="../results/eqe.png" alt="Modeled external quantum efficiency and the single-pass absorption reference">
   <div class="side">
     <ul>
       <li>EQE = collected electrons per incident photon</li>
@@ -590,7 +590,7 @@ python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv<
     </div>
     <div class="scope-card">
       <h3>Model</h3>
-      <p>1D abrupt junction, Boltzmann statistics, fixed mobility, coarse Beer–Lambert optics and terminal R<sub>s</sub>/R<sub>sh</sub>; no band-gap narrowing, texture or lateral grid.</p>
+      <p>1D abrupt junction, Boltzmann statistics, fixed mobility, single-pass Beer–Lambert optics and terminal R<sub>s</sub>/R<sub>sh</sub>; no band-gap narrowing, rear optical reflection, texture or lateral grid.</p>
     </div>
     <div class="scope-card">
       <h3>Claim</h3>

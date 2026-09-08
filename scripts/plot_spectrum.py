@@ -21,7 +21,9 @@ Q = 1.602176634e-19
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Spectrum, absorption coefficient, and absorption limit")
+    ap = argparse.ArgumentParser(
+        description="Spectrum, absorption coefficient, and single-pass absorption reference"
+    )
     ap.add_argument("--out", default="results/spectrum.png", help="Output PNG path")
     args = ap.parse_args()
 
@@ -35,7 +37,6 @@ def main() -> None:
 
     fig, axes = plt.subplots(1, 2, figsize=(13.5, 5.2))
 
-
     ax = axes[0]
     ax.plot(lam, flux * 1e-14, color=C_BLUE, lw=2.0, marker="o", ms=4)
     ax.fill_between(lam, 0, flux * 1e-14, color=C_BLUE, alpha=0.15)
@@ -46,7 +47,6 @@ def main() -> None:
     ax.set_ylabel("Photon flux (10$^{14}$ cm$^{-2}$ s$^{-1}$ nm$^{-1}$)")
     ax.set_title("Teaching spectrum: 16 wavelength bins")
     ax.grid(True)
-
 
     ax = axes[1]
     ax.semilogy(lam, alpha, color=C_ORANGE, lw=2.0, marker="o", ms=4)
@@ -79,7 +79,10 @@ def main() -> None:
         f"Ideal Jsc (R={R:.2f}, complete collection of absorbed photons) = "
         f"{jsc_ideal:.1f} mA/cm^2"
     )
-    print("Compare this optical limit with the regenerated device Jsc to quantify collection loss.")
+    print(
+        "Compare this single-pass optical reference with the regenerated device Jsc "
+        "to quantify collection loss."
+    )
 
 
 if __name__ == "__main__":

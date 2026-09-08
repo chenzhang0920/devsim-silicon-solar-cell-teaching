@@ -58,7 +58,8 @@ def main() -> None:
             color=(C_DARK, C_BLUE, "#6a3d9a")[k],
         )
     ax1.axhline(0, color="gray", lw=0.8)
-    ax1.set_xlabel("Voltage V (V)"); ax1.set_ylabel("J (mA/cm²)")
+    ax1.set_xlabel("Voltage V (V)")
+    ax1.set_ylabel("J (mA/cm²)")
     ax1.set_title("Series resistance reduces fill factor")
     ax1.legend(fontsize=11.5, frameon=False, loc="lower left")
     ax1.set_xlim(0.0, 0.66)
@@ -78,7 +79,8 @@ def main() -> None:
             color=(C_DARK, C_ORANGE, "#b2182b")[k],
         )
     ax2.axhline(0, color="gray", lw=0.8)
-    ax2.set_xlabel("Voltage V (V)"); ax2.set_ylabel("J (mA/cm²)")
+    ax2.set_xlabel("Voltage V (V)")
+    ax2.set_ylabel("J (mA/cm²)")
     ax2.set_title("Shunt leakage reduces $V_{oc}$ and fill factor")
     ax2.legend(fontsize=11.5, frameon=False, loc="lower left")
     ax2.set_xlim(0.0, 0.66)

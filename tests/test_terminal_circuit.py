@@ -1,4 +1,4 @@
-'Utilities for tests/test_terminal_circuit.py.'
+"""Unit tests for terminal series and shunt resistance transforms."""
 import numpy as np
 import pytest
 

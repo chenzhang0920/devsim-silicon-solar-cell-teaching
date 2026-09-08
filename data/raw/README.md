@@ -9,3 +9,9 @@ That prevents one illuminated area or polarity transform from being applied to a
 group's files; use a unique numeric sample ID in the native filenames.
 
 Generated teaching data is not raw data; it belongs in `data/synthetic/`.
+
+`power.jpg` is an informal source note containing optical-power readings. It is
+retained only as raw supporting evidence: the image does not record beam area or
+profile, detector calibration, measurement plane, or a mapping to a specific cell
+and J–V sweep. Do not convert its milliwatt values to irradiance or use them as a
+`photon_flux` calibration input unless that missing metadata is recovered.

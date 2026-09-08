@@ -2,7 +2,7 @@
   "schema_version": 1,
   "mode": "joint",
   "data_file": "data/processed/light_iv_sample3.csv",
-  "data_sha256": "395a0895ac51a0b8860b07ab0dd38da7c1d128292cb0c0f7f39206148f7c71f7",
+  "data_sha256": "73de1a716d8cd21dc10920f559ecbeb5c8c5248c129c20833e8fab0dd18e1077",
   "command": "python scripts/run_calibration.py --joint --sample 3",
   "residual_mode": "absolute",
   "model_params": {
@@ -99,8 +99,8 @@
     "success": true,
     "message": "`xtol` termination condition is satisfied.",
     "nfev": 35,
-    "sum_squared_scaled_residuals": 9.197998539476426,
-    "lmfit_redchi_internal": 0.3284999478384438,
+    "sum_squared_scaled_residuals": 31.653018207587884,
+    "lmfit_redchi_internal": 1.1304649359852816,
     "interpretation": "Internal optimizer diagnostics, not a statistical goodness-of-fit test. For joint mode use joint_objective.normalized_block_score."
   },
   "covariance_scaling": "Unscaled local Jacobian covariance using the stated discrepancy scales",
@@ -111,12 +111,12 @@
     ],
     "matrix": [
       [
-        0.00047218228031889204,
-        0.0010027593242611691
+        0.00020485130863620438,
+        0.003442476193931895
       ],
       [
-        0.0010027593242611691,
-        0.1993057192542461
+        0.0034424761939318956,
+        1.6779087485788682
       ]
     ]
   },
@@ -138,7 +138,7 @@
   "voc_sigma_V": 0.01,
   "joint_objective": {
     "definition": "self_consistent_terminal_prediction",
-    "normalized_block_score": 4.379999304512584,
+    "normalized_block_score": 15.072865813137087,
     "active_weight_sum": 2.1,
     "quality_warning_threshold": 4.0,
     "quality_gate_passed": false,
@@ -146,38 +146,38 @@
       "light_iv": {
         "weight": 1.0,
         "residual_count": 13,
-        "normalized_rms": 2.142333633484776,
-        "weighted_squared_contribution": 4.589593397160082,
-        "objective_share": 0.4989774000791844
+        "normalized_rms": 4.978993118883426,
+        "weighted_squared_contribution": 24.790372477888504,
+        "objective_share": 0.7831914263375281
       },
       "dark_iv": {
         "weight": 0.35,
         "residual_count": 15,
-        "normalized_rms": 3.20192500827178,
-        "weighted_squared_contribution": 3.5883133155086826,
-        "objective_share": 0.3901189264281987
+        "normalized_rms": 2.1367633542875617,
+        "weighted_squared_contribution": 1.5980151712791812,
+        "objective_share": 0.05048539639408238
       },
       "light_ishort": {
         "weight": 0.5,
         "residual_count": 1,
-        "normalized_rms": 0.03853764819113093,
-        "weighted_squared_contribution": 0.0007425751640516885,
-        "objective_share": 8.073225505142967e-05
+        "normalized_rms": 0.5958271279762305,
+        "weighted_squared_contribution": 0.17750498321620164,
+        "objective_share": 0.005607837522857458
       },
       "light_voc": {
         "weight": 0.25,
         "residual_count": 1,
-        "normalized_rms": 2.0192565479835483,
-        "weighted_squared_contribution": 1.019349251643609,
-        "objective_share": 0.11082294123756546
+        "normalized_rms": 4.510931422756946,
+        "weighted_squared_contribution": 5.087125575204001,
+        "objective_share": 0.16071533974553212
       }
     },
     "interpretation": "Weighted mean squared self-consistent terminal discrepancy across active observable blocks; not a statistical reduced chi-square"
   },
   "dataset_sha256": {
-    "light_iv": "395a0895ac51a0b8860b07ab0dd38da7c1d128292cb0c0f7f39206148f7c71f7",
-    "dark_iv": "3f0fbc520a8f1fedf9d423e1955c903e6336c9183777e4a5c3c7b9bc918dfb01",
-    "ishort_summary": "4c24f089c988e0236a999b358b5eab3fe60de53a5327dfa59a75ad927c5cf8e3",
+    "light_iv": "73de1a716d8cd21dc10920f559ecbeb5c8c5248c129c20833e8fab0dd18e1077",
+    "dark_iv": "10bda79deba338e0066c59048f232a7e971981e937332de98900b188de5403d8",
+    "ishort_summary": "59adae9c22e32d2b1f7dcc74838f0932d508602bb2e59270f6e3f9eb413ac649",
     "voc_summary": "0c5f7b49a83a368084a7fccaa11e7785fa3706fbb69aa62c1840ebbc0f4e7617"
   }
 }

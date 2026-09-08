@@ -30,18 +30,18 @@
       "stderr": null
     },
     "photon_flux": {
-      "value": 1.3783990376800588,
+      "value": 0.46986047569110806,
       "vary": true,
       "min": 0.1,
       "max": 2.0,
-      "stderr": 0.02172975564333138
+      "stderr": 0.014312627593709144
     },
     "series_resistance": {
-      "value": 4.838596834675935,
+      "value": 16.05540496999781,
       "vary": true,
       "min": 0.0,
       "max": 20.0,
-      "stderr": 0.44643669120519885
+      "stderr": 1.2953411707264106
     },
     "shunt_resistance": {
       "value": 0.0,

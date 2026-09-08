@@ -4,8 +4,9 @@ This directory contains cleaned and unit-converted tables derived from the
 unmodified files in `data/raw/keithley/`. The bundled Cell #3 and Cell #4 files
 are produced by `scripts/prepare_keithley.py` and use voltage in V and current
 density in A/cm² (therefore they are J–V tables). The bundled tables use the documented
-4.0 cm² illuminated-area conversion. That area is experimental metadata rather than a
-DEVSIM device parameter.
+3 cm × 4 cm illuminated dimensions, corresponding to a 12.0 cm² current-density
+normalization area. That area is experimental metadata rather than a DEVSIM device
+parameter.
 
 Keithley J-V conversions retain the lesson's modeled forward-bias interval,
 `0 <= V <= --v-max` (0.72 V by default). Reverse-bias measurements remain in the raw
