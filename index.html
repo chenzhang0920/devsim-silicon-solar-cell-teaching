@@ -115,6 +115,81 @@
     .fact strong { display: block; color: var(--navy); }
     .fact span { color: var(--muted); font-size: .9rem; }
 
+    .physics-section { background: var(--paper); }
+    .physics-section .section-head { max-width: 860px; }
+    .coupling-path {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.35rem;
+      margin: 0 0 1.35rem;
+    }
+    .coupling-node {
+      position: relative; min-width: 0; padding: 1rem;
+      background: var(--wash); border: 1px solid var(--line);
+      border-top: 4px solid var(--blue); border-radius: 10px;
+    }
+    .coupling-node:not(:last-child)::after {
+      content: "→"; position: absolute; top: 50%; right: -1.08rem;
+      z-index: 2; color: var(--orange); font-size: 1.35rem; font-weight: 900;
+      transform: translateY(-55%);
+    }
+    .coupling-node span {
+      display: block; margin-bottom: .3rem; color: var(--orange);
+      font-size: .72rem; font-weight: 850; letter-spacing: .1em;
+    }
+    .coupling-node strong { display: block; color: var(--navy); line-height: 1.25; }
+    .coupling-node small { display: block; margin-top: .3rem; color: var(--muted); line-height: 1.4; }
+    .solver-loop {
+      margin-bottom: 1.5rem; padding: 1.2rem 1.4rem;
+      color: white; background: linear-gradient(120deg, var(--navy), #075c8b);
+      border-radius: 12px;
+    }
+    .solver-loop strong { color: #f3d788; }
+    .loop-expression {
+      display: block; overflow-x: auto; margin: .45rem 0 .35rem;
+      color: white; font-family: Cambria, Georgia, serif;
+      font-size: clamp(1.08rem, 2vw, 1.42rem); white-space: nowrap;
+    }
+    .solver-loop p { margin: 0; color: #d7e6ef; }
+    .equation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .equation-card {
+      min-width: 0; padding: 1.35rem; background: var(--wash);
+      border: 1px solid var(--line); border-radius: 12px;
+    }
+    .equation-card.terminal { grid-column: 1 / -1; }
+    .equation-label {
+      margin: 0 0 .45rem; color: var(--orange); font-size: .76rem;
+      font-weight: 850; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .equation-card h3 { font-size: 1.28rem; }
+    .equation {
+      display: block; overflow-x: auto; margin: .85rem 0;
+      padding: .8rem .9rem; color: #062f53; background: white;
+      border-left: 4px solid var(--gold); border-radius: 6px;
+      font-family: Cambria, Georgia, serif; font-size: 1.16rem;
+      line-height: 1.75; white-space: nowrap;
+    }
+    .equation span { display: block; }
+    .equation.compact { font-size: 1.02rem; }
+    .equation-card p { margin: .65rem 0 0; color: var(--muted); }
+    .physics-check {
+      padding-left: .75rem; border-left: 3px solid var(--blue);
+      color: var(--ink) !important; font-size: .93rem;
+    }
+    .terminal-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 1.3rem; align-items: start; }
+    .operating-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+    .operating-point { padding: .85rem; background: white; border: 1px solid var(--line); border-radius: 8px; }
+    .operating-point strong { display: block; color: var(--navy); }
+    .operating-point span { color: var(--muted); font-size: .9rem; }
+    .parameter-map { margin-top: 1.6rem; }
+    .parameter-map h3 { margin-bottom: .7rem; font-size: 1.35rem; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+    .parameter-map table { width: 100%; min-width: 760px; border-collapse: collapse; background: white; }
+    .parameter-map th, .parameter-map td { padding: .75rem .85rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    .parameter-map th { color: white; background: var(--navy); font-size: .85rem; }
+    .parameter-map tr:last-child td { border-bottom: 0; }
+    .parameter-map td { color: var(--muted); font-size: .9rem; }
+    .parameter-map td:first-child { color: var(--navy); font-weight: 800; }
+    .fit-note { margin: .9rem 0 0; color: var(--muted); font-size: .94rem; }
+
     section { padding: 4.6rem 0; }
     .section-head { max-width: 720px; margin-bottom: 2rem; }
     .section-head p { margin: 0; color: var(--muted); font-size: 1.08rem; }
@@ -173,6 +248,10 @@
       .hero-grid, .scope-grid { grid-template-columns: 1fr; }
       .device-card { width: min(390px, 100%); }
       .fact-grid, .steps { grid-template-columns: 1fr 1fr; }
+      .coupling-path { grid-template-columns: 1fr 1fr; gap: .8rem; }
+      .coupling-node:not(:last-child)::after { display: none; }
+      .equation-grid, .terminal-layout { grid-template-columns: 1fr; }
+      .equation-card.terminal { grid-column: auto; }
       .fact:nth-child(2) { border-right: 0; }
       .fact:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
       .resources, .gallery { grid-template-columns: 1fr; }
@@ -185,7 +264,7 @@
       .brand span { display: none; }
       .hero { padding: 3rem 0 3.5rem; }
       .hero-grid { gap: 2.5rem; }
-      .fact-grid, .steps { grid-template-columns: 1fr; }
+      .fact-grid, .steps, .coupling-path, .operating-points { grid-template-columns: 1fr; }
       .fact { border-right: 0; border-bottom: 1px solid var(--line); }
       .fact:last-child { border-bottom: 0; }
       section { padding: 3.5rem 0; }
@@ -210,6 +289,7 @@
         <span><strong>MICS3090 (L01)</strong><small>Integrated Circuit Devices</small></span>
       </a>
       <nav aria-label="Course website">
+        <a href="#physics">Physics</a>
         <a href="#workflow">Workflow</a>
         <a href="#resources">Materials</a>
         <a href="#evidence">Results</a>
@@ -250,12 +330,121 @@
       </div>
     </div>
 
+    <section class="physics-section" id="physics">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Coupled device physics</p>
+          <h2>How absorbed light becomes terminal current</h2>
+          <p>The equations are not separate chapters. Charge changes the electric field, the field and carrier gradients set current, and continuity updates the charge. Newton iteration closes this nonlinear loop.</p>
+        </div>
+
+        <div class="coupling-path" aria-label="Physical cause-and-effect chain">
+          <div class="coupling-node"><span>01 · Structure</span><strong>Doping and junction</strong><small>p<sup>+</sup> emitter on an n-type base</small></div>
+          <div class="coupling-node"><span>02 · Electrostatics</span><strong>Potential and field</strong><small>Space charge bends the bands</small></div>
+          <div class="coupling-node"><span>03 · Illumination</span><strong>Carrier generation</strong><small>Absorption depends on depth and wavelength</small></div>
+          <div class="coupling-node"><span>04 · Transport</span><strong>Drift, diffusion, loss</strong><small>Carriers move or recombine</small></div>
+          <div class="coupling-node"><span>05 · Observation</span><strong>J–V and EQE</strong><small>Contacts convert internal physics into data</small></div>
+        </div>
+
+        <div class="solver-loop">
+          <strong>The self-consistent loop solved by DEVSIM</strong>
+          <span class="loop-expression">(n, p, N<sub>D</sub>, N<sub>A</sub>) → &rho; → &psi; → E → (J<sub>n</sub>, J<sub>p</sub>) → continuity → (n, p)</span>
+          <p>A one-dimensional finite-volume discretization and Newton iteration solve &psi;, n, and p together. Light intensity and voltage are ramped gradually so each converged state initializes the next.</p>
+        </div>
+
+        <div class="equation-grid">
+          <article class="equation-card">
+            <p class="equation-label">1 · Junction electrostatics</p>
+            <h3>Space charge creates band bending</h3>
+            <div class="equation" aria-label="Poisson equation and electric field">
+              <span>d<sup>2</sup>&psi;/dx<sup>2</sup> = &minus;(q/&varepsilon;<sub>Si</sub>)(p &minus; n + N<sub>D</sub><sup>+</sup> &minus; N<sub>A</sub><sup>&minus;</sup>)</span>
+              <span>E = &minus;d&psi;/dx</span>
+            </div>
+            <p>Carrier diffusion across the p<sup>+</sup>–n interface exposes fixed ionized dopants. Their space charge forms a depletion region on both sides of the metallurgical junction and, because the base is less heavily doped, mostly inside the n-type base.</p>
+            <p class="physics-check"><strong>Direction check:</strong> x runs from the front p<sup>+</sup> emitter to the rear n contact, so the built-in field points from n to p (&minus;x).</p>
+          </article>
+
+          <article class="equation-card">
+            <p class="equation-label">2 · Optical generation</p>
+            <h3>Absorption sets where pairs are created</h3>
+            <div class="equation" aria-label="Beer-Lambert optical generation">
+              <span>G(x) = s(1 &minus; R<sub>f</sub>) &Sigma;<sub>i</sub> &Phi;<sub>i</sub>&alpha;<sub>i</sub>e<sup>&minus;&alpha;<sub>i</sub>x</sup></span>
+            </div>
+            <p>The model distributes a 16-bin AM1.5-like teaching spectrum through silicon using single-pass Beer–Lambert absorption. &Phi;<sub>i</sub> and &alpha;<sub>i</sub> are the photon flux and absorption coefficient of bin i; R<sub>f</sub> is front reflectance; s is the effective photogeneration scale.</p>
+            <p class="physics-check"><strong>Depth check:</strong> strongly absorbed short wavelengths generate near the front; weakly absorbed near-band-gap photons penetrate deeper.</p>
+          </article>
+
+          <article class="equation-card">
+            <p class="equation-label">3 · Drift–diffusion transport</p>
+            <h3>Fields and gradients move carriers</h3>
+            <div class="equation" aria-label="Electron and hole drift-diffusion current equations">
+              <span>J<sub>n</sub> = q&mu;<sub>n</sub>nE + qD<sub>n</sub>dn/dx</span>
+              <span>J<sub>p</sub> = q&mu;<sub>p</sub>pE &minus; qD<sub>p</sub>dp/dx</span>
+            </div>
+            <p>In the depletion region, the built-in field sweeps holes toward the front p contact and electrons toward the rear n contact. In the quasi-neutral emitter and base, diffusion is essential: a carrier contributes only if it reaches a collecting region before recombining.</p>
+            <p class="physics-check"><strong>Plot connection:</strong> compare doping, electric field, carrier density, and generation in <code>results/profiles.png</code>.</p>
+          </article>
+
+          <article class="equation-card">
+            <p class="equation-label">4 · Continuity and recombination</p>
+            <h3>Local conservation sets collection loss</h3>
+            <div class="equation" aria-label="Steady-state carrier continuity equations">
+              <span>dJ<sub>n</sub>/dx = q(R &minus; G)</span>
+              <span>dJ<sub>p</sub>/dx = &minus;q(R &minus; G)</span>
+            </div>
+            <div class="equation compact" aria-label="Shockley Read Hall and total recombination">
+              <span>R = R<sub>SRH</sub> + R<sub>Auger</sub> + R<sub>front</sub><sup>eff</sup> + R<sub>back</sub><sup>eff</sup></span>
+              <span>R<sub>SRH</sub> = (np &minus; n<sub>i</sub><sup>2</sup>)/[&tau;<sub>p</sub>(n+n<sub>1</sub>) + &tau;<sub>n</sub>(p+p<sub>1</sub>)]</span>
+            </div>
+            <p>Continuity enforces the steady-state balance of generation, transport, and recombination. Larger bulk or near-contact loss reduces collection; at open circuit it also reduces quasi-Fermi-level splitting and therefore V<sub>oc</sub>.</p>
+            <p class="physics-check"><strong>Model boundary:</strong> the front and rear losses are finite-thickness effective “dead layers,” not full interface-state or Robin-boundary models.</p>
+          </article>
+
+          <article class="equation-card terminal">
+            <p class="equation-label">5 · From device solution to measured data</p>
+            <h3>Contacts and parasitics define the terminal J–V curve</h3>
+            <div class="terminal-layout">
+              <div>
+                <div class="equation" aria-label="Terminal series and shunt resistance equations">
+                  <span>J = J<sub>device</sub>(V<sub>j</sub>) &minus; V<sub>j</sub>/R<sub>sh</sub></span>
+                  <span>V<sub>term</sub> = V<sub>j</sub> &minus; JR<sub>s</sub></span>
+                </div>
+                <p>DEVSIM provides the intrinsic junction response. The terminal mapping then adds area-normalized series and shunt resistance. This site uses generation-positive output: illuminated J<sub>sc</sub> is positive, while forward dark-diode current is negative.</p>
+              </div>
+              <div class="operating-points" aria-label="Observable operating points">
+                <div class="operating-point"><strong>Short circuit</strong><span>V<sub>term</sub> = 0; J<sub>sc</sub> tests photocarrier collection.</span></div>
+                <div class="operating-point"><strong>Open circuit</strong><span>J = 0; V<sub>oc</sub> reflects generation–recombination balance.</span></div>
+                <div class="operating-point"><strong>Maximum power</strong><span>Maximize VJ; R<sub>s</sub> and R<sub>sh</sub> strongly affect fill factor.</span></div>
+                <div class="operating-point"><strong>Spectral response</strong><span>J<sub>sc,EQE</sub> = q&int;&Phi;<sub>inc</sub>(&lambda;)EQE(&lambda;)d&lambda;.</span></div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="parameter-map">
+          <h3>How equations become calibration evidence</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Mechanism</th><th>Representative parameters</th><th>Observable evidence</th><th>Standard exercise</th></tr></thead>
+              <tbody>
+                <tr><td>Junction electrostatics</td><td>Emitter/base doping, emitter depth</td><td>Field and band profiles</td><td>Fixed device definition</td></tr>
+                <tr><td>Photogeneration</td><td>Effective scale s, front reflectance</td><td>Light J–V, J<sub>sc</sub>, EQE</td><td>Fit s; hold reflectance fixed</td></tr>
+                <tr><td>Collection and recombination</td><td>Carrier lifetimes, effective front/rear loss</td><td>J<sub>sc</sub>, V<sub>oc</sub>, EQE shape</td><td>Fixed; current data do not separate them reliably</td></tr>
+                <tr><td>Terminal parasitics</td><td>R<sub>s</sub>, R<sub>sh</sub></td><td>Light/dark J–V slope and knee</td><td>Fit R<sub>s</sub>; hold R<sub>sh</sub> infinite</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="fit-note">The Cell #3 joint objective uses illuminated J–V, dark J–V, independent J<sub>sc</sub>, and independent V<sub>oc</sub>. Only s (<code>photon_flux</code>) and R<sub>s</sub> vary so the undergraduate exercise remains interpretable and does not claim information the measurements cannot support. A failed residual block is evidence of model discrepancy, not permission to fit every parameter.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="workflow">
       <div class="shell">
         <div class="section-head">
-          <p class="eyebrow">Learning storyline</p>
-          <h2>From physical assumptions to defensible evidence</h2>
-          <p>Each stage produces something students can inspect, challenge, and explain.</p>
+          <p class="eyebrow">Laboratory workflow</p>
+          <h2>Build, solve, measure, and test</h2>
+          <p>Turn the coupled physics into reproducible evidence that students can inspect, challenge, and explain.</p>
         </div>
         <div class="steps">
           <article class="step"><span class="step-number">01</span><h3>Build</h3><p>Define the mesh, p<sup>+</sup> emitter, n-type base, contacts, doping, and optical source.</p></article>

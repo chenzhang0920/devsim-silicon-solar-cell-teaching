@@ -137,6 +137,14 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "docs/grading.md" in html
     assert "Zhang CHEN" in html
     assert "zchen758@connect.hkust-gz.edu.cn" in html
+    assert 'id="physics"' in html
+    assert "Newton iteration closes this nonlinear loop" in html
+    assert "d<sup>2</sup>&psi;/dx<sup>2</sup>" in html
+    assert "J<sub>n</sub> = q&mu;<sub>n</sub>nE" in html
+    assert "R<sub>SRH</sub>" in html
+    assert "V<sub>term</sub> = V<sub>j</sub>" in html
+    assert "illuminated J–V, dark J–V, independent J<sub>sc</sub>" in html
+    assert "Only s (<code>photon_flux</code>) and R<sub>s</sub> vary" in html
 
     local_refs = re.findall(r'(?:href|src)="((?!https?:|mailto:|#)[^"]+)"', html)
     assert local_refs
