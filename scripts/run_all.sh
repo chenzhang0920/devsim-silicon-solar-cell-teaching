@@ -16,7 +16,7 @@ Profiles:
   full, all       Rebuild every checked course result, then execute the tutorial notebook.
   quick           Rebuild only the fast forward-model and figure steps.
   simulation      Run the core simulation and device-physics figures.
-  calibration     Run calibration and optimization diagnostics.
+  calibration     Run the joint calibration and synthetic optimization trace.
   joint           Calibrate one measured cell with all compatible observables.
   eqe             Run the wavelength-dependent EQE calculation and figure.
   synthetic       Regenerate the deterministic synthetic J-V smoke-test table.
@@ -117,7 +117,6 @@ case "${profile}" in
     calibration|calibrate)
         "${PYTHON_BIN}" scripts/build_slides.py \
             --only demo-data \
-            --only calibration \
             --only joint \
             --only optimization \
             "$@"

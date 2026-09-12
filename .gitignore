@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.uvcache/
 .coverage
 coverage.xml
 htmlcov/
@@ -27,7 +28,11 @@ venv/
 Thumbs.db
 
 # The checked baseline in results/ is intentionally shared because the slide deck
-# links to it. Ignore only disposable local audit artifacts.
+# links to it. Ignore only optional local fits and disposable audit artifacts.
+results/fit_plot.png
+results/identifiability.png
+results/fitted_params.json
+results/fit_metadata.json
 results/_audit*
 results/*.tmp
 results/prepared_data_preview.png

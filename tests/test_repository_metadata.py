@@ -65,8 +65,8 @@ def test_saved_fit_replot_rejects_changed_input(tmp_path):
         _verify_hash(source, digest)
 
 
-def test_checked_fit_parameters_use_portable_strict_json():
-    path = ROOT / "results" / "fitted_params.json"
+def test_checked_joint_fit_parameters_use_portable_strict_json():
+    path = ROOT / "results" / "joint_fitted_params.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["schema_version"] == 1
     assert "unique_symbols" not in payload
@@ -76,9 +76,6 @@ def test_checked_fit_parameters_use_portable_strict_json():
 
 
 def test_checked_calibration_results_state_covariance_and_schema_contracts():
-    single = json.loads(
-        (ROOT / "results" / "fit_metadata.json").read_text(encoding="utf-8")
-    )
     joint = json.loads(
         (ROOT / "results" / "joint_fit_metadata.json").read_text(encoding="utf-8")
     )
@@ -86,9 +83,7 @@ def test_checked_calibration_results_state_covariance_and_schema_contracts():
         (ROOT / "results" / "joint_metrics.json").read_text(encoding="utf-8")
     )
 
-    assert single["schema_version"] == joint["schema_version"] == 1
-    assert "lmfit default" in single["covariance_scaling"]
-    assert "not an instrument-derived" in single["covariance_scaling"]
+    assert joint["schema_version"] == 1
     assert "Unscaled local Jacobian" in joint["covariance_scaling"]
     assert metrics["schema_version"] == 1
     objective = joint["joint_objective"]
@@ -113,8 +108,16 @@ def test_repository_text_and_binary_rules_cover_portable_entry_points():
     assert "data/raw/**/*.csv -text -whitespace" in attributes
     assert "end_of_line = lf" in editorconfig
     assert ".pytest_cache/" in gitignore
+    assert ".uvcache/" in gitignore
     assert ".venv/" in gitignore
     assert "results/*" not in gitignore.splitlines()
+    for optional_fit in (
+        "results/fit_plot.png",
+        "results/identifiability.png",
+        "results/fitted_params.json",
+        "results/fit_metadata.json",
+    ):
+        assert optional_fit in gitignore
     assert "results/_audit*" in gitignore
     assert "results/prepared_data_preview.png" in gitignore
 

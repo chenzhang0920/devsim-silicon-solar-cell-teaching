@@ -141,7 +141,8 @@ def test_student_deck_matches_build_and_data_contracts():
     }
     assert refs <= declared
     names = [step[0] for step in build.STEPS]
-    assert names.index("demo-data") < names.index("iv") < names.index("calibration")
+    assert "calibration" not in names
+    assert names.index("demo-data") < names.index("iv") < names.index("joint")
     demo_step = next(step for step in build.STEPS if step[0] == "demo-data")
     assert demo_step[3] == ["data/synthetic/iv.csv"]
     sweep_step = next(step for step in build.STEPS if step[0] == "sweep")

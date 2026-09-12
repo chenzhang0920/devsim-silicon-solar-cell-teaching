@@ -108,7 +108,7 @@ bash scripts/run_all.sh check
 ```
 
 The `full` profile regenerates the deterministic synthetic J–V reference from the current
-`config.py`, then rebuilds the standard figures, synthetic smoke-test calibration,
+`config.py`, then rebuilds the standard figures, synthetic optimization trace,
 Cell #3 joint calibration, and the executed Notebook. Use
 `bash scripts/run_all.sh help` to see focused simulation, calibration, EQE, data
 conversion, and Notebook workflows. On Windows PowerShell, the underlying Python scripts
@@ -328,6 +328,11 @@ The intended reading order is:
 2. [`config.py`](config.py) and the [Tutorial Notebook](notebooks/tutorial.ipynb);
 3. the relevant command-line script;
 4. model or calibration internals only when the lesson asks for them.
+
+The compact artifact index in [`results/README.md`](results/README.md) separates assessed
+outputs from instructor-support figures. Optional light-only fits may create additional
+local `fit_*` files; they are not part of the checked baseline because the joint workflow
+is the canonical assessed calibration.
 
 ## ✅ Assessment
 

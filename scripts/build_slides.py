@@ -1,4 +1,4 @@
-"""Build and validate the generated assets used by the HTML slide deck."""
+"""Build reproducible teaching assets and validate the HTML slide deck."""
 from __future__ import annotations
 
 import argparse
@@ -28,10 +28,6 @@ STEPS = [
                       "--stop", "1e-4", "--n", "5"],
                      ["results/sweep.png"], True),
     ("eqe",          "scripts/plot_eqe.py",        [],                     ["results/eqe.png"],          True),
-    ("calibration",  "scripts/run_calibration.py", [],                     ["results/fit_plot.png",
-                                                                            "results/identifiability.png",
-                                                                            "results/fitted_params.json",
-                                                                            "results/fit_metadata.json"], True),
     ("joint",        "scripts/run_calibration.py", ["--joint", "--sample", "3"],
                     ["results/joint_observables.png",
                      "results/joint_identifiability.png",
@@ -143,7 +139,9 @@ def _check_slides() -> list[str]:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Generate all figures used by the slide deck")
+    ap = argparse.ArgumentParser(
+        description="Generate checked figures and calibration artifacts for the course"
+    )
     step_names = sorted(_NAME_TO_STEP)
     slow_names = [name for name, *_, slow in STEPS if slow]
     ap.add_argument("--skip-slow", action="store_true",
