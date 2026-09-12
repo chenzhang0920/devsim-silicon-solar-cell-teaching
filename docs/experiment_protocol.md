@@ -88,8 +88,9 @@ It must not be used to calculate experimental efficiency.
 1. Confirm the polarity with a low-risk test point under instructor supervision.
 2. Sweep from short circuit toward forward bias and continue slightly beyond the measured
    zero-current crossing. Use the approved voltage limit and compliance.
-3. Use sufficiently small steps to resolve the knee; denser points near the knee and a few
-   safe forward-current points improve resistance information.
+3. Use sufficiently small steps to resolve the knee. When instrument time and limits allow,
+   use 10–20 mV steps around the knee and zero-current crossing; retain a few safe
+   forward-current points to improve resistance information.
 4. Allow each point to settle before recording it. Keep sweep direction, delay, and
    integration time fixed.
 5. Save the native export without editing it.
@@ -109,8 +110,10 @@ Use the same area, temperature, wiring and instrument settings wherever possible
 
 ### 6.1 Dark I–V
 
-Block the light completely, verify the dark condition, and repeat the voltage sweep. Record
-any changed range, compliance, or integration setting.
+Block the light completely, verify the dark condition, and repeat the voltage sweep. Increase
+positive bias until |Jdark| is comparable with |Jsc|, or stop at the approved compliance or
+voltage limit and record that limitation. Otherwise, leverage on series resistance may remain
+weak. Record any changed range, compliance, or integration setting.
 
 ### 6.2 Repeated illuminated short-circuit current
 

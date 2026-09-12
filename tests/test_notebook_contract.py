@@ -155,7 +155,7 @@ def test_animation_and_eqe_scope_avoid_misleading_extras():
 
 
 def test_notebook_uses_portable_setup_and_the_configured_reporting_grid():
-    _, code = _sources()
+    markdown, code = _sources()
 
     assert 'print("Project root detected.")' in code
     assert 'print(f"Project root: {project_root}")' not in code
@@ -166,6 +166,14 @@ def test_notebook_uses_portable_setup_and_the_configured_reporting_grid():
     assert "not validated parameter uncertainties" in code
     assert "joint_block_diagnostics" in code
     assert "Objective share (%)" in code
+    assert ".style.format" not in code
+    assert "Separately acquired illuminated Jsc" in code
+    assert "Independent Jsc" not in (markdown + code)
+    assert "How to read this result" in code
+    assert "The gate flags disagreement" in code
+    assert "blockwise and signed residuals" in code
+    assert "Largest signed illuminated J" in code
+    assert "relative uncertainties" not in (markdown + code).lower()
     assert 'device_data["electric_field"]' in code
     assert code.index("Normalized block score") < code.index(
         "Fitted effective parameters and local covariance diagnostics"

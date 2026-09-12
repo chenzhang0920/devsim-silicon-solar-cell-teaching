@@ -1,4 +1,4 @@
-"""Calibration diagnostics, uncertainty checks, and report plots."""
+"""Calibration diagnostics, local covariance checks, and report plots."""
 from __future__ import annotations
 
 import numpy as np
@@ -96,7 +96,7 @@ def joint_comparison_figure(
 ) -> plt.Figure:
     """Plot the illuminated and dark J-V data used by a joint calibration.
 
-    The independent short-circuit and Voc observations are shown as markers,
+    The separately acquired short-circuit and Voc observations are shown as markers,
     making it clear which measurements constrain which part of the model.
     ``data`` is duck-typed to keep this reporting module independent from the
     calibration loader at import time.
@@ -235,11 +235,14 @@ def physical_warnings(params: lmfit.Parameters) -> list[str]:
             rel = stderr / abs(val)
             if rel > 1.0:
                 warns.append(
-                    f"{name} has {rel:.0%} relative uncertainty "
+                    f"{name} has {rel:.0%} relative local covariance scale "
                     "(insensitive or not reliably identified)"
                 )
             elif rel > 0.5:
-                warns.append(f"{name} has {rel:.0%} relative uncertainty (weakly constrained)")
+                warns.append(
+                    f"{name} has {rel:.0%} relative local covariance scale "
+                    "(weakly constrained)"
+                )
 
         if "lifetime" in name and val > 0.1:
             warns.append(
@@ -276,23 +279,37 @@ _STRONG_CORR = 0.8
 
 
 def _identifiability_data(params: lmfit.Parameters, covar=None, var_names=None):
-    """Assemble uncertainties, correlations, and trade-off flags."""
+    """Assemble local covariance scales, correlations, and trade-off flags."""
     names = _varied_names(params, var_names)
 
+    covariance = None
+    corr = None
+    if covar is not None:
+        covariance = np.asarray(covar, dtype=float)
+        covariance_corr = correlation_from_covar(covariance)
+        if covariance.shape != (len(names), len(names)):
+            raise ValueError(
+                f"covar shape {covariance.shape} does not match "
+                f"{len(names)} fitted parameters"
+            )
+        if len(names) > 1:
+            corr = covariance_corr
+
     rels = []
-    for n in names:
+    for index, n in enumerate(names):
         p = params[n]
-        stderr = getattr(p, "stderr", None)
-        rel = (stderr / abs(p.value)) if (stderr is not None and abs(p.value) > 0) else np.nan
+        local_scale = (
+            np.sqrt(covariance[index, index])
+            if covariance is not None
+            else getattr(p, "stderr", None)
+        )
+        rel = (
+            local_scale / abs(p.value)
+            if (local_scale is not None and abs(p.value) > 0)
+            else np.nan
+        )
         rels.append(rel)
     rels = np.asarray(rels, dtype=float)
-
-    corr = None
-    if covar is not None and len(names) > 1:
-        corr = correlation_from_covar(covar)
-        if corr.shape != (len(names), len(names)):
-            raise ValueError(
-                f"covar shape {corr.shape} does not match {len(names)} fitted parameters")
 
     strongly_correlated = set()
     if corr is not None:
@@ -310,7 +327,7 @@ def identifiability_figure(
     context: str = "selected observations",
     quality_note: str | None = None,
 ) -> plt.Figure:
-    """Visualize local relative uncertainty and fitted-parameter correlation."""
+    """Visualize relative local covariance scales and parameter correlation."""
     names, rels, corr, strongly_correlated = _identifiability_data(params, covar, var_names)
 
 
@@ -320,7 +337,7 @@ def identifiability_figure(
     )
     ax1 = fig.add_subplot(grid[0])
     ax2 = fig.add_subplot(grid[1])
-    title_prefix = "Local covariance sensitivity" if quality_note else "Local identifiability"
+    title_prefix = "Local covariance sensitivity" if quality_note else "Local covariance diagnostics"
     title = f"{title_prefix} — {context}"
     if quality_note:
         title += f"\n{quality_note}"
@@ -371,15 +388,11 @@ def identifiability_figure(
     ax1.set_yticklabels(labels)
     ax1.set_xscale("log")
     ax1.set_xlim(x_min, x_max)
-    if quality_note:
-        ax1.set_xlabel(
-            r"Relative local covariance scale  $\sqrt{\mathrm{diag}(C)}/|\hat{p}|$",
-            fontsize=16,
-        )
-        ax1.set_title("Relative local covariance scale", fontsize=18)
-    else:
-        ax1.set_xlabel("Relative uncertainty  σ / |fitted value|", fontsize=16)
-        ax1.set_title("Relative parameter uncertainty", fontsize=18)
+    ax1.set_xlabel(
+        r"Relative local covariance scale  $\sqrt{\mathrm{diag}(C)}/|\hat{p}|$",
+        fontsize=16,
+    )
+    ax1.set_title("Relative local covariance scale", fontsize=18)
     ax1.tick_params(labelsize=15)
     ax1.grid(True, axis="x")
     for n, y, r in zip(names, ypos, rels):
@@ -417,7 +430,7 @@ def identifiability_figure(
 def identifiability_summary(params: lmfit.Parameters,
                             covar=None, var_names=None,
                             quality_adequate: bool = True) -> list[str]:
-    """Summarize local uncertainty and parameter trade-offs in text.
+    """Summarize local covariance scales and parameter trade-offs in text.
 
     ``quality_adequate=False`` prevents a small local covariance from being
     described as physical identifiability after the model-data quality gate has
@@ -430,7 +443,7 @@ def identifiability_summary(params: lmfit.Parameters,
     lines = []
     for n, rel in zip(names, rels):
         if np.isnan(rel):
-            lines.append(f"{n}: no uncertainty estimate (not varied or fit failed)")
+            lines.append(f"{n}: no local covariance estimate (not varied or fit failed)")
             continue
         if not quality_adequate:
             verdict = "local numerical sensitivity only (quality gate failed)"
@@ -445,11 +458,7 @@ def identifiability_summary(params: lmfit.Parameters,
 
         # Keep terminal summaries ASCII so they render reliably in Windows
         # PowerShell/CMD as well as UTF-8 terminals.
-        ratio_label = (
-            "sqrt(diag(cov))/abs(fitted value)"
-            if not quality_adequate
-            else "stderr/abs(value)"
-        )
+        ratio_label = "sqrt(diag(cov))/abs(fitted value)"
         lines.append(f"{n}: {ratio_label} = {rel:.2%} -> {verdict}")
 
     if corr is not None:

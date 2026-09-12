@@ -77,9 +77,9 @@ CALIBRATION = {
     "diff_step": 1e-3,
     "residual_mode": "absolute",  # choices: absolute or relative
 
-    # A single sparse J-V curve cannot separate lifetime and near-contact loss effects, so those
-    # parameters remain fixed. Light level and effective series resistance are the
-    # two intentionally fitted, comparatively identifiable quantities.
+    # The bundled electrical observables do not independently separate bulk lifetime
+    # from near-contact loss. Hold those mechanisms fixed; fit only the effective
+    # generation scale and series resistance so the exercise remains interpretable.
     "params": {
         "electron_lifetime": {"value": 1e-5, "min": 1e-9, "max": 1e-3, "vary": False},
         "hole_lifetime":     {"value": 1e-5, "min": 1e-9, "max": 1e-3, "vary": False},

@@ -310,7 +310,7 @@ def load_joint_data(
         raise ValueError("The measured illuminated Voc must be positive")
     if not light_v[0] <= float(voc_row["V_at_I0_V"]) <= light_v[-1]:
         raise ValueError(
-            "The independent illuminated Voc must lie inside the illuminated J-V voltage range"
+            "The separately acquired illuminated Voc must lie inside the illuminated J-V voltage range"
         )
 
     weights_cfg = cfg.get("weights", {})
@@ -392,9 +392,9 @@ def joint_residual(pars: lmfit.Parameters, data: JointData,
     """Evaluate self-consistent weighted residuals for multiple measurements.
 
     Each illuminated/dark J-V curve contributes one RMS-normalized block using
-    the configured model-data discrepancy fraction. The independent illuminated
-    short-circuit and Voc observations each contribute one residual using their
-    stated discrepancy scales. One illuminated terminal curve supplies all three
+    the configured model-data discrepancy fraction. The separately acquired
+    illuminated short-circuit and Voc observations each contribute one residual
+    using their stated discrepancy scales. One illuminated terminal curve supplies all three
     illuminated blocks, so every residual is a prediction at fixed terminal voltage.
     Block weights are applied only after nondimensionalization.
     """

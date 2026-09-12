@@ -646,7 +646,7 @@
               <h4>Additional calibration inputs</h4>
               <ul>
                 <li>processed illuminated and dark J–V data;</li>
-                <li>independent illuminated J<sub>sc</sub> and V<sub>oc</sub> observations;</li>
+                <li>separately acquired illuminated J<sub>sc</sub> and V<sub>oc</sub> observations;</li>
                 <li>residual scales, block weights, parameter bounds, and vary/fix choices.</li>
               </ul>
             </div>
@@ -655,7 +655,7 @@
               <ul>
                 <li>fitted effective generation scale and R<sub>s</sub>;</li>
                 <li>predicted observables, per-block residuals, and quality-gate result;</li>
-                <li>local covariance sensitivity and an explicit identifiability warning.</li>
+                <li>local covariance diagnostics and an explicit identifiability warning.</li>
               </ul>
             </div>
           </div>
@@ -800,7 +800,7 @@
               </tbody>
             </table>
           </div>
-          <p class="fit-note">The Cell #3 joint objective uses illuminated J–V, dark J–V, independent J<sub>sc</sub>, and independent V<sub>oc</sub>. Only s (<code>photon_flux</code>) and R<sub>s</sub> vary so the exercise remains interpretable and does not claim information the measurements cannot support. Dark J–V is therefore both a constraint on R<sub>s</sub> at larger forward current and, more importantly, an out-of-sample check on the fixed transport/recombination assumptions.</p>
+          <p class="fit-note">The Cell #3 joint objective uses illuminated J–V, dark J–V, separately acquired J<sub>sc</sub>, and separately acquired V<sub>oc</sub>. Only s (<code>photon_flux</code>) and R<sub>s</sub> vary so the exercise remains interpretable and does not claim information the measurements cannot support. Dark J–V is both a constraint on R<sub>s</sub> at larger forward current and a cross-observable check on the fixed transport/recombination assumptions. It participates in the objective; it is not held-out validation data.</p>
           <p class="fit-note"><strong>Quality score:</strong> Q = [&Sigma;<sub>b</sub>w<sub>b</sub> mean(r<sub>b</sub><sup>2</sup>)]/&Sigma;<sub>b</sub>w<sub>b</sub>, where each r<sub>b</sub> is normalized by its declared model–data discrepancy scale. The threshold Q = 4 is an instructor-defined teaching gate, equivalent to a weighted aggregate normalized RMS &radic;Q = 2; it is not a reduced &chi;<sup>2</sup> test or confidence level. A failed block is evidence of model discrepancy, not permission to vary every parameter.</p>
         </div>
       </div>
@@ -859,7 +859,7 @@
           </figure>
           <figure class="figure-calibration">
             <a class="figure-link" href="results/joint_observables.png" aria-label="Open the joint calibration observables at full size"><img src="results/joint_observables.png" alt="Measured and simulated illuminated and dark current-voltage data with short-circuit and open-circuit checks"></a>
-            <figcaption><strong>Across compatible observables</strong>Compare illuminated and dark J–V together with independent J<sub>sc</sub> and V<sub>oc</sub> checks. The full-width layout preserves the residual-block labels used to diagnose the failed quality gate.<br><a class="figure-open" href="results/joint_observables.png">Open full-size figure →</a></figcaption>
+            <figcaption><strong>Across compatible observables</strong>Compare illuminated and dark J–V together with separately acquired J<sub>sc</sub> and V<sub>oc</sub> checks. The full-width layout preserves the residual-block labels used to diagnose the failed quality gate.<br><a class="figure-open" href="results/joint_observables.png">Open full-size figure →</a></figcaption>
           </figure>
         </div>
       </div>

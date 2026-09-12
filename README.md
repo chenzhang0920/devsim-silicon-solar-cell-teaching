@@ -74,7 +74,7 @@ After completing the project, students should be able to:
 - convert raw instrument current into traceable current-density data with correct area,
   units, polarity, and metadata;
 - calibrate a small set of effective parameters against several compatible observables;
-- use residuals, uncertainty, correlation, and parameter bounds to discuss
+- use residuals, local covariance diagnostics, correlation, and parameter bounds to discuss
   identifiability and model limitations.
 
 ## 🚀 Quick start
@@ -223,8 +223,8 @@ explicit:
 |---|---|
 | illuminated J–V | photocurrent, knee shape, and zero crossing |
 | dark J–V | forward-current cross-check; limited leverage on effective series resistance |
-| repeated illuminated short-circuit readings | independent current anchor and repeatability |
-| illuminated open-circuit voltage | independent voltage anchor |
+| repeated illuminated short-circuit readings | separately acquired current anchor and repeatability |
+| illuminated open-circuit voltage | separately acquired voltage anchor |
 
 The canonical joint exercise varies only a deliberately small set of effective parameters. In
 particular, the fitted generation scale is not a measured number of suns, and an effective
@@ -235,8 +235,8 @@ does not identify lifetime, interface recombination, or detailed diode physics b
 fixed by design.
 
 Each optimizer evaluation computes one self-consistent illuminated terminal curve and one
-self-consistent dark terminal curve. Illuminated J–V, independent Jsc, and independent Voc
-are extracted from the same illuminated solution. Each output table reports the normalized
+self-consistent dark terminal curve. Predictions for illuminated J–V and the separately
+acquired Jsc and Voc anchors come from the same illuminated solution. Each output table reports the normalized
 RMS and objective share of every observation block, so systematic mismatch cannot be hidden
 inside one aggregate value. The normalized block score is the weighted mean squared
 discrepancy: 1 matches the stated scales on average and 4 corresponds to a twice-scale
@@ -251,7 +251,7 @@ Interpret these outputs together:
 - `results/joint_fitted_params.json` and `results/joint_fit_metadata.json` — fitted values,
   bounds, gate-qualified local covariance diagnostics, configuration, software versions,
   and data provenance;
-- `results/joint_identifiability.png` — local covariance sensitivity and parameter
+- `results/joint_identifiability.png` — local covariance scales and parameter
   correlation, explicitly qualified by the fit-quality gate.
 
 To redraw the saved joint fit without running the optimizer again, use:
@@ -298,7 +298,7 @@ Captions state whether an item is simulated, synthetic, or measured.
 </p>
 
 <p align="center">
-  <img src="results/joint_identifiability.png" alt="Local covariance sensitivity and parameter correlation for the Cell 3 joint calibration after its quality gate" width="820">
+  <img src="results/joint_identifiability.png" alt="Local covariance scales and parameter correlation for the Cell 3 joint calibration after its quality gate" width="820">
   <br><sub><strong>Trust check.</strong> The Cell #3 quality gate fails, so covariance is shown only as local numerical sensitivity; it does not validate the model or fitted parameters.</sub>
 </p>
 
@@ -367,7 +367,7 @@ python scripts/build_slides.py --check
 | `ModuleNotFoundError: devsim` | activate `devsim_solar` and verify the import shown in Quick start |
 | implausible J–V polarity | compare raw wiring with the voltage/current convention before flipping signs |
 | nonlinear solve failure | restore the checked voltage range and continuation settings, then change one item at a time |
-| visually good fit but large uncertainty | report the uncertainty and correlation; do not add more varied parameters |
+| visually good fit but large local covariance scale | report the scale and correlation; do not add more varied parameters |
 | unfamiliar command option | for a script with options, run `python scripts/<script>.py --help` from the project root |
 
 For course questions, contact **Zhang CHEN** at

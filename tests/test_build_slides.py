@@ -129,8 +129,31 @@ def test_student_deck_matches_build_and_data_contracts():
     assert "Bounded least-squares calibration" in html
     assert "Q = Σ" in html and "15.1 &gt; 4.0" in html
     assert "Model–data adequacy gate: failed" in html
+    assert "Four complementary observable blocks" in html
+    assert "Four independent checks" not in html
+    assert "test one sensitivity-supported physical hypothesis at a time" in html
+    assert "instructor-defined teaching gate" in html
     assert "Student workflow" in html
     assert 'href="https://zenodo.org/records/17328734"' in html
+
+    fitted = json.loads(
+        (root / "results" / "joint_fitted_params.json").read_text(encoding="utf-8")
+    )["parameters"]
+    metadata = json.loads(
+        (root / "results" / "joint_fit_metadata.json").read_text(encoding="utf-8")
+    )
+    objective = metadata["joint_objective"]
+    for name in ("photon_flux", "series_resistance"):
+        relative_percent = 100 * fitted[name]["stderr"] / abs(fitted[name]["value"])
+        assert f"{relative_percent:.1f}%" in html
+        assert f'style="--w:{relative_percent / 30 * 100:.0f}%"' in html
+    covariance = metadata["covariance"]["matrix"]
+    correlation = covariance[0][1] / (covariance[0][0] * covariance[1][1]) ** 0.5
+    assert html.count(f">{correlation:.2f}</div>") == 2
+    assert f"= {objective['normalized_block_score']:.1f} &gt; " \
+        f"{objective['quality_warning_threshold']:.1f}" in html
+    assert f"RMS ≈ {objective['blocks']['light_iv']['normalized_rms']:.1f}" in html
+    assert f"differs by ≈ {objective['blocks']['light_voc']['normalized_rms']:.1f}" in html
 
     refs = set(re.findall(r'src="\.\./results/([^"]+)"', html))
     declared = {
@@ -215,9 +238,11 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "J<sub>n</sub> = q&mu;<sub>n</sub>nE" in html
     assert "R<sub>SRH</sub>" in html
     assert "V<sub>term</sub> = V<sub>j</sub>" in html
-    assert "illuminated J–V, dark J–V, independent J<sub>sc</sub>" in html
+    assert "illuminated J–V, dark J–V, separately acquired J<sub>sc</sub>" in html
     assert "Only s (<code>photon_flux</code>) and R<sub>s</sub> vary" in html
     assert "not a reduced &chi;<sup>2</sup> test" in html
+    assert "out-of-sample check" not in html
+    assert "not held-out validation data" in html
 
     metrics = json.loads((root / "results" / "joint_metrics.json").read_text(encoding="utf-8"))
     objective = metrics["joint_objective"]

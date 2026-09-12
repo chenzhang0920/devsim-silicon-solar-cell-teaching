@@ -215,8 +215,8 @@ The joint objective uses four observable blocks:
 |---|---|
 | illuminated J–V | current plateau, knee, and curve shape |
 | dark J–V | forward-current cross-check and limited leverage on effective series resistance |
-| repeated illuminated short-circuit measurement | independent current and repeatability check |
-| illuminated open-circuit measurement | independent zero-current voltage check |
+| repeated illuminated short-circuit measurement | separately acquired current and repeatability check |
+| illuminated open-circuit measurement | separately acquired zero-current voltage check |
 
 The repeated short-circuit readings enter through a summary rather than as many copies of
 the same constraint. Dark short-circuit and dark zero-current-voltage files remain offset
@@ -268,7 +268,8 @@ Treat that reduced fit as less informative than the canonical joint workflow.
 - the observable, fit, and metrics outputs for the assigned dataset, using the canonical
   joint workflow on your own sample when those measurements are available;
 - a table of varied and fixed parameters, bounds, fitted values, units, and local
-  covariance diagnostics; call them uncertainties only when the quality gate passes;
+  covariance indicators; do not report them as confidence intervals because the current
+  discrepancy scales and block weights are teaching choices, not a statistical error model;
 - the exact calibration command and any deliberate `config.py` changes.
 
 ### Explain
@@ -309,10 +310,11 @@ python scripts/run_calibration.py --joint --sample YOUR_SAMPLE_ID
 
 ### Explain
 
-1. Does each fitted parameter have sufficient sensitivity and acceptable uncertainty?
+1. Does each fitted parameter have sufficient local sensitivity and a defensible
+   covariance scale?
 2. What does a large-magnitude parameter correlation imply?
-3. What should be concluded if a parameter reaches a bound or has uncertainty comparable
-   with its value?
+3. What should be concluded if a parameter reaches a bound or has a local covariance scale
+   comparable with its value?
 4. What additional independent measurement would best reduce the ambiguity, and why?
 
 ---

@@ -352,6 +352,8 @@ def test_identifiability_summary():
     lines = identifiability_summary(p, covar=None, var_names=["a", "b"])
     assert any("a" in ln and "identifiable" in ln for ln in lines)
     assert any("b" in ln and "not reliably identified" in ln for ln in lines)
+    assert all("sqrt(diag(cov))/abs(fitted value)" in ln for ln in lines)
+    assert all("uncertainty" not in ln for ln in lines)
 
 
 def test_identifiability_summary_does_not_call_correlated_parameters_identifiable():
@@ -380,6 +382,18 @@ def test_identifiability_summary_downgrades_failed_quality_gate():
     assert "locally identifiable" not in lines[0]
 
 
+def test_identifiability_summary_uses_supplied_covariance_diagonal():
+    p = lmfit.Parameters()
+    p.add("a", value=2.0, vary=True)
+    p["a"].stderr = 0.2
+
+    lines = identifiability_summary(
+        p, covar=np.array([[1.0]]), var_names=["a"]
+    )
+
+    assert "50.00%" in lines[0]
+
+
 def test_identifiability_figure_makes_failed_quality_gate_visible():
     p = lmfit.Parameters()
     p.add("a", value=1.0, vary=True)
@@ -390,6 +404,20 @@ def test_identifiability_figure_makes_failed_quality_gate_visible():
     try:
         assert "Quality gate failed" in figure._suptitle.get_text()
         assert "Local covariance sensitivity" in figure._suptitle.get_text()
+    finally:
+        import matplotlib.pyplot as plt
+        plt.close(figure)
+
+
+def test_identifiability_figure_uses_local_covariance_language_without_quality_warning():
+    p = lmfit.Parameters()
+    p.add("a", value=1.0, vary=True)
+    p["a"].stderr = 0.05
+    figure = identifiability_figure(p, context="test observations")
+    try:
+        assert "Local covariance diagnostics" in figure._suptitle.get_text()
+        assert figure.axes[0].get_title() == "Relative local covariance scale"
+        assert "Relative uncertainty" not in figure.axes[0].get_xlabel()
     finally:
         import matplotlib.pyplot as plt
         plt.close(figure)

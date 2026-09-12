@@ -232,8 +232,8 @@ def main() -> None:
             labels = {
                 "light_iv": "illuminated J-V",
                 "dark_iv": "dark J-V",
-                "light_ishort": "independent Jsc",
-                "light_voc": "independent Voc",
+                "light_ishort": "separately acquired Jsc",
+                "light_voc": "separately acquired Voc",
             }
             print("\n  block diagnostics:")
             print(f"    {'block':<18}{'RMS / scale':>15}{'share':>10}")

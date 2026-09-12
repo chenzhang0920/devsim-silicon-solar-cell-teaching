@@ -2,7 +2,7 @@
 
 The default command keeps the beginner-friendly single illuminated-J-V smoke test.
 Use ``--joint --sample 3`` for the measured-cell exercise: that objective uses
-the illuminated and dark J-V sweeps plus independent illuminated short-circuit and Voc
+the illuminated and dark J-V sweeps plus separately acquired illuminated short-circuit and Voc
 measurements, with documented weights from ``config.py``.
 """
 from __future__ import annotations
@@ -131,9 +131,9 @@ def _print_optimizer_summary(result: lmfit.MinimizerResult) -> None:
     print(f"  {'name':<22}{'value':>14}{'local stderr':>16}{'status':>10}")
     for name, parameter in result.params.items():
         status = "varied" if parameter.vary else "fixed"
-        uncertainty = "n/a" if not parameter.vary or parameter.stderr is None \
+        local_scale = "n/a" if not parameter.vary or parameter.stderr is None \
             or not np.isfinite(parameter.stderr) else f"{parameter.stderr:.5g}"
-        print(f"  {name:<22}{parameter.value:>14.6g}{uncertainty:>16}{status:>10}")
+        print(f"  {name:<22}{parameter.value:>14.6g}{local_scale:>16}{status:>10}")
 
 
 def _print_joint_blocks(blocks: dict[str, dict]) -> None:
@@ -141,8 +141,8 @@ def _print_joint_blocks(blocks: dict[str, dict]) -> None:
     labels = {
         "light_iv": "illuminated J-V",
         "dark_iv": "dark J-V",
-        "light_ishort": "independent Jsc",
-        "light_voc": "independent Voc",
+        "light_ishort": "separately acquired Jsc",
+        "light_voc": "separately acquired Voc",
     }
     print("\n-- Joint objective by observable --")
     print(f"  {'block':<18}{'weight':>9}{'RMS / scale':>15}{'share':>10}")

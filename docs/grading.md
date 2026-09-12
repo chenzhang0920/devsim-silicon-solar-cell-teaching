@@ -71,7 +71,7 @@ systematically, and model limitations are supported by evidence.
 
 | Criterion | Points |
 |---|---:|
-| Interprets parameter sensitivity, uncertainty, correlation, and bound behavior using the identifiability output | 6 |
+| Interprets parameter sensitivity, local covariance scale, correlation, and bound behavior using the identifiability output | 6 |
 | Explains systematic mismatch and identifies at least two relevant model limitations and one measurement limitation | 5 |
 | Provides sufficient commands, filenames, parameter changes, and software information to reproduce the reported work | 4 |
 | **Task 5 total** | **15** |
