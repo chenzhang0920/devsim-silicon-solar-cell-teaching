@@ -289,6 +289,17 @@
       font-size: .88rem; font-weight: 850; letter-spacing: .12em;
     }
     .step p, .resource p { margin: 0; color: var(--muted); font-size: 1.06rem; }
+    .workflow-runner {
+      max-width: 980px; margin: 3rem auto 0; padding-top: 1.2rem;
+      border-top: 2px solid var(--navy);
+    }
+    .workflow-runner h3 { margin-bottom: .75rem; }
+    .workflow-runner pre {
+      overflow-x: auto; margin: 0; padding: 1rem 1.15rem;
+      color: #062f53; background: var(--wash); font-size: .98rem; line-height: 1.65;
+    }
+    .workflow-runner code { padding: 0; background: transparent; font-size: inherit; }
+    .workflow-runner p { margin: .75rem 0 0; color: var(--muted); }
 
     .resources-section { background: var(--wash); color: var(--ink); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .resources { grid-template-columns: repeat(3, 1fr); }
@@ -367,6 +378,7 @@
       .model-block, .equation-card { padding: 2.7rem 0; }
       .model-contract { padding: 1.2rem .9rem; }
       .footer-grid { grid-template-columns: 1fr; }
+      .workflow-runner pre { white-space: pre-wrap; overflow-wrap: anywhere; }
     }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
     @media print {
@@ -819,6 +831,26 @@
           <article class="step"><span class="step-number">02</span><h3>Solve</h3><p>Use continuation to reach equilibrium, dark bias, illumination, and the operating J–V curve.</p></article>
           <article class="step"><span class="step-number">03</span><h3>Measure</h3><p>Convert instrument current to current density with traceable area, polarity, units, and metadata.</p></article>
           <article class="step"><span class="step-number">04</span><h3>Calibrate</h3><p>Fit a limited parameter set, inspect residual blocks, and decide whether the result is identifiable.</p></article>
+        </div>
+        <div class="workflow-runner">
+          <h3>Run the same workflow from the repository root</h3>
+          <pre><code># 1. Preview the complete plan; change nothing.
+bash scripts/run_all.sh full --dry-run
+
+# 2. Learn interactively or rebuild the core physics outputs.
+bash scripts/run_all.sh simulation
+python -m jupyter lab notebooks/tutorial.ipynb
+
+# 3. New measurements only: confirm area, polarity, and units.
+bash scripts/run_all.sh keithley --area 12.0
+
+# 4. Fit one processed sample.
+bash scripts/run_all.sh joint --sample 3
+
+# 5. Rebuild everything and validate the teaching assets.
+bash scripts/run_all.sh full
+bash scripts/run_all.sh check</code></pre>
+          <p>Use the Notebook to pause after each mechanism and figure. Replace <code>12.0</code> and <code>3</code> with the recorded illuminated area (cm²) and sample ID when processing new measurements; skip step 3 when using the supplied processed data.</p>
         </div>
       </div>
     </section>

@@ -160,8 +160,18 @@ def test_animation_and_eqe_scope_avoid_misleading_extras():
 def test_notebook_uses_portable_setup_and_the_configured_reporting_grid():
     markdown, code = _sources()
 
-    assert 'print("Project root detected.")' in code
+    setup_notes = _cell_source("setup-notes")
+    assert "python -m jupyter lab notebooks/tutorial.ipynb" in setup_notes
+    assert "bash scripts/run_all.sh help" in setup_notes
+    assert "bash scripts/run_all.sh notebook --dry-run" in setup_notes
+    assert "bash scripts/run_all.sh full --dry-run" in setup_notes
+    assert "Restart Kernel and Run All Cells" in setup_notes
+    assert "import devsim" in code
+    assert 'print("Project root detected; repository imports enabled.")' in code
     assert 'print(f"Project root: {project_root}")' not in code
+    assert 'print(f"Python: {sys.version.split()[0]}")' in code
+    assert 'print(f"DEVSIM: {devsim.__version__}")' in code
+    assert "run the remaining cells in order" in code
     assert "terminal_iv(MODEL_PARAMS)" in code
     assert "terminal_iv(MODEL_PARAMS, n=81" not in code
     assert "lifetimes = np.geomspace(1e-6, 1e-4, 5)" in code

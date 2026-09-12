@@ -12,8 +12,9 @@ def test_run_all_script_declares_supported_profiles():
 
     assert text.startswith("#!/usr/bin/env bash\n")
     assert "set -Eeuo pipefail" in text
-    for profile in ("full|all)", "quick)", "simulation|sim)", "calibration|calibrate)",
-                    "joint)", "eqe)", "synthetic)", "notebook)", "check)", "keithley)"):
+    for profile in ("full|all)", "quick)", "simulation|sim)", "sweep)",
+                    "calibration|calibrate)", "joint)", "eqe)", "synthetic)",
+                    "notebook)", "check)", "keithley)"):
         assert profile in text
     assert "config.py" in text
     assert "scripts/build_slides.py" in text
@@ -25,4 +26,14 @@ def test_run_all_script_declares_supported_profiles():
     assert "--only demo-data" in text
     assert "full profile intentionally does not convert raw experimental files" in text
     assert "Full always" in text and "joint --sample ID" in text
+    assert "Recommended first run:" in text
+    assert "bash scripts/run_all.sh full --dry-run" in text
+    assert "python -m jupyter lab notebooks/tutorial.ipynb" in text
+    assert "bash scripts/run_all.sh notebook" in text
+    assert "Replace 12.0 with the recorded illuminated area" in text
+    assert 'has_option()' in text
+    assert 'python -c "import devsim"' in text
+    assert "Python command:" in text
+    assert "Runtime:" in text
+    assert "Run the standard hole-lifetime sensitivity sweep" in text
     assert text.index('profile="${1:-help}"') < text.index('PYTHON_BIN="${PYTHON_BIN:-}"')

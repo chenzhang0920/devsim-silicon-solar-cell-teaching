@@ -27,6 +27,60 @@ authoritative reference for simulator commands and API syntax. The project pins 
 compatible DEVSIM 2.10.1 runtime used for validation; follow this repository
 for the course workflow and validated configuration.
 
+## Choose how to run the project
+
+Use the Notebook when learning the sequence and the command-line runner when rebuilding
+known outputs. Both use the same `config.py` and Python model.
+
+### Interactive teaching route
+
+```bash
+python -m jupyter lab notebooks/tutorial.ipynb
+```
+
+Choose **Restart Kernel and Run All Cells** in Jupyter. Follow the cells in order and stop
+after each figure to connect the governing equations, numerical solution, internal state,
+terminal response, measurements, and calibration evidence. After changing `config.py`,
+restart the kernel and run all cells again so no state is carried over from the previous
+case.
+
+### Reproducible command-line route
+
+```bash
+# 1. Preview the complete pipeline; this does not change files.
+bash scripts/run_all.sh full --dry-run
+
+# 2. Run only the stage currently being studied.
+bash scripts/run_all.sh simulation
+bash scripts/run_all.sh eqe
+bash scripts/run_all.sh sweep
+bash scripts/run_all.sh calibration
+
+# 3. Refresh the executed Notebook and verify slide assets.
+bash scripts/run_all.sh notebook
+bash scripts/run_all.sh check
+```
+
+For a single complete rebuild, replace those focused commands with
+`bash scripts/run_all.sh full`. The runner prints the active project root and Python
+interpreter, then names each substep and generated file. Run
+`bash scripts/run_all.sh help` at any time for the profile list. On Windows, use Git Bash
+or WSL for the Bash runner; the individual `python scripts/...` commands under each task
+also work directly in an activated PowerShell environment.
+
+The commands above use the checked processed Cell #3 data. For a new experimental bundle,
+insert the following two steps after confirming sample identity, wiring polarity, units,
+and illuminated area:
+
+```bash
+# Replace 12.0 with the measured illuminated area in cm^2.
+bash scripts/run_all.sh keithley --area 12.0
+bash scripts/run_all.sh joint --sample YOUR_SAMPLE_ID
+```
+
+Do not run the conversion merely to rebuild the supplied example: `full` deliberately
+leaves raw measurements untouched.
+
 Keep these conventions visible in every figure and table:
 
 - `x = 0` is the illuminated front p⁺ emitter; the n-type base is at larger `x`.

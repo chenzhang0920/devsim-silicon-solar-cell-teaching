@@ -430,13 +430,15 @@
   <div class="content middle code-map">
     <div>
       <h3>Environment and entry points</h3>
-      <pre>git clone https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching.git
-cd devsim-silicon-solar-cell-teaching
-conda env create -f environment.yml
-conda activate devsim_solar
+      <pre>conda activate devsim_solar
+python -c "import devsim; print(devsim.__version__)"
 
-python scripts/run_sim.py
-jupyter lab notebooks/tutorial.ipynb</pre>
+python -m jupyter lab notebooks/tutorial.ipynb
+bash scripts/run_all.sh full --dry-run
+bash scripts/run_all.sh simulation
+bash scripts/run_all.sh keithley --area 12.0
+bash scripts/run_all.sh joint --sample 3
+bash scripts/run_all.sh full</pre>
       <h3>Core call sequence in <code>model/device.py</code></h3>
       <pre>create_1d_mesh(...)
 add_1d_mesh_line(...)      # positions and refinement
@@ -459,7 +461,7 @@ get_contact_current(...)   # intrinsic J(V)</pre>
         <dt>data/processed/</dt><dd>validated tables with consistent units and signs</dd>
         <dt>results/</dt><dd>outputs that the scripts can regenerate</dd>
       </dl>
-      <p class="note">Run every command from the repository root. Change model settings in <code>config.py</code>; do not edit raw measurements.</p>
+      <p class="note">Run from the repository root. Use <code>keithley</code> only for new raw data after confirming area, polarity and sample ID; never edit raw exports.</p>
     </div>
   </div>
 </section>

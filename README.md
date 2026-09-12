@@ -80,7 +80,10 @@ After completing the project, students should be able to:
 
 ## 🚀 Quick start
 
-Conda is recommended because DEVSIM includes native libraries:
+Run every command below from the repository root. Conda is recommended because
+DEVSIM includes native libraries.
+
+### 1. Install and verify the environment
 
 ```bash
 git clone https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching.git
@@ -90,38 +93,91 @@ conda env create -f environment.yml
 conda activate devsim_solar
 
 python -c "import devsim; print('DEVSIM:', devsim.__version__)"
-python -m pytest tests -q
-python scripts/run_sim.py
-python scripts/plot_iv.py --csv results/iv_sim.csv
-jupyter lab notebooks/tutorial.ipynb
 ```
 
-The Notebook already contains checked teaching outputs, so it can be read on GitHub
-before the environment is installed. Run commands from the repository root unless a
-script's `--help` text says otherwise.
+Create the environment only once. For later sessions, start with
+`conda activate devsim_solar`.
 
-For a reproducible project-wide rebuild, use the aggregate Bash runner (Linux, macOS,
-WSL, or Git Bash):
+### 2. Choose one learning route
+
+#### Route A — interactive Notebook (recommended for learning)
 
 ```bash
+python -m jupyter lab notebooks/tutorial.ipynb
+```
+
+In Jupyter, choose **Restart Kernel and Run All Cells**. Read the Notebook from top to
+bottom: structure → equations → solver sequence → internal profiles → J–V/EQE → data
+preparation → calibration → adequacy and identifiability. Change one documented setting
+in `config.py`, restart the kernel, and run all cells again when making a comparison.
+
+The checked Notebook already contains outputs, so it can also be
+[read directly on GitHub](notebooks/tutorial.ipynb) before installation. To refresh and
+embed every output without opening Jupyter interactively, run:
+
+```bash
+bash scripts/run_all.sh notebook --dry-run
+bash scripts/run_all.sh notebook
+```
+
+#### Route B — reproducible command line (recommended for rebuilding results)
+
+The aggregate runner works in Linux/macOS terminals, WSL, and Git Bash on Windows:
+
+```bash
+# Show every planned step without changing files.
+bash scripts/run_all.sh full --dry-run
+
+# Rebuild all checked figures and calibration artifacts, then execute the Notebook.
 bash scripts/run_all.sh full
+
+# Confirm that every classroom-slide asset is present.
 bash scripts/run_all.sh check
 ```
 
-The `full` profile regenerates the deterministic synthetic J–V reference from the current
-`config.py`, then rebuilds the standard figures, synthetic optimization trace,
-Cell #3 joint calibration, and the executed Notebook. Use
-`bash scripts/run_all.sh help` to see focused simulation, calibration, EQE, data
-conversion, and Notebook workflows. On Windows PowerShell, the underlying Python scripts
-can be run directly in the activated environment.
+`full` runs the deterministic synthetic example, forward simulation and figures,
+sensitivity sweep, EQE, Cell #3 joint calibration, optimization demonstration, and finally
+the executed Notebook. It is the release/reproducibility command, not the first command a
+student must wait for during every edit.
+
+### 3. Use focused commands while learning
+
+| Purpose | Command | Main result |
+|---|---|---|
+| Preview the complete pipeline | `bash scripts/run_all.sh full --dry-run` | ordered plan; no files changed |
+| Fast smoke run | `bash scripts/run_all.sh quick` | fast forward-model figures; slow fitting/EQE skipped |
+| Device physics | `bash scripts/run_all.sh simulation` | J–V, resistance, profiles, bands, and model map |
+| Spectral response | `bash scripts/run_all.sh eqe` | `results/eqe.png` |
+| Standard sensitivity study | `bash scripts/run_all.sh sweep` | `results/sweep.png` |
+| Calibration lesson | `bash scripts/run_all.sh calibration` | Cell #3 joint-fit and optimization figures |
+| One processed sample | `bash scripts/run_all.sh joint --sample 3` | fitted parameters, metrics, provenance, and fit figures |
+| Refresh Notebook outputs | `bash scripts/run_all.sh notebook` | executed `notebooks/tutorial.ipynb` |
+| Validate slide assets | `bash scripts/run_all.sh check` | pass/fail asset report |
+
+Run `bash scripts/run_all.sh help` for the same guide in the terminal. Each profile prints
+its project root, Python interpreter, ordered substeps, generated files, and completion
+status. On Windows PowerShell, open Git Bash for `run_all.sh`; the individual
+`python scripts/...` commands in the [Student Lab Guide](docs/lab_guide.md) remain valid in
+PowerShell after activating the environment.
+
+### 4. Process a new measurement bundle
 
 Raw experimental conversion is deliberately **not** part of `full`: illuminated area,
 wiring polarity, and sample identity must be confirmed for each measurement session.
-After replacing raw files, run `prepare_keithley.py` or `prepare_data.py` with the recorded
-experimental settings before calibrating; otherwise existing processed tables will still
-be used. The `full` profile always rebuilds the checked Cell #3 course example. For a new
-sample, run `bash scripts/run_all.sh joint --sample YOUR_SAMPLE_ID` (or the corresponding Python
-calibration command) after conversion.
+For a complete Keithley bundle using the documented 3 cm × 4 cm illuminated area:
+
+```bash
+# 1. Preserve the raw exports in data/raw/keithley/.
+# 2. Convert current to current density and build the processed summaries.
+bash scripts/run_all.sh keithley --area 12.0
+
+# 3. Fit that sample only after checking signs, units, coverage, and repeatability.
+bash scripts/run_all.sh joint --sample YOUR_SAMPLE_ID
+```
+
+Use `--prune` during conversion only when the raw directory is a complete replacement
+bundle. The `full` profile always rebuilds the checked Cell #3 example; it never silently
+converts new raw measurements.
 
 ## 🔬 Model and conventions
 

@@ -119,6 +119,12 @@ def test_student_deck_matches_build_and_data_contracts():
     assert "DEVSIM in semiconductor TCAD" in html
     assert "DEVSIM and Crosslight APSYS" in html
     assert "Running the course model" in html
+    assert "python -m jupyter lab notebooks/tutorial.ipynb" in html
+    assert "bash scripts/run_all.sh full --dry-run" in html
+    assert "bash scripts/run_all.sh simulation" in html
+    assert "bash scripts/run_all.sh keithley --area 12.0" in html
+    assert "bash scripts/run_all.sh joint --sample 3" in html
+    assert "bash scripts/run_all.sh full" in html
     assert "Device, coordinates and external circuit" in html
     assert "The complete mathematical problem" in html
     assert "Abrupt-junction electrostatics" in html
@@ -213,6 +219,13 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     assert "docs/lab_guide.md" in html
     assert "docs/experiment_protocol.md" in html
     assert "docs/grading.md" in html
+    assert "bash scripts/run_all.sh full --dry-run" in html
+    assert "bash scripts/run_all.sh simulation" in html
+    assert "python -m jupyter lab notebooks/tutorial.ipynb" in html
+    assert "bash scripts/run_all.sh keithley --area 12.0" in html
+    assert "bash scripts/run_all.sh joint --sample 3" in html
+    assert "bash scripts/run_all.sh check" in html
+    assert "skip step 3 when using the supplied processed data" in html
     assert 'href="https://zenodo.org/records/17328734"' in html
     assert "Zhang CHEN" in html
     assert "zchen758@connect.hkust-gz.edu.cn" in html
