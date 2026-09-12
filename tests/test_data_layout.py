@@ -44,5 +44,11 @@ def test_bundled_data_are_classified_by_provenance():
     assert not (processed / "iv.csv").exists()
 
     voltage_at_zero_current = pd.read_csv(processed / "voc_summary.csv")
-    assert "V_at_I0_V" in voltage_at_zero_current.columns
+    assert {
+        "V_at_I0_V", "V_std_V", "V_n_points"
+    } <= set(voltage_at_zero_current.columns)
     assert "Voc_V" not in voltage_at_zero_current.columns
+    assert voltage_at_zero_current[[
+        "V_at_I0_V", "V_std_V", "V_n_points"
+    ]].notna().all().all()
+    assert (voltage_at_zero_current["V_n_points"] == 100).all()

@@ -60,6 +60,7 @@ def test_notebook_is_streamlined_unique_and_ordered():
         "## 13. Joint Calibration of Cell #3: Complementary Observations Constrain Different Model Responses",
         "joint_result = fit_joint",
         "joint_comparison_figure",
+        "### Residual-to-decision checkpoint",
         "identifiability_figure",
         "## 15. Model Scope and Limitations",
         "## 16. Summary and Next Steps",
@@ -113,6 +114,8 @@ def test_data_provenance_and_joint_calibration_are_complete():
     assert "if not synthetic_result.success" in code
     assert "load_joint_data(3)" in code
     assert "fit_joint(joint_data)" in code
+    assert "V_std_V" in code
+    assert "V_n_points" in code
     for source in (
         "light_iv",
         "dark_iv",
@@ -173,11 +176,48 @@ def test_notebook_uses_portable_setup_and_the_configured_reporting_grid():
     assert "The gate flags disagreement" in code
     assert "blockwise and signed residuals" in code
     assert "Largest signed illuminated J" in code
+    assert "Measurement-adequacy screening" in code
+    assert "Knee/Voc resolution" in code
+    assert "Measured light anchors vs sweep" in code
+    assert "Dark diagnostic consistency" in code
+    assert "teaching prompts, not statistical acceptance gates" in code
+    assert "not sufficient to justify adding more fitted" in code
+    decision = _cell_source("residual-decision-checkpoint")
+    for step in ("Observe", "Verify", "Test one", "Decide"):
+        assert step in decision
+    assert "Never change weights or add several fit parameters" in decision
     assert "relative uncertainties" not in (markdown + code).lower()
     assert 'device_data["electric_field"]' in code
     assert code.index("Normalized block score") < code.index(
         "Fitted effective parameters and local covariance diagnostics"
     )
+
+
+def test_measurement_adequacy_screen_handles_incomplete_evidence_safely():
+    _, code = _sources()
+    screening = _cell_source("joint-data-preview")
+
+    assert 'Path(joint_data.paths["ishort_summary"]).with_name' in screening
+    assert 'f"light_ishort_sample{joint_data.sample}.csv"' in screening
+    assert 'pd.read_csv("data/processed/light_ishort_sample3.csv")' not in screening
+    assert "knee_voltage.size >= 2" in screening
+    assert "only {knee_voltage.size} point(s)" in screening
+    assert "if not dark_aux_available" in screening
+    assert 'dark_decision = "MISSING"' in screening
+    assert "if not np.isfinite(dark_curve_zero)" in screening
+    assert 'dark_decision = "CAUTION"' in screening
+    assert '"WITHIN TEACHING SCREEN" if light_consistent' in screening
+    assert 'else "OUTSIDE TEACHING SCREEN"' in screening
+    assert "not estimates of instrument uncertainty" in screening
+    assert 'pd.option_context("display.max_colwidth", None)' in screening
+    assert "Coverage supports this cross-check" in screening
+    assert "Retain the dark auxiliaries as consistency cross-checks" in screening
+    assert "Stability supports this demonstration" in screening
+    assert "The dark zero-current voltage is retained" in code
+    assert "Model–data adequacy gate" in code
+    assert "Model-adequacy gate" not in code
+    assert "Quality gate failed" not in code
+    assert "(quality gate failed)" not in code
 
 
 def test_code_cells_execute_without_errors():
@@ -188,6 +228,32 @@ def test_code_cells_execute_without_errors():
     assert code_cells
     assert all("".join(cell.get("source", [])).strip() for cell in code_cells)
     assert all(cell.get("outputs") for cell in code_cells)
+
+
+def test_checked_outputs_use_current_adequacy_language():
+    notebook = _notebook()
+    code_cells = [
+        cell for cell in notebook["cells"] if cell.get("cell_type") == "code"
+    ]
+    visible = []
+    for cell in notebook["cells"]:
+        for output in cell.get("outputs", []):
+            if "text" in output:
+                value = output["text"]
+                visible.extend(value if isinstance(value, list) else [value])
+            for mime in ("text/plain", "text/html", "text/markdown"):
+                value = output.get("data", {}).get(mime)
+                if value is not None:
+                    visible.extend(value if isinstance(value, list) else [value])
+
+    rendered_text = "".join(visible)
+    assert "Measured light anchors vs sweep" in rendered_text
+    assert "WITHIN TEACHING SCREEN" in rendered_text
+    assert "not estimates of instrument uncertainty" in rendered_text
+    assert "Model–data adequacy gate" in rendered_text
+    assert "Model-adequacy gate" not in rendered_text
+    assert "Quality gate failed" not in rendered_text
+    assert "(quality gate failed)" not in rendered_text
 
     visual_cell_ids = {
         "newton-demo",

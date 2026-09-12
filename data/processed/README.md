@@ -18,9 +18,11 @@ standard deviation, mean measured voltage, and sample count. The dark short
 measurement is retained as a leakage/offset diagnostic; it is not automatically
 treated as a physical illuminated Jsc.
 
-`voc_summary.csv` uses the neutral field name `V_at_I0_V`. Its illuminated rows are
-open-circuit-voltage measurements; its dark rows are zero-current voltage offsets, not
-photovoltaic `Voc` values.
+`voc_summary.csv` uses the neutral field name `V_at_I0_V` for the median repeated
+voltage. `V_std_V` is the sample standard deviation and `V_n_points` is the
+number of retained readings; these names prevent confusion with the short-circuit
+summary's voltage spread and `n_points`. Illuminated rows are open-circuit-voltage
+measurements; dark rows are zero-current voltage offsets, not photovoltaic `Voc` values.
 
 Power-conversion efficiency is not stored because irradiance at the cell plane was not
 recorded with the bundled example. Calculate efficiency only when the incident W/cm²

@@ -11,6 +11,7 @@ from scripts.prepare_keithley import (
     remove_stale_converter_outputs,
     to_solar_cell,
     voltage_at_zero_current_from_file,
+    zero_current_summary_from_file,
 )
 
 
@@ -132,6 +133,42 @@ def test_keithley_voc_file_must_actually_be_near_zero_current(tmp_path):
         voltage_at_zero_current_from_file(source, current_tolerance=1e-8)
 
 
+def test_keithley_zero_current_summary_preserves_repeat_statistics(tmp_path):
+    source = tmp_path / "light - voc - 3.csv"
+    source.write_text(
+        "instrument export\nIndex,Voltage (V),Current (A)\n"
+        "1,-0.64,0\n2,-0.65,0\n3,-0.66,0\n",
+        encoding="utf-8",
+    )
+
+    summary = zero_current_summary_from_file(source)
+
+    assert summary["V_at_I0_V"] == pytest.approx(0.65)
+    assert summary["V_std_V"] == pytest.approx(0.01)
+    assert summary["V_n_points"] == 3
+    assert voltage_at_zero_current_from_file(source) == pytest.approx(0.65)
+
+
+def test_keithley_zero_current_summary_requires_repeats(tmp_path):
+    source = tmp_path / "light - voc - 3.csv"
+    source.write_text(
+        "instrument export\nIndex,Voltage (V),Current (A)\n1,-0.65,0\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="at least 2 repeated readings"):
+        zero_current_summary_from_file(source)
+
+
+@pytest.mark.parametrize("count", [1, 2])
+def test_short_circuit_summary_requires_three_repeats(count):
+    voltage = [0.0] * count
+    current_density = [0.01] * count
+
+    with pytest.raises(ValueError, match="at least 3 repeated readings"):
+        prepare_keithley.ishort_summary(voltage, current_density)
+
+
 def test_keithley_parser_accepts_english_locale_headers(tmp_path):
     source = tmp_path / "english.csv"
     source.write_text(
@@ -197,6 +234,7 @@ def test_keithley_main_preserves_other_samples_unless_prune_is_requested(
     other_sample.write_text("V,J\n0,0\n", encoding="utf-8")
     pd.DataFrame({
         "sample": [4], "condition": ["light"], "V_at_I0_V": [0.62],
+        "V_std_V": [0.001], "V_n_points": [3],
     }).to_csv(out / "voc_summary.csv", index=False)
     pd.DataFrame({
         "sample": [4], "condition": ["light"],
@@ -211,7 +249,12 @@ def test_keithley_main_preserves_other_samples_unless_prune_is_requested(
     monkeypatch.setattr(sys, "argv", base_args)
     prepare_keithley.main()
     assert other_sample.exists()
-    assert set(pd.read_csv(out / "voc_summary.csv")["sample"]) == {3, 4}
+    voc = pd.read_csv(out / "voc_summary.csv")
+    assert set(voc["sample"]) == {3, 4}
+    new_voc = voc.query("sample == 3 and condition == 'light'").iloc[0]
+    assert new_voc["V_at_I0_V"] == pytest.approx(0.65)
+    assert new_voc["V_std_V"] == pytest.approx(0.01)
+    assert new_voc["V_n_points"] == 3
     assert set(pd.read_csv(out / "ishort_summary.csv")["sample"]) == {3, 4}
 
     monkeypatch.setattr(sys, "argv", [*base_args, "--prune"])

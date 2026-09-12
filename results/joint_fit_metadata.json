@@ -1,9 +1,17 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "mode": "joint",
   "data_file": "data/processed/light_iv_sample3.csv",
-  "data_sha256": "73de1a716d8cd21dc10920f559ecbeb5c8c5248c129c20833e8fab0dd18e1077",
+  "data_hash_method": "sha256-lf-normalized-v1",
+  "data_sha256": "df5a3868f5f8a1894c2a34603f20ae12c71d169c5b24deb068ba23632126e372",
   "command": "python scripts/run_calibration.py --joint --sample 3",
+  "command_argv": [
+    "python",
+    "scripts/run_calibration.py",
+    "--joint",
+    "--sample",
+    "3"
+  ],
   "residual_mode": "absolute",
   "model_params": {
     "thickness": 0.025,
@@ -99,7 +107,7 @@
     "success": true,
     "message": "`xtol` termination condition is satisfied.",
     "nfev": 35,
-    "sum_squared_scaled_residuals": 31.653018207587884,
+    "sum_squared_scaled_residuals": 31.653018207587888,
     "lmfit_redchi_internal": 1.1304649359852816,
     "interpretation": "Internal optimizer diagnostics, not a statistical goodness-of-fit test. For joint mode use joint_objective.normalized_block_score."
   },
@@ -111,12 +119,12 @@
     ],
     "matrix": [
       [
-        0.00020485130863620438,
-        0.003442476193931895
+        0.00020485130863646305,
+        0.0034424761939363924
       ],
       [
-        0.0034424761939318956,
-        1.6779087485788682
+        0.0034424761939363924,
+        1.677908748579526
       ]
     ]
   },
@@ -138,7 +146,7 @@
   "voc_sigma_V": 0.01,
   "joint_objective": {
     "definition": "self_consistent_terminal_prediction",
-    "normalized_block_score": 15.072865813137087,
+    "normalized_block_score": 15.072865813137089,
     "active_weight_sum": 2.1,
     "quality_warning_threshold": 4.0,
     "quality_gate_passed": false,
@@ -146,38 +154,38 @@
       "light_iv": {
         "weight": 1.0,
         "residual_count": 13,
-        "normalized_rms": 4.978993118883426,
-        "weighted_squared_contribution": 24.790372477888504,
-        "objective_share": 0.7831914263375281
+        "normalized_rms": 4.978993118883565,
+        "weighted_squared_contribution": 24.79037247788989,
+        "objective_share": 0.7831914263375719
       },
       "dark_iv": {
         "weight": 0.35,
         "residual_count": 15,
-        "normalized_rms": 2.1367633542875617,
-        "weighted_squared_contribution": 1.5980151712791812,
-        "objective_share": 0.05048539639408238
+        "normalized_rms": 2.1367633542876243,
+        "weighted_squared_contribution": 1.598015171279275,
+        "objective_share": 0.050485396394085336
       },
       "light_ishort": {
         "weight": 0.5,
         "residual_count": 1,
-        "normalized_rms": 0.5958271279762305,
-        "weighted_squared_contribution": 0.17750498321620164,
-        "objective_share": 0.005607837522857458
+        "normalized_rms": 0.595827127972657,
+        "weighted_squared_contribution": 0.1775049832140725,
+        "objective_share": 0.005607837522790191
       },
       "light_voc": {
         "weight": 0.25,
         "residual_count": 1,
-        "normalized_rms": 4.510931422756946,
-        "weighted_squared_contribution": 5.087125575204001,
-        "objective_share": 0.16071533974553212
+        "normalized_rms": 4.510931422757235,
+        "weighted_squared_contribution": 5.087125575204652,
+        "objective_share": 0.1607153397455527
       }
     },
     "interpretation": "Weighted mean squared self-consistent terminal discrepancy across active observable blocks; not a statistical reduced chi-square"
   },
   "dataset_sha256": {
-    "light_iv": "73de1a716d8cd21dc10920f559ecbeb5c8c5248c129c20833e8fab0dd18e1077",
-    "dark_iv": "10bda79deba338e0066c59048f232a7e971981e937332de98900b188de5403d8",
-    "ishort_summary": "59adae9c22e32d2b1f7dcc74838f0932d508602bb2e59270f6e3f9eb413ac649",
-    "voc_summary": "0c5f7b49a83a368084a7fccaa11e7785fa3706fbb69aa62c1840ebbc0f4e7617"
+    "light_iv": "df5a3868f5f8a1894c2a34603f20ae12c71d169c5b24deb068ba23632126e372",
+    "dark_iv": "3ca759565cebb30c1ab09139b6843c350dd6c0288a901c18f452a8f35cec17ba",
+    "ishort_summary": "668ac3ab67f535926a795a2a43388222808a6c8960d078807947498a7ca0057c",
+    "voc_summary": "0ae15e03b94192aaac1d1b6caf0e9615acd63648fa9a495f51a305473bd7d5cd"
   }
 }

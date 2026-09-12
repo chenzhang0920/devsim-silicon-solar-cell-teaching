@@ -1,6 +1,5 @@
 """Check CLI paths and saved-fit replay behavior."""
 
-import hashlib
 import json
 from pathlib import Path
 import sys
@@ -10,6 +9,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
+from calibration.provenance import (
+    CALIBRATION_HASH_METHOD,
+    FIT_METADATA_SCHEMA_VERSION,
+    calibration_input_sha256,
+)
 from scripts import plot_fit, plot_iv, plot_optimization, prepare_data
 
 
@@ -56,18 +60,60 @@ def test_saved_fit_hash_verification_requires_a_valid_sha256(
         plot_fit._verify_hash(source.name, expected)
 
 
+def test_calibration_hash_is_portable_across_line_endings(tmp_path):
+    source = tmp_path / "data.csv"
+    source.write_bytes(b"V,J\n0,0.03\n")
+    expected = calibration_input_sha256(source)
+
+    source.write_bytes(b"V,J\r\n0,0.03\r\n")
+    assert calibration_input_sha256(source) == expected
+    plot_fit._verify_hash(source, expected)
+
+    source.write_bytes(b"V,J\r\n0,0.04\r\n")
+    assert calibration_input_sha256(source) != expected
+    with pytest.raises(SystemExit, match="input changed"):
+        plot_fit._verify_hash(source, expected)
+
+
+def test_saved_fit_hash_verification_rejects_unknown_method(tmp_path):
+    source = tmp_path / "data.csv"
+    source.write_text("V,J\n0,0.03\n", encoding="utf-8")
+
+    with pytest.raises(SystemExit, match="unsupported calibration-input hash method"):
+        plot_fit._verify_hash(
+            source,
+            calibration_input_sha256(source),
+            "sha256-raw-bytes-v0",
+        )
+
+
 def test_saved_fit_replay_rejects_unknown_metadata_schema(
     monkeypatch, tmp_path,
 ):
     params_path = tmp_path / "fitted_params.json"
     params_path.write_text("{}", encoding="utf-8")
     (tmp_path / "fit_metadata.json").write_text(
-        json.dumps({"schema_version": 2}), encoding="utf-8"
+        json.dumps({"schema_version": 999}), encoding="utf-8"
     )
     monkeypatch.setattr(plot_fit, "PROJECT_ROOT", tmp_path)
     monkeypatch.setattr(sys, "argv", ["plot_fit.py", "--params", params_path.name])
 
     with pytest.raises(SystemExit, match="Unsupported fit-metadata schema"):
+        plot_fit.main()
+
+
+def test_saved_fit_replay_requires_the_versioned_hash_method(
+    monkeypatch, tmp_path,
+):
+    params_path = tmp_path / "fitted_params.json"
+    params_path.write_text("{}", encoding="utf-8")
+    (tmp_path / "fit_metadata.json").write_text(
+        json.dumps({"schema_version": FIT_METADATA_SCHEMA_VERSION}), encoding="utf-8"
+    )
+    monkeypatch.setattr(plot_fit, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(sys, "argv", ["plot_fit.py", "--params", params_path.name])
+
+    with pytest.raises(SystemExit, match="unsupported calibration-input hash method"):
         plot_fit.main()
 
 
@@ -95,10 +141,11 @@ def test_joint_replay_metrics_use_the_saved_complete_parameter_snapshot(
     for name, relative_path in dataset_paths.items():
         source = tmp_path / relative_path
         source.write_text(f"fixture,{name}\n", encoding="utf-8")
-        dataset_hashes[name] = hashlib.sha256(source.read_bytes()).hexdigest()
+        dataset_hashes[name] = calibration_input_sha256(source)
 
     (tmp_path / "joint_fit_metadata.json").write_text(json.dumps({
-        "schema_version": 1,
+        "schema_version": FIT_METADATA_SCHEMA_VERSION,
+        "data_hash_method": CALIBRATION_HASH_METHOD,
         "mode": "joint",
         "sample": "3",
         "model_params": saved_model,

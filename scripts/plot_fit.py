@@ -1,6 +1,5 @@
 """Render fitted-model versus reference J-V diagnostics from saved metadata."""
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -17,6 +16,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from calibration.fit import evaluate_joint, load_iv_csv, load_joint_data
+from calibration.provenance import (
+    CALIBRATION_HASH_METHOD,
+    FIT_METADATA_SCHEMA_VERSION,
+    calibration_input_sha256,
+)
 from calibration.report import comparison_figure, joint_comparison_figure, physical_warnings
 from config import SIMULATION
 
@@ -26,8 +30,18 @@ def _project_path(path: str | Path) -> Path:
     return value if value.is_absolute() else PROJECT_ROOT / value
 
 
-def _verify_hash(path: str | Path, expected: str | None) -> None:
-    """Require and verify the SHA-256 recorded for one calibration input."""
+def _verify_hash(
+    path: str | Path,
+    expected: str | None,
+    method: str = CALIBRATION_HASH_METHOD,
+) -> None:
+    """Require and verify a portable SHA-256 for one calibration input."""
+    if method != CALIBRATION_HASH_METHOD:
+        raise SystemExit(
+            "Fit metadata contain a missing or unsupported calibration-input "
+            "hash method; rerun scripts/run_calibration.py before plotting "
+            "saved parameters."
+        )
     valid_hex = isinstance(expected, str) and len(expected) == 64 and all(
         character in "0123456789abcdefABCDEF" for character in expected
     )
@@ -39,7 +53,7 @@ def _verify_hash(path: str | Path, expected: str | None) -> None:
     source = _project_path(path)
     if not source.is_file():
         raise SystemExit(f"Recorded calibration input is missing: {source}")
-    actual = hashlib.sha256(source.read_bytes()).hexdigest()
+    actual = calibration_input_sha256(source)
     if actual != expected.lower():
         raise SystemExit(
             f"Calibration input changed since the fit: {source}. "
@@ -110,10 +124,17 @@ def main() -> None:
             "Saved parameters have no fit_metadata.json, so their dataset is unknown; "
             "rerun scripts/run_calibration.py or provide the matching metadata file.")
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    if metadata.get("schema_version") != 1:
+    if metadata.get("schema_version") != FIT_METADATA_SCHEMA_VERSION:
         raise SystemExit(
             f"Unsupported fit-metadata schema in {metadata_path}; "
             "rerun scripts/run_calibration.py"
+        )
+    hash_method = metadata.get("data_hash_method")
+    if hash_method != CALIBRATION_HASH_METHOD:
+        raise SystemExit(
+            "Fit metadata contain a missing or unsupported calibration-input "
+            "hash method; rerun scripts/run_calibration.py before plotting "
+            "saved parameters."
         )
     fitted = load_params_json(args.params)
     print(f"[NOTE] Using saved fitted parameters: {args.params}")
@@ -157,7 +178,7 @@ def main() -> None:
                 "rerun scripts/run_calibration.py"
             )
         for name, path in data.paths.items():
-            _verify_hash(path, expected_hashes.get(name))
+            _verify_hash(path, expected_hashes.get(name), hash_method)
         print(f"[NOTE] Recreating the complete Cell #{sample} joint-observable figure")
         blocks = metadata.get("joint_objective", {}).get("blocks")
         fig = joint_comparison_figure(data, full, blocks)
@@ -179,7 +200,7 @@ def main() -> None:
             )
         else:
             print(f"[NOTE] Read the data file from fit metadata: {data_path}")
-            _verify_hash(data_path, metadata.get("data_sha256"))
+            _verify_hash(data_path, metadata.get("data_sha256"), hash_method)
         v_meas, j_meas = load_iv_csv(data_path)
         resolved = _project_path(data_path).resolve()
         synthetic_root = (PROJECT_ROOT / "data" / "synthetic").resolve()
@@ -246,7 +267,7 @@ def main() -> None:
         if score is not None and threshold is not None \
                 and float(score) > float(threshold):
             print(
-                "  [WARNING] Quality gate failed; covariance describes local "
+                "  [WARNING] Model–data adequacy gate failed; covariance describes local "
                 "optimizer sensitivity, not physical adequacy."
             )
 

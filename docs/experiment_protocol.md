@@ -117,14 +117,15 @@ weak. Record any changed range, compliance, or integration setting.
 
 ### 6.2 Repeated illuminated short-circuit current
 
-Under stable illumination, hold the terminal close to `V = 0` and record repeated current
-readings. Keep their timestamps and voltages; do not replace the repeated readings with a
-hand-calculated value in the raw file.
+Under stable illumination, hold the terminal close to `V = 0` and record at least three
+current readings. Keep their timestamps and voltages; do not replace the repeated readings
+with a hand-calculated value in the raw file.
 
 ### 6.3 Illuminated open-circuit voltage
 
-Measure the zero-current terminal voltage under the same illumination. Record repeated
-readings when the instrument workflow supports them.
+Measure the zero-current terminal voltage under the same illumination. Record at least
+two readings so the converter can report a sample standard deviation; retain every
+reading in the raw export.
 
 ## 7. Preserve raw data and prepare processed J–V
 
@@ -224,6 +225,11 @@ Inspect the processed CSV and preview. Confirm that:
   experiment;
 - raw, processed, and synthetic files have not been mixed.
 
+An internally consistent illuminated curve with sparse voltage sampling, limited dark
+coverage, or dark observations that conflict with one another may still be used to
+demonstrate the processing and calibration workflow. Remeasure the inadequate or
+contradictory observable before assigning physical meaning to fitted parameters.
+
 For the canonical Cell #3 joint calibration, run:
 
 ```bash
@@ -242,8 +248,8 @@ python scripts/run_calibration.py data/processed/measured_iv.csv
 - [ ] Temperature, illumination, wiring, instrument settings, and sweep settings recorded.
 - [ ] Raw instrument files preserved unchanged.
 - [ ] Core illuminated I–V sweep contains short circuit, knee, and zero crossing.
-- [ ] Dark I–V, repeated illuminated short-circuit, and illuminated open-circuit data
-      collected when using joint calibration.
+- [ ] Dark I–V, at least three illuminated short-circuit readings, and at least two
+      illuminated zero-current voltage readings collected for joint calibration.
 - [ ] Processed J–V units and signs checked against the raw wiring convention.
 - [ ] Irradiance measured independently if efficiency will be reported.
 - [ ] Synthetic examples kept separate from experimental data.

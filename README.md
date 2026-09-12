@@ -56,6 +56,7 @@ Student entry points:
 - [Classroom Slides](docs/lab_slides.html) — the projection-ready lesson deck;
 - [DEVSIM Manual (v2.10.0)](https://zenodo.org/records/17328734) — the
   authoritative command and API reference for the simulator.
+  This project pins the compatible DEVSIM 2.10.1 runtime used for validation.
 
 Open the [classroom slides online](https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/docs/lab_slides.html),
 or open `docs/lab_slides.html` after cloning or downloading the repository. Use the arrow
@@ -240,9 +241,18 @@ acquired Jsc and Voc anchors come from the same illuminated solution. Each outpu
 RMS and objective share of every observation block, so systematic mismatch cannot be hidden
 inside one aggregate value. The normalized block score is the weighted mean squared
 discrepancy: 1 matches the stated scales on average and 4 corresponds to a twice-scale
-weighted RMS mismatch. It is a model-quality teaching diagnostic, not a statistical reduced
-chi-square. If the quality gate fails, covariance indicates only local optimizer sensitivity,
-not physical adequacy or unique parameter identification.
+weighted RMS mismatch. It is a model–data adequacy teaching diagnostic, not a statistical
+reduced chi-square. If the model–data adequacy gate fails, covariance indicates only local
+optimizer sensitivity, not physical adequacy or unique parameter identification.
+
+- **Observe:** name the strongest block-level residual pattern.
+- **Verify:** assess measurement adequacy with two checks such as voltage coverage,
+  repeatability, polarity/area, or dark leakage.
+- **Test one:** test one single-factor hypothesis and predict the direction in which its
+  change should move that residual.
+- **Decide:** accept a physical interpretation only if the evidence survives those checks;
+  otherwise demonstrate the workflow and remeasure. See the
+  [Tutorial Notebook](notebooks/tutorial.ipynb) and [Student Lab Guide](docs/lab_guide.md).
 
 Interpret these outputs together:
 
@@ -252,7 +262,7 @@ Interpret these outputs together:
   bounds, gate-qualified local covariance diagnostics, configuration, software versions,
   and data provenance;
 - `results/joint_identifiability.png` — local covariance scales and parameter
-  correlation, explicitly qualified by the fit-quality gate.
+  correlation, explicitly qualified by the model–data adequacy gate.
 
 To redraw the saved joint fit without running the optimizer again, use:
 
@@ -298,8 +308,8 @@ Captions state whether an item is simulated, synthetic, or measured.
 </p>
 
 <p align="center">
-  <img src="results/joint_identifiability.png" alt="Local covariance scales and parameter correlation for the Cell 3 joint calibration after its quality gate" width="820">
-  <br><sub><strong>Trust check.</strong> The Cell #3 quality gate fails, so covariance is shown only as local numerical sensitivity; it does not validate the model or fitted parameters.</sub>
+  <img src="results/joint_identifiability.png" alt="Local covariance scales and parameter correlation for the Cell 3 joint calibration after its model–data adequacy gate" width="820">
+  <br><sub><strong>Trust check.</strong> The Cell #3 model–data adequacy gate fails, so covariance is shown only as local numerical sensitivity; it does not validate the model or fitted parameters.</sub>
 </p>
 
 Rebuildable images are checked into `results/` so the lesson remains readable on GitHub.

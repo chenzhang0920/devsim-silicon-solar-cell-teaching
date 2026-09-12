@@ -12,7 +12,7 @@ generated the artifact.
 | Illuminated device response | `iv_sim.csv`, `iv_plot.png`, `profiles.png`, `eqe.png` |
 | Parameter sensitivity | `sweep.png` |
 | Joint measured-data calibration | `joint_observables.png`, `joint_metrics.json`, `joint_fitted_params.json`, `joint_fit_metadata.json` |
-| Fit-quality interpretation | `joint_identifiability.png` |
+| Model–data adequacy and identifiability | `joint_identifiability.png` |
 
 ## Instructor-support artifacts
 

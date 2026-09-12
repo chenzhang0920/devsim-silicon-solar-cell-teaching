@@ -119,9 +119,9 @@ def crop(V, J, v_max):
     return V[m], J[m]
 
 
-def voltage_at_zero_current_from_file(
+def zero_current_summary_from_file(
         path, voltage_sign=-1, current_tolerance=1e-8):
-    """Return median voltage after verifying that a current-biased file is near zero A."""
+    """Summarize repeated voltage readings acquired at approximately zero current."""
     if not np.isfinite(current_tolerance) or current_tolerance <= 0:
         raise ValueError("zero-current tolerance must be finite and > 0")
     V, I = parse_keithley(path)
@@ -131,17 +131,43 @@ def voltage_at_zero_current_from_file(
             f"{path} is labeled as a zero-current voltage measurement but reaches "
             f"|I|={max_current:.3g} A (tolerance {current_tolerance:.3g} A)"
         )
-    return float(np.median(voltage_sign * V))
+    converted_voltage = voltage_sign * np.asarray(V, dtype=float)
+    if converted_voltage.size < 2:
+        raise ValueError(
+            f"{path} contains only {converted_voltage.size} zero-current voltage "
+            "reading; at least 2 repeated readings are required to estimate "
+            "the sample standard deviation"
+        )
+    return {
+        "V_at_I0_V": float(np.median(converted_voltage)),
+        "V_std_V": float(np.std(converted_voltage, ddof=1)),
+        "V_n_points": int(converted_voltage.size),
+    }
+
+
+def voltage_at_zero_current_from_file(
+        path, voltage_sign=-1, current_tolerance=1e-8):
+    """Compatibility wrapper returning the median zero-current voltage."""
+    return zero_current_summary_from_file(
+        path,
+        voltage_sign=voltage_sign,
+        current_tolerance=current_tolerance,
+    )["V_at_I0_V"]
 
 
 def ishort_summary(V, J):
     """Summarize a near-zero-bias short-circuit measurement."""
-    ddof = 1 if len(V) > 1 else 0
+    if len(V) != len(J):
+        raise ValueError("short-circuit voltage and current arrays must have equal length")
+    if len(V) < 3:
+        raise ValueError(
+            "short-circuit summaries require at least 3 repeated readings"
+        )
     return {
         "J_mean_A_cm2": float(np.mean(J)),
-        "J_std_A_cm2": float(np.std(J, ddof=ddof)),
+        "J_std_A_cm2": float(np.std(J, ddof=1)),
         "V_mean_V": float(np.mean(V)),
-        "V_std_V": float(np.std(V, ddof=ddof)),
+        "V_std_V": float(np.std(V, ddof=1)),
         "n_points": int(len(V)),
     }
 
@@ -225,7 +251,10 @@ def main() -> None:
     )
     ap.add_argument(
         "--zero-current-tolerance", type=float, default=1e-8,
-        help="Maximum |I| accepted in *-voc-* files (A; default: 1e-8)",
+        help=(
+            "Maximum |I| accepted in *-voc-* files, which must contain at "
+            "least two repeated readings (A; default: 1e-8)"
+        ),
     )
     ap.add_argument(
         "--prune", action="store_true",
@@ -324,15 +353,16 @@ def main() -> None:
     for f, classification in classified_files:
         cond, kind, sample = classification
         if kind == "voc":
-            voltage_at_i0 = voltage_at_zero_current_from_file(
+            zero_current = zero_current_summary_from_file(
                 f,
                 voltage_sign=args.voltage_sign,
                 current_tolerance=args.zero_current_tolerance,
             )
+            voltage_at_i0 = zero_current["V_at_I0_V"]
             voc_rows.append({
                 "sample": sample,
                 "condition": cond,
-                "V_at_I0_V": voltage_at_i0,
+                **zero_current,
             })
             if cond == "light" and voltage_at_i0 <= 0:
                 raise SystemExit(
@@ -341,7 +371,11 @@ def main() -> None:
                 )
             quantity = "illuminated Voc" if cond.lower() == "light" \
                 else "dark zero-current offset"
-            print(f"  {f.name:24s} -> {quantity} = {voltage_at_i0:.4f} V")
+            print(
+                f"  {f.name:24s} -> {quantity} = {voltage_at_i0:.4f} V "
+                f"(std {zero_current['V_std_V'] * 1e3:.2f} mV, "
+                f"n={zero_current['V_n_points']})"
+            )
             continue
         V_smu, I_smu = parse_keithley(f)
         if kind == "ishort":

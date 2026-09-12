@@ -23,7 +23,8 @@ python -c "import devsim; print('DEVSIM:', devsim.__version__)"
 Run commands from the repository root. Model and calibration settings belong in
 `config.py`; do not duplicate parameter values inside scripts or the Notebook.
 Use the [DEVSIM Manual (v2.10.0)](https://zenodo.org/records/17328734) as the
-authoritative reference for simulator commands and API syntax; follow this repository
+authoritative reference for simulator commands and API syntax. The project pins the
+compatible DEVSIM 2.10.1 runtime used for validation; follow this repository
 for the course workflow and validated configuration.
 
 Keep these conventions visible in every figure and table:
@@ -237,9 +238,9 @@ The illuminated curve supplies the J–V, Jsc, and Voc residuals; the dark curve
 dark forward-current residual. Inspect the reported normalized RMS and objective share for
 all four blocks. The normalized block score is their weighted mean squared discrepancy:
 1 matches the stated scales on average, while 4 corresponds to a twice-scale weighted RMS
-mismatch. It is a transparent model-quality diagnostic, not a statistical reduced
-chi-square. If the gate fails, report the systematic disagreement and treat covariance only
-as local numerical sensitivity.
+mismatch. It is a transparent model–data adequacy diagnostic, not a statistical reduced
+chi-square. If the gate fails, check both measurements and the model, report the
+systematic disagreement, and treat covariance only as local numerical sensitivity.
 
 For a generic two-column **illuminated I–V sweep**, convert raw I–V to processed illuminated J–V
 explicitly:
@@ -302,8 +303,15 @@ python scripts/run_calibration.py --joint --sample YOUR_SAMPLE_ID
 ### Submit
 
 - `results/joint_identifiability.png`;
-- a one-page conclusion that distinguishes fitted values, local covariance diagnostics,
-  correlation, bounds, residual mismatch, and the quality-gate result;
+- a one-page four-step decision record that distinguishes fitted values, local covariance
+  diagnostics, correlation, bounds, residual mismatch, and the model–data adequacy result:
+  1. **Observe:** cite the strongest block-level residual pattern;
+  2. **Verify:** document two relevant measurement-adequacy checks, such as sampling,
+     repeatability, polarity/area, or dark-data coverage;
+  3. **Test one:** state and test one single-factor hypothesis, predicting the direction
+     in which its change should move the named residual;
+  4. **Decide:** state whether the evidence supports a physical parameter interpretation,
+     only a workflow demonstration, or remeasurement;
 - at least two model limitations and one measurement limitation relevant to your result;
 - enough commands, filenames, parameter changes, and software information for another
   student to reproduce your figures.

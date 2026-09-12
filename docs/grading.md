@@ -72,7 +72,8 @@ systematically, and model limitations are supported by evidence.
 | Criterion | Points |
 |---|---:|
 | Interprets parameter sensitivity, local covariance scale, correlation, and bound behavior using the identifiability output | 6 |
-| Explains systematic mismatch and identifies at least two relevant model limitations and one measurement limitation | 5 |
+| Builds one traceable residual-to-decision chain: cites a block-level residual pattern, documents two relevant measurement-adequacy checks, states one single-factor hypothesis with its predicted direction of change, and reaches an evidence-based conclusion | 3 |
+| Links at least two model limitations and one measurement limitation to the submitted residual or metadata evidence | 2 |
 | Provides sufficient commands, filenames, parameter changes, and software information to reproduce the reported work | 4 |
 | **Task 5 total** | **15** |
 

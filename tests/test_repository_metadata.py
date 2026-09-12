@@ -1,11 +1,15 @@
 """Checks for files that keep the public teaching repository reproducible."""
 import csv
 import json
-import hashlib
 from pathlib import Path
 
 import pytest
 
+from calibration.provenance import (
+    CALIBRATION_HASH_METHOD,
+    FIT_METADATA_SCHEMA_VERSION,
+    calibration_input_sha256,
+)
 from config import MODEL_PARAMS, MODELED_INPUT_POWER_W_CM2
 from scripts.plot_fit import _verify_hash, load_params_json
 
@@ -58,7 +62,7 @@ def test_fit_and_plot_commands_have_distinct_responsibilities():
 def test_saved_fit_replot_rejects_changed_input(tmp_path):
     source = tmp_path / "data.csv"
     source.write_text("V,J\n0,1\n", encoding="utf-8")
-    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    digest = calibration_input_sha256(source)
     _verify_hash(source, digest)
     source.write_text("V,J\n0,2\n", encoding="utf-8")
     with pytest.raises(SystemExit, match="input changed"):
@@ -83,7 +87,16 @@ def test_checked_calibration_results_state_covariance_and_schema_contracts():
         (ROOT / "results" / "joint_metrics.json").read_text(encoding="utf-8")
     )
 
-    assert joint["schema_version"] == 1
+    assert joint["schema_version"] == FIT_METADATA_SCHEMA_VERSION
+    assert joint["command_argv"][:2] == ["python", "scripts/run_calibration.py"]
+    assert joint["data_hash_method"] == CALIBRATION_HASH_METHOD
+    assert joint["data_sha256"] == calibration_input_sha256(
+        ROOT / joint["data_file"]
+    )
+    assert joint["dataset_sha256"] == {
+        name: calibration_input_sha256(ROOT / path)
+        for name, path in joint["datasets"].items()
+    }
     assert "Unscaled local Jacobian" in joint["covariance_scaling"]
     assert metrics["schema_version"] == 1
     objective = joint["joint_objective"]

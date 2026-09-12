@@ -8,7 +8,6 @@ measurements, with documented weights from ``config.py``.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import platform
 import sys
@@ -35,6 +34,11 @@ from calibration.fit import (
     joint_block_score,
     load_iv_csv,
     load_joint_data,
+)
+from calibration.provenance import (
+    CALIBRATION_HASH_METHOD,
+    FIT_METADATA_SCHEMA_VERSION,
+    calibration_input_sha256,
 )
 from calibration.report import (
     comparison_figure,
@@ -78,8 +82,8 @@ def _project_path(path: str | Path) -> Path:
 
 
 def _sha256(path: str | Path) -> str:
-    """Return a compact provenance hash for one calibration input."""
-    return hashlib.sha256(_project_path(path).read_bytes()).hexdigest()
+    """Return the portable provenance hash for one calibration input."""
+    return calibration_input_sha256(_project_path(path))
 
 
 def _data_label(path: str | Path) -> str:
@@ -196,11 +200,13 @@ def _save_common(result: lmfit.MinimizerResult, data_path: str,
     ]
     covar = getattr(result, "covar", None)
     metadata = {
-        "schema_version": 1,
+        "schema_version": FIT_METADATA_SCHEMA_VERSION,
         "mode": mode,
         "data_file": str(data_path),
+        "data_hash_method": CALIBRATION_HASH_METHOD,
         "data_sha256": _sha256(data_path),
         "command": " ".join(["python", "scripts/run_calibration.py", *sys.argv[1:]]),
+        "command_argv": ["python", "scripts/run_calibration.py", *sys.argv[1:]],
         "residual_mode": CALIBRATION.get("residual_mode", "absolute"),
         "model_params": MODEL_PARAMS,
         "simulation_config": SIMULATION,
@@ -375,7 +381,7 @@ def main(argv: list[str] | None = None) -> None:
     quality_note = None
     if data is not None and block_score > quality_limit:
         quality_note = (
-            f"Quality gate failed: block score {block_score:.1f} > {quality_limit:g}; "
+            f"Model–data adequacy gate failed: block score {block_score:.1f} > {quality_limit:g}; "
             "local sensitivity only"
         )
     fig = identifiability_figure(
@@ -387,7 +393,7 @@ def main(argv: list[str] | None = None) -> None:
     quality_adequate = data is None or not np.isfinite(block_score) \
         or block_score <= quality_limit
     heading = "Parameter identifiability" if quality_adequate \
-        else "Local covariance sensitivity (quality gate failed)"
+        else "Local covariance sensitivity (model–data adequacy gate failed)"
     print(f"\n-- {heading} --")
     for line in identifiability_summary(
         result.params,

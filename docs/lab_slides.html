@@ -27,7 +27,7 @@
   .slide.active { display:grid; }
   .slide:has(> .command) { grid-template-rows:auto auto minmax(0,1fr); }
   .slide::after {
-    content:attr(data-step) " / 24"; position:fixed; right:1.6rem; bottom:.72rem;
+    content:attr(data-step) " / 25"; position:fixed; right:1.6rem; bottom:.72rem;
     color:#62727a; font-size:1.05rem; font-weight:650; font-variant-numeric:tabular-nums;
   }
   .global-logo {
@@ -153,8 +153,8 @@
   .electrostatic-plot .rho-p { fill:#b9511e; opacity:.8; }
   .electrostatic-plot .rho-n { fill:#247da8; opacity:.8; }
   .electrostatic-plot .curve { fill:none; stroke:var(--navy); stroke-width:3; vector-effect:non-scaling-stroke; }
-  .electrostatic-plot .label { fill:var(--navy); font-size:17px; font-weight:800; }
-  .electrostatic-plot .sub { fill:var(--muted); font-size:15px; }
+  .electrostatic-plot .label { fill:var(--navy); font-size:20px; font-weight:800; }
+  .electrostatic-plot .sub { fill:var(--muted); font-size:20px; }
   .equation-stack { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem 3rem; }
   .equation-stack > div { padding-top:.45rem; border-top:2px solid var(--line); }
   .equation-stack p { color:var(--muted); font-size:1.35rem; }
@@ -180,7 +180,7 @@
   .mesh-figure .node { fill:var(--navy); }
   .mesh-figure .volume { fill:#e8f1f4; stroke:#a7bac4; stroke-width:1; }
   .mesh-figure .flux { fill:none; stroke:var(--rust); stroke-width:2.4; vector-effect:non-scaling-stroke; }
-  .mesh-figure text { fill:var(--navy); font-size:16px; font-weight:700; }
+  .mesh-figure text { fill:var(--navy); font-size:19px; font-weight:700; }
   .mesh-copy { padding-left:1.5rem; border-left:1px solid var(--line); }
   .mesh-copy p { margin:0; color:var(--muted); font-size:1.3rem; }
   .solver-path { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
@@ -227,6 +227,18 @@
   .quality-explain { padding-left:2rem; border-left:1px solid var(--line); }
   .quality-explain .equation { margin-top:0; }
   .quality-explain .status { color:var(--rust); font-size:1.35rem; font-weight:800; }
+  .decision-layout { display:grid; grid-template-rows:auto 1fr; gap:2.7rem; align-content:start; padding-top:1rem; }
+  .decision-sequence { margin-top:0; gap:2.8rem; }
+  .decision-sequence > div:not(:last-child)::after { content:"→"; position:absolute; right:-2rem; top:.85rem; color:var(--muted); font-size:2rem; font-weight:700; }
+  .decision-sequence strong { font-size:2rem; }
+  .decision-sequence span { font-size:1.4rem; line-height:1.34; }
+  .decision-details { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(28rem,.92fr); gap:3.5rem; align-items:start; }
+  .decision-evidence, .decision-judgment { padding-top:.75rem; border-top:3px solid var(--gold); }
+  .decision-judgment { border-top-color:var(--rust); }
+  .decision-evidence ul { margin-bottom:0; }
+  .decision-evidence li { margin:.65rem 0; font-size:1.5rem; }
+  .decision-claim { color:var(--navy); font-size:1.85rem; line-height:1.35; font-weight:750; }
+  .decision-rule { margin-top:1.25rem; padding:.75rem 0 .75rem 1rem; border-left:4px solid var(--rust); font-size:1.48rem; }
   .title-slide { grid-template-rows:1fr; background:linear-gradient(100deg,#fbfcfa 0%,#fbfcfa 68%,#eef4f5 100%); }
   .cover-layout { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(28rem,.85fr); gap:4rem; align-items:center; height:100%; }
   .title-slide .cover { max-width:72rem; padding-left:1.7rem; border-left:8px solid var(--gold); }
@@ -271,6 +283,15 @@
     .figure-layout img { max-height:69vh; }
     .calibration-layout > img { max-height:60vh; }
     .quality-layout { padding-top:1rem; }
+    .decision-layout { gap:1.25rem; padding-top:0; }
+    .decision-sequence { gap:2rem; }
+    .decision-sequence > div:not(:last-child)::after { right:-1.45rem; top:.6rem; font-size:1.55rem; }
+    .decision-sequence strong { font-size:1.55rem; }
+    .decision-sequence span { font-size:1.18rem; }
+    .decision-details { gap:2.5rem; }
+    .decision-evidence li { margin:.4rem 0; font-size:1.22rem; }
+    .decision-claim { font-size:1.5rem; }
+    .decision-rule { margin-top:.75rem; padding:.5rem 0 .5rem .8rem; font-size:1.22rem; }
     .figure-layout .explain li { font-size:1.18rem; }
     .double-figure img { max-height:55vh; }
     .note { font-size:1.2rem; }
@@ -281,12 +302,13 @@
     .two, .two.wide-left, .two.wide-right, .code-map, .circuit-layout, .junction,
     .definition, .equation-stack, .numerics, .figure-layout, .double-figure, .model-flow,
     .model-bottom, .physics-loop, .mesh-row, .solver-path, .cover-layout,
-    .closing-grid, .calibration-notes, .quality-layout, .quality-viz { grid-template-columns:1fr; }
+    .closing-grid, .calibration-notes, .quality-layout, .quality-viz, .decision-details { grid-template-columns:1fr; }
     .flow-arrow, .physics-loop b { display:none; }
     .divide > :last-child, .figure-layout .explain { padding-left:0; border-left:0; }
     .global-logo { width:7.4rem; top:.55rem; right:.6rem; }
     h2 { padding-right:7.8rem; }
     .sequence { grid-template-columns:1fr 1fr; }
+    .decision-sequence > div::after { display:none; }
     .figure-layout img, .double-figure img { max-height:50vh; }
   }
   @media print {
@@ -379,7 +401,7 @@
         <li>mesh, solver tolerances and validation tests</li>
       </ul>
       <p class="note">DEVSIM solves the equations that we define. A converged solve does not prove that those equations represent the experiment.</p>
-      <p class="small">References: <a href="https://github.com/devsim/devsim/blob/main/README.md">DEVSIM project</a> · <a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a></p>
+      <p class="small">References: <a href="https://github.com/devsim/devsim/blob/main/README.md">DEVSIM project</a> · <a href="https://zenodo.org/records/17328734">Manual v2.10.0</a> · validated runtime 2.10.1</p>
     </div>
   </div>
 </section>
@@ -550,7 +572,7 @@ get_contact_current(...)   # intrinsic J(V)</pre>
       </div>
       <div class="number-pair">
         <div><strong>≈ 99%</strong><span>of W<sub>0</sub> lies in the lower-doped n-type base</span></div>
-        <div><strong>2 nm mesh target</strong><span>is much smaller than W<sub>0</sub>, but mesh refinement must still verify the result</span></div>
+        <div><strong>2 nm mesh target</strong><span>is much smaller than W<sub>0</sub>; the provided baseline was checked by mesh refinement</span></div>
       </div>
       <svg class="electrostatic-plot" viewBox="0 0 900 190" role="img" aria-labelledby="electrostatic-title electrostatic-desc">
         <title id="electrostatic-title">Qualitative charge, electric-field and potential profiles through the depletion region</title>
@@ -577,7 +599,7 @@ get_contact_current(...)   # intrinsic J(V)</pre>
           <line class="guide" x1="105" y1="34" x2="105" y2="150"></line>
           <path class="curve" d="M50 132 C82 132,91 126,105 111 C139 73,186 48,244 48"></path>
           <text class="sub" x="168" y="34">rise ≈ V<tspan baseline-shift="sub">bi</tspan></text>
-          <text class="sub" x="150" y="162">qualitative, not to scale</text>
+          <text class="sub" x="145" y="162" text-anchor="middle">qualitative, not to scale</text>
         </g>
       </svg>
       <p class="note warn">“Depleted” describes mobile-carrier removal near a junction. It does not mean that this ordinary p–n cell contains intrinsic silicon.</p>
@@ -717,12 +739,12 @@ get_contact_current(...)   # intrinsic J(V)</pre>
     </div>
     <div>
       <div class="solver-path">
-      <div><strong>Equilibrium</strong><span>Poisson only</span></div>
-      <div><strong>Dark device</strong><span>add carrier continuity</span></div>
+      <div><strong>Initialize</strong><span>equilibrium Poisson solve</span></div>
+      <div><strong>Dark equilibrium</strong><span>add carrier continuity</span></div>
       <div><strong>Illumination</strong><span>ramp G from zero</span></div>
       <div><strong>Bias sweep</strong><span>reuse the previous solution</span></div>
       </div>
-      <p class="note warn">Convergence is one numerical check. Repeat the calculation with a finer mesh and confirm that J<sub>sc</sub>, V<sub>oc</sub> and the internal profiles remain stable.</p>
+      <p class="note warn">For this lab, confirm convergence and continuation using the provided mesh. Instructor mesh-refinement checks establish the baseline; repeating them is an optional extension.</p>
     </div>
   </div>
 </section>
@@ -849,14 +871,14 @@ get_contact_current(...)   # intrinsic J(V)</pre>
     <table class="simple-table parameter-table" aria-label="Rationale for calibration parameter selection" style="margin-top:1.3rem">
       <thead><tr><th>Parameter</th><th>Current status</th><th>Measurement response</th><th>Reason</th></tr></thead>
       <tbody>
-        <tr><td>photon_flux</td><td class="fit">varied</td><td>light J–V and J<sub>sc</sub></td><td>controls the generation scale; measured irradiance should constrain it when available</td></tr>
-        <tr><td>series_resistance</td><td class="fit">varied</td><td>high-current knee</td><td>creates a distinct terminal-voltage distortion over a sufficient voltage range</td></tr>
-        <tr><td>lifetimes</td><td class="fixed">fixed</td><td>J–V, EQE or lifetime data</td><td>bulk lifetime and surface losses are correlated in sparse J–V data</td></tr>
-        <tr><td>front/back loss</td><td class="fixed">fixed</td><td>measured EQE</td><td>wavelength dependence is needed to separate collection regions</td></tr>
-        <tr><td>R<sub>sh</sub></td><td class="fixed">fixed at ∞</td><td>near-J<sub>sc</sub> slope and leakage</td><td>activate only after a repeatable shunt signature appears in the data</td></tr>
+        <tr><td>photon_flux</td><td class="fit">varied</td><td>light J–V and J<sub>sc</sub></td><td>scales generation; irradiance provides an independent check or prior</td></tr>
+        <tr><td>series_resistance</td><td class="fit">varied</td><td>high-current knee</td><td>distorts terminal voltage near the knee</td></tr>
+        <tr><td>lifetimes</td><td class="fixed">fixed</td><td>J–V, EQE or lifetime data</td><td>bulk and surface losses correlate in sparse J–V data</td></tr>
+        <tr><td>front/back loss</td><td class="fixed">fixed</td><td>measured EQE</td><td>spectral information separates collection regions</td></tr>
+        <tr><td>R<sub>sh</sub></td><td class="fixed">fixed at ∞</td><td>near-J<sub>sc</sub> slope and leakage</td><td>enable only after repeatable leakage appears</td></tr>
       </tbody>
     </table>
-    <p class="note">The model contains more parameters than the present measurements can identify. Varying only two parameters protects the interpretation from unsupported freedom.</p>
+    <p class="note">The model contains more parameters than the present measurements can identify. Vary two only.</p>
   </div>
 </section>
 
@@ -882,7 +904,7 @@ get_contact_current(...)   # intrinsic J(V)</pre>
   <h2>Bounded least-squares calibration</h2>
   <p class="command">python scripts/plot_optimization.py --params photon_flux --init photon_flux=0.5 --max-nfev 30 --gif</p>
   <div class="content">
-    <span class="equation">θ* = arg min<sub>l ≤ θ ≤ u</sub> ‖r(θ)‖², &nbsp;&nbsp; r<sub>i</sub> = [J<sub>sim</sub>(V<sub>i</sub>;θ) − J<sub>meas,i</sub>]/s<sub>i</sub></span>
+    <span class="equation">θ* = arg min<sub>l ≤ θ ≤ u</sub> ‖e(θ)‖², &nbsp;&nbsp; e<sub>i</sub> = [J<sub>sim</sub>(V<sub>i</sub>;θ) − J<sub>meas,i</sub>]/s<sub>i</sub></span>
     <img class="screen-only" src="../results/optimization.gif" alt="Synthetic calibration trajectory for the optical generation scale" style="display:block;width:100%;max-height:60vh;object-fit:contain">
     <img class="print-only" src="../results/optimization.png" alt="Static summary of the synthetic calibration" style="width:100%;max-height:60vh;object-fit:contain">
     <p class="small" style="text-align:center"><code>lmfit</code> calls the forward model, scales the residuals and respects the bounds in <code>config.py</code>. This synthetic demonstration varies only <code>photon_flux</code>.</p>
@@ -897,8 +919,8 @@ get_contact_current(...)   # intrinsic J(V)</pre>
     <img src="../results/joint_observables.png" alt="Cell 3 illuminated and dark J–V curves with short-circuit and open-circuit checks">
     <div class="calibration-notes">
       <div>
-        <span class="eyebrow">Block-scaled residual</span>
-        <span class="equation">r<sub>b</sub> = √(w<sub>b</sub>/N<sub>b</sub>) [y<sub>sim,b</sub> − y<sub>meas,b</sub>]/σ<sub>b</sub></span>
+        <span class="eyebrow">Normalized error and optimizer residual</span>
+        <span class="equation">e<sub>b</sub> = (y<sub>sim,b</sub> − y<sub>meas,b</sub>)/σ<sub>b</sub>, &nbsp; r<sub>b</sub> = √(w<sub>b</sub>/N<sub>b</sub>)e<sub>b</sub></span>
       </div>
       <div>
         <span class="eyebrow">Four complementary observable blocks</span>
@@ -909,8 +931,8 @@ get_contact_current(...)   # intrinsic J(V)</pre>
   </div>
 </section>
 
-<section class="slide" data-step="23" data-title="Fit quality and parameter trust">
-  <h2>Fit quality and parameter trust</h2>
+<section class="slide" data-step="23" data-title="Model–data adequacy and parameter trust">
+  <h2>Model–data adequacy and parameter trust</h2>
   <p class="command">python scripts/run_calibration.py --joint --sample 3</p>
   <div class="content quality-layout">
     <div class="quality-viz" role="img" aria-label="Local covariance scale and correlation diagnostics for the two fitted Cell 3 parameters">
@@ -945,21 +967,47 @@ get_contact_current(...)   # intrinsic J(V)</pre>
       </div>
     </div>
     <div class="quality-explain">
-      <span class="equation">Q = Σ<sub>b</sub>w<sub>b</sub>RMS<sub>b</sub><sup>2</sup>/Σ<sub>b</sub>w<sub>b</sub> = 15.1 &gt; 4.0</span>
+      <span class="equation">Q = ‖r‖²/Σ<sub>b</sub>w<sub>b</sub> = Σ<sub>b</sub>w<sub>b</sub>RMS(e<sub>b</sub>)<sup>2</sup>/Σ<sub>b</sub>w<sub>b</sub> = 15.1 &gt; 4.0</span>
       <p class="status">Model–data adequacy gate: failed</p>
       <ul>
         <li>illuminated J–V has normalized RMS ≈ 5.0</li>
-        <li>the V<sub>oc</sub> check differs by ≈ 4.5 declared scales</li>
+        <li>simulated V<sub>oc</sub> differs from the measured anchor by ≈ 4.5 declared scales</li>
         <li>Q = 4 is an instructor-defined teaching gate, not a reduced χ² threshold</li>
       </ul>
-      <p class="note warn">After the failed gate, covariance remains only a local numerical diagnostic. It does not establish parameter identifiability.</p>
-      <h3>Next scientific action</h3>
-      <p>Verify area, temperature, irradiance and polarity. Inspect residual structure; then test one sensitivity-supported physical hypothesis at a time.</p>
+      <p class="note warn">After the failed gate, covariance still describes local numerical sensitivity, but it cannot establish physical identifiability or validate the fitted parameters.</p>
     </div>
   </div>
 </section>
 
-<section class="slide closing" data-step="24" data-title="Student workflow">
+<section class="slide" data-step="24" data-title="From residual to scientific decision">
+  <h2>From residual to scientific decision</h2>
+  <div class="content decision-layout">
+    <div class="sequence decision-sequence" aria-label="Observe, then verify, then test one hypothesis, then decide">
+      <div><strong>1 · Observe</strong><span>Read residual shape, sign and auxiliary checks.</span></div>
+      <div><strong>2 · Verify</strong><span>Classify each relevant measurement as verified, missing or inconsistent.</span></div>
+      <div><strong>3 · Test one</strong><span>Test one sensitivity-supported physical hypothesis.</span></div>
+      <div><strong>4 · Decide</strong><span>Limit the claim, or remeasure before extending the model.</span></div>
+    </div>
+    <div class="decision-details">
+      <div class="decision-evidence">
+        <h3>Cell #3 evidence</h3>
+        <ul>
+          <li><strong>Measured light checks:</strong> sweep-derived and separate anchors agree within screens (ΔJ<sub>sc</sub> +0.202 vs ±0.500 mA/cm²; ΔV<sub>oc</sub> +1.49 vs ±10.0 mV).</li>
+          <li><strong>Voltage sampling:</strong> median step 57.6 mV near the knee and V<sub>oc</sub>.</li>
+          <li><strong>Dark reach:</strong> max |J<sub>dark</sub>| = 0.51 |J<sub>sc</sub>|.</li>
+          <li><strong>Dark auxiliary conflict:</strong> the dark J–V curve and separate dark checks disagree.</li>
+        </ul>
+      </div>
+      <div class="decision-judgment">
+        <h3>Decision</h3>
+        <p class="decision-claim">This dataset supports a workflow demonstration, but not additional fitted physical parameters.</p>
+        <p class="decision-rule"><strong>Remeasure first.</strong> Never change objective weights or add multiple fit parameters merely to force Q below the threshold.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide closing" data-step="25" data-title="Student workflow">
   <div class="content">
     <div class="closing-grid">
       <div>
@@ -972,14 +1020,14 @@ get_contact_current(...)   # intrinsic J(V)</pre>
           <div><strong>4 · Calibrate</strong><span>test sensitivity, fit few parameters and report mismatch</span></div>
         </div>
         <p class="question">A useful result states what the model explains, what the data constrain and what remains uncertain.</p>
-        <p><a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a> · <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching">Course repository</a></p>
+        <p><a href="https://zenodo.org/records/17328734">DEVSIM Manual v2.10.0</a> · validated runtime 2.10.1 · <a href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching">Course repository</a></p>
       </div>
       <div>
         <h3>Before reporting a result</h3>
         <ol class="exit-check">
           <li><strong>Check the structure and signs</strong><span>p<sup>+</sup> at the illuminated front, n-type base at the rear, and a declared current convention.</span></li>
           <li><strong>Check equations and boundaries</strong><span>Every solved field has a governing equation and contact condition.</span></li>
-          <li><strong>Check the numerics</strong><span>Convergence, continuation and mesh refinement agree.</span></li>
+          <li><strong>Check the numerics</strong><span>Convergence and continuation succeed on the instructor-validated mesh.</span></li>
           <li><strong>Check the evidence</strong><span>Residuals, data provenance and parameter sensitivity support the interpretation.</span></li>
         </ol>
       </div>

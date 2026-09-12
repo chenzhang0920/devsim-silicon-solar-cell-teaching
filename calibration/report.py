@@ -433,7 +433,7 @@ def identifiability_summary(params: lmfit.Parameters,
     """Summarize local covariance scales and parameter trade-offs in text.
 
     ``quality_adequate=False`` prevents a small local covariance from being
-    described as physical identifiability after the model-data quality gate has
+    described as physical identifiability after the model-data adequacy gate has
     failed.  The covariance is still useful as a numerical sensitivity check.
     """
     names, rels, corr, strongly_correlated = _identifiability_data(
@@ -446,7 +446,7 @@ def identifiability_summary(params: lmfit.Parameters,
             lines.append(f"{n}: no local covariance estimate (not varied or fit failed)")
             continue
         if not quality_adequate:
-            verdict = "local numerical sensitivity only (quality gate failed)"
+            verdict = "local numerical sensitivity only (model–data adequacy gate failed)"
         elif n in strongly_correlated:
             verdict = "not separately identifiable (strong correlation)"
         elif rel < 0.3:

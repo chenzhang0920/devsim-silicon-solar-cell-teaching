@@ -78,7 +78,10 @@ def test_student_deck_matches_build_and_data_contracts():
         html.index("Calibration as an inverse problem")
     assert "plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5" in html
     assert html.index("Joint calibration of Cell #3") < \
-        html.index("Fit quality and parameter trust")
+        html.index("Model–data adequacy and parameter trust")
+    assert html.index("Model–data adequacy and parameter trust") < \
+        html.index("From residual to scientific decision") < \
+        html.index("Student workflow")
     assert "synthetic/eqe.csv" not in html
     assert "overview.png" not in html
     assert "--bias 0.61" not in html
@@ -93,11 +96,11 @@ def test_student_deck_matches_build_and_data_contracts():
     assert (root / "docs" / "logo1_HKUSTGZ.png").is_file()
     assert "p⁺ emitter" in html
     assert 'class="slide closing"' in html
-    assert len(re.findall(r'<section class="slide', html)) == 24
+    assert len(re.findall(r'<section class="slide', html)) == 25
     assert "@media (min-width:1101px) and (max-height:720px)" in html
-    assert html.count("data-step=") == 24
+    assert html.count("data-step=") == 25
     assert re.findall(r'data-step="([0-9]{2})"', html) == [
-        f"{i:02d}" for i in range(1, 25)
+        f"{i:02d}" for i in range(1, 26)
     ]
     assert 'class="kicker"' not in html
     assert 'class="card"' not in html
@@ -127,12 +130,35 @@ def test_student_deck_matches_build_and_data_contracts():
     assert "Calibration as an inverse problem" in html
     assert "The model contains more parameters than the present measurements can identify" in html
     assert "Bounded least-squares calibration" in html
-    assert "Q = Σ" in html and "15.1 &gt; 4.0" in html
+    assert "Q = ‖r‖²/Σ" in html and "15.1 &gt; 4.0" in html
     assert "Model–data adequacy gate: failed" in html
     assert "Four complementary observable blocks" in html
     assert "Four independent checks" not in html
-    assert "test one sensitivity-supported physical hypothesis at a time" in html
+    assert "Test one sensitivity-supported physical hypothesis." in html
     assert "instructor-defined teaching gate" in html
+    decision_slide = re.search(
+        r'<section class="slide" data-step="24" '
+        r'data-title="From residual to scientific decision">(.*?)</section>',
+        html,
+        re.DOTALL,
+    ).group(1)
+    for step in ("Observe", "Verify", "Test one", "Decide"):
+        assert step in decision_slide
+    assert "verified, missing or inconsistent" in decision_slide
+    assert "Cell #3 evidence" in decision_slide
+    assert "Measured light checks" in decision_slide
+    assert "sweep-derived and separate anchors agree within screens" in decision_slide
+    assert "±0.500 mA/cm²" in decision_slide
+    assert "±10.0 mV" in decision_slide
+    assert "+0.202 vs ±0.500 mA/cm²" in decision_slide
+    assert "+1.49 vs ±10.0 mV" in decision_slide
+    assert "median step 57.6 mV" in decision_slide
+    assert "0.51 |J<sub>sc</sub>|" in decision_slide
+    assert "Dark auxiliary conflict" in decision_slide
+    assert "supports a workflow demonstration, but not additional fitted physical parameters" in decision_slide
+    assert "Remeasure first" in decision_slide
+    assert "Never change objective weights or add multiple fit parameters" in decision_slide
+    assert "force Q below the threshold" in decision_slide
     assert "Student workflow" in html
     assert 'href="https://zenodo.org/records/17328734"' in html
 
@@ -153,7 +179,7 @@ def test_student_deck_matches_build_and_data_contracts():
     assert f"= {objective['normalized_block_score']:.1f} &gt; " \
         f"{objective['quality_warning_threshold']:.1f}" in html
     assert f"RMS ≈ {objective['blocks']['light_iv']['normalized_rms']:.1f}" in html
-    assert f"differs by ≈ {objective['blocks']['light_voc']['normalized_rms']:.1f}" in html
+    assert f"differs from the measured anchor by ≈ {objective['blocks']['light_voc']['normalized_rms']:.1f}" in html
 
     refs = set(re.findall(r'src="\.\./results/([^"]+)"', html))
     declared = {
@@ -178,6 +204,7 @@ def test_student_deck_matches_build_and_data_contracts():
 def test_course_website_has_valid_local_assets_and_student_entry_points():
     root = Path(__file__).resolve().parents[1]
     html = (root / "index.html").read_text(encoding="utf-8")
+    assert ".core-system { grid-template-columns: minmax(0, 1fr); }" in html
 
     assert "MICS3090 (L01)" in html
     assert "p<sup>+</sup>-on-n" in html
@@ -248,7 +275,7 @@ def test_course_website_has_valid_local_assets_and_student_entry_points():
     objective = metrics["joint_objective"]
     assert f"Q = {objective['normalized_block_score']:.1f}" in html
     assert f"&gt; {objective['quality_warning_threshold']:.1f}" in html
-    assert "the declared quality gate fails" in html
+    assert "the declared model–data adequacy gate fails" in html
 
     local_refs = re.findall(r'(?:href|src)="((?!https?:|mailto:|#)[^"]+)"', html)
     assert local_refs
