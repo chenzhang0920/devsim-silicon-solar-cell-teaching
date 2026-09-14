@@ -1,0 +1,400 @@
+# Silicon Solar Cell Modeling — Student Lab Guide
+
+This project introduces semiconductor-device simulation through a one-dimensional,
+front-illuminated **p⁺-on-n silicon solar cell**. It is designed for undergraduate
+students and contributes **10% of the course grade**. The project is marked out of
+100 using the public rubric in [`grading.md`](grading.md).
+
+Complete the five tasks in order. The central question is:
+
+> How do device structure and physical parameters become observable J–V data, and what
+> can those data support when we calibrate a model?
+
+Assessment evidence must come from the dataset assigned to your group. The bundled Cell #3
+results demonstrate the workflow; do not copy their numerical results or conclusions into
+your submission. Marks depend on a traceable interpretation of your own measurements and
+residuals.
+
+## Before you begin
+
+Create the environment and verify that the project imports correctly:
+
+```bash
+conda env create -f environment.yml
+conda activate devsim_solar
+python -c "import devsim; print('DEVSIM:', devsim.__version__)"
+```
+
+Run commands from the repository root. Model and calibration settings belong in
+`config.py`; do not duplicate parameter values inside scripts or the Notebook.
+Use the [DEVSIM Manual (v2.10.0)](https://zenodo.org/records/17328734) as the
+authoritative reference for simulator commands and API syntax. The project pins the
+compatible DEVSIM 2.10.1 runtime used for validation; follow this repository
+for the course workflow and validated configuration.
+
+## Choose how to run the project
+
+Use the Notebook when learning the sequence and the command-line runner when rebuilding
+known outputs. Both use the same `config.py` and Python model.
+
+### Interactive teaching route
+
+```bash
+python -m jupyter lab notebooks/tutorial.ipynb
+```
+
+Choose **Restart Kernel and Run All Cells** in Jupyter. Follow the cells in order and stop
+after each figure to connect the governing equations, numerical solution, internal state,
+terminal response, measurements, and calibration evidence. After changing `config.py`,
+restart the kernel and run all cells again so no state is carried over from the previous
+case.
+
+### Reproducible command-line route
+
+```bash
+# 1. Preview the complete pipeline; this does not change files.
+bash scripts/run_all.sh full --dry-run
+
+# 2. Run only the stage currently being studied.
+bash scripts/run_all.sh simulation
+bash scripts/run_all.sh eqe
+bash scripts/run_all.sh sweep
+bash scripts/run_all.sh calibration
+
+# 3. Refresh the executed Notebook and verify slide assets.
+bash scripts/run_all.sh notebook
+bash scripts/run_all.sh check
+```
+
+For a single complete rebuild, replace those focused commands with
+`bash scripts/run_all.sh full`. The runner prints the active project root and Python
+interpreter, then names each substep and generated file. Run
+`bash scripts/run_all.sh help` at any time for the profile list. On Windows, use Git Bash
+or WSL for the Bash runner; the individual `python scripts/...` commands under each task
+also work directly in an activated PowerShell environment.
+
+The commands above use the checked processed Cell #3 data. For a new experimental bundle,
+insert the following two steps after confirming sample identity, wiring polarity, units,
+and illuminated area:
+
+```bash
+# Replace 12.0 with the measured illuminated area in cm².
+bash scripts/run_all.sh keithley --area 12.0
+bash scripts/run_all.sh joint --sample YOUR_SAMPLE_ID
+```
+
+Do not run the conversion merely to rebuild the supplied example: `full` deliberately
+leaves raw measurements untouched.
+
+Keep these conventions visible in every figure and table:
+
+- $x=0$ is the illuminated front p⁺ emitter; the n-type base is at larger $x$.
+- $V=V_{\mathrm{front}}(p)-V_{\mathrm{back}}(n)$; positive voltage is forward bias.
+- Processed curves use the generation-positive convention: illuminated $J_{\mathrm{sc}}>0$.
+- Raw instrument **I–V** uses current $I$ in $\mathrm A$ or $\mathrm{mA}$. Area-normalized
+  **J–V** uses current density $J$ in $\mathrm{A\,cm^{-2}}$ or $\mathrm{mA\,cm^{-2}}$.
+- A modeled efficiency may use the explicitly stated modeled input power. Report an
+  **experimental** efficiency only when irradiance at the cell plane was measured
+  independently.
+
+The checked files in `results/` are examples, not your submission. Regenerate the
+required outputs and record every command and parameter change. Follow the course LMS
+for the submission deadline, file format, and group policy.
+
+---
+
+## Task 1 — Structure, equilibrium, and the built-in field (20 points)
+
+### Goal
+
+Connect the p⁺-on-n structure and doping profile to equilibrium band bending, the
+depletion region, and the built-in electric field.
+
+### Run
+
+```bash
+python scripts/plot_model.py
+python scripts/plot_band.py --bias near-voc
+```
+
+Use `results/model.png` to establish the device orientation. For Task 1, use the
+**equilibrium panel** of `results/band.png`; Task 2 uses its illuminated panel as a
+different piece of evidence. The
+`near-voc` option derives the operating point from the current model rather than assuming
+one fixed voltage for every parameter set.
+
+### Submit
+
+- the device schematic and equilibrium panel of the band diagram;
+- one clear annotation locating the p⁺ emitter, junction, n base, and illumination side;
+- your calculated or simulated built-in potential, with units and the values used in the
+  calculation.
+
+### Explain
+
+1. Why must the equilibrium Fermi level be spatially constant?
+2. How does that condition produce band bending at the junction?
+3. What sets the direction and spatial location of the strongest built-in field?
+
+---
+
+## Task 2 — Illumination, J–V performance, and EQE (20 points)
+
+### Goal
+
+Relate photogeneration and carrier transport to quasi-Fermi-level splitting, the
+illuminated J–V curve, and wavelength-dependent collection.
+
+### Run
+
+```bash
+python scripts/run_sim.py
+python scripts/plot_iv.py --csv results/iv_sim.csv
+python scripts/plot_profiles.py --bias near-voc
+python scripts/plot_band.py --bias near-voc
+python scripts/plot_eqe.py
+```
+
+The direct J-V command plots the simulation alone. To reproduce the explicitly labeled
+synthetic overlay used in the classroom deck, first regenerate it and pass it deliberately:
+
+```bash
+python scripts/make_demo_data.py
+python scripts/plot_iv.py --csv results/iv_sim.csv --data data/synthetic/iv.csv
+```
+
+`plot_eqe.py` compares the modeled EQE with the model's single-pass absorption
+reference. It uses the project's 16-bin teaching spectrum and may take about 30
+seconds. Rear optical reflection and light trapping are not included.
+
+Those bins approximate above-band-gap photons used for generation. The illustrative
+modeled efficiency uses a separately stated total input of 100 mW/cm², including omitted
+non-generating spectral power; it is not a precision ASTM G173 power balance.
+
+### Submit
+
+- `results/iv_plot.png` and a table containing $J_{\mathrm{sc}}$, $V_{\mathrm{oc}}$,
+  FF, and $P_{\max}$;
+- the relevant panels from `results/profiles.png` showing illumination-dependent internal
+  quantities;
+- the illuminated panel from `results/band.png`, used to explain quasi-Fermi-level
+  splitting (the equilibrium panel was assessed in Task 1);
+- `results/eqe.png` and the $J_{\mathrm{sc}}$ value obtained from EQE integration.
+
+No additional measured EQE dataset is required, and no synthetic EQE comparison table is
+bundled. If the instructor supplies measured EQE, overlay it with:
+
+```bash
+python scripts/plot_eqe.py --data path/to/measured_eqe.csv
+```
+
+The CSV must contain increasing wavelength values and columns `wavelength_nm` (or
+`wavelength`) and `EQE`, where EQE is a ratio from 0 to 1.
+
+### Explain
+
+1. How do generation, recombination, and diode current shape the illuminated J–V curve?
+2. What does quasi-Fermi-level splitting mean, and how is it related to terminal voltage?
+3. Why can the modeled EQE differ from the single-pass absorption reference at short
+   and long wavelengths?
+4. Under what experimental condition may efficiency be reported?
+
+---
+
+## Task 3 — Parameter sensitivity (15 points)
+
+### Goal
+
+Test how an observable responds to one physical parameter before deciding whether that
+parameter could be calibrated.
+
+### Run
+
+Use the region-wide SRH hole-lifetime parameter for the standard exercise. Its
+terminal response is dominated by minority holes in the n-type base:
+
+```bash
+python scripts/plot_sweep.py --param hole_lifetime --start 1e-6 --stop 1e-4 --n 5
+```
+
+If the instructor assigns another parameter, change only `--param`, `--start`, and
+`--stop`; keep the range physically meaningful and record it.
+
+### Submit
+
+- `results/sweep.png`;
+- a small table of parameter values and the corresponding $J_{\mathrm{sc}}$ and
+  $V_{\mathrm{oc}}$;
+- the baseline value from `config.py`, clearly marked on the table or plot.
+
+### Explain
+
+1. Which observable is most sensitive over the chosen range, and what evidence supports
+   that conclusion?
+2. Is the response linear, logarithmic, saturating, or negligible?
+3. Which physical mechanism explains the trend, and what other fixed mechanism could
+   limit it?
+
+---
+
+## Task 4 — Experimental data and joint calibration (30 points)
+
+### Goal
+
+Build a traceable path from raw measurements to standardized J–V data and then calibrate
+only the effective parameters supported by the available observables.
+
+Read [`experiment_protocol.md`](experiment_protocol.md) before using equipment. Preserve
+raw exports unchanged and record sample, area, temperature, illumination condition,
+wiring mode, units, sweep settings, and sign convention.
+
+### Run
+
+First reproduce the canonical bundled Cell #3 workflow:
+
+```bash
+python scripts/prepare_keithley.py --area 12.0
+python scripts/run_calibration.py --joint --sample 3
+```
+
+Cell #3 is an instructor-provided **reference exercise**, not the assessed measurement from
+your group. When your own experiment is assigned, keep its raw files in a separate group
+directory, use a unique numeric sample ID, convert it with that session's area and polarity,
+and calibrate that sample. For example:
+
+```bash
+python scripts/prepare_keithley.py --data data/raw/group01 --area 12.0
+python scripts/run_calibration.py --joint --sample 101
+```
+
+In this example the four required native filenames end in `- 101.csv`. Replace the area,
+signs, group directory, and sample number with your recorded values. Do not overwrite the
+bundled Cell #3 files, and do not submit them as measurements made by your group.
+
+The joint objective uses four observable blocks:
+
+| Observable | Information supplied |
+|---|---|
+| illuminated J–V | current plateau, knee, and curve shape |
+| dark J–V | forward-current cross-check and limited leverage on effective series resistance |
+| repeated illuminated short-circuit measurement | separately acquired current and repeatability check |
+| illuminated open-circuit measurement | separately acquired zero-current voltage check |
+
+The repeated short-circuit readings enter through a summary rather than as many copies of
+the same constraint. Dark short-circuit and dark zero-current-voltage files remain offset
+and leakage diagnostics; the latter is not a photovoltaic $V_{\mathrm{oc}}$. Pointwise J–V residuals
+are divided by a characteristic current scale and by the square root of the block's point
+count, so a denser sweep does not win merely by containing more rows. The block priorities
+and model–data discrepancy scales are documented under `CALIBRATION["joint"]` in
+`config.py`. They are transparent teaching choices, not instrument-derived confidence
+intervals; change them only with a stated reason and discuss whether the conclusion moves.
+
+In the assessed two-parameter fit, the dark curve is primarily a forward-current
+cross-check and can influence only the effective series resistance; lifetime, effective
+near-contact loss velocities, and diode parameters are fixed. Identifying those mechanisms
+would require demonstrated sensitivity and richer data.
+
+Each optimizer evaluation computes self-consistent illuminated and dark terminal curves.
+The illuminated curve supplies the J–V, $J_{\mathrm{sc}}$, and $V_{\mathrm{oc}}$ residuals; the dark curve supplies the
+dark forward-current residual. Inspect the reported normalized RMS and objective share for
+all four blocks. The normalized block score is their weighted mean squared discrepancy:
+1 matches the stated scales on average, while 4 corresponds to a twice-scale weighted RMS
+mismatch. It is a transparent model–data adequacy diagnostic, not a statistical reduced
+chi-square. If the gate fails, check both measurements and the model, report the
+systematic disagreement, and treat covariance only as local numerical sensitivity.
+
+For a generic two-column **illuminated I–V sweep**, convert raw I–V to processed illuminated J–V
+explicitly:
+
+```bash
+python scripts/prepare_data.py data/raw/my_light_iv.csv --area 12.0 --current-unit mA --out data/processed/measured_iv.csv --plot
+```
+
+This generic converter supports the light-only workflow; it does not create dark-I–V,
+short-circuit-summary, or open-circuit-summary inputs for a joint fit. Use the real area
+and units from your experiment. After checking the wiring and raw
+convention, use `--voltage-sign -1` and/or `--current-sign -1` only for axes that need
+reversal. If the joint observables were not collected and the instructor
+authorizes a light-only fit, run:
+
+```bash
+python scripts/run_calibration.py data/processed/measured_iv.csv
+```
+
+Treat that reduced fit as less informative than the canonical joint workflow.
+
+### Submit
+
+- a data-provenance table containing the required experimental metadata;
+- the raw filenames and processed filenames used, without editing the raw files;
+- the observable, fit, and metrics outputs for the assigned dataset, using the canonical
+  joint workflow on your own sample when those measurements are available;
+- a table of varied and fixed parameters, bounds, fitted values, units, and local
+  covariance indicators; do not report them as confidence intervals because the current
+  discrepancy scales and block weights are teaching choices, not a statistical error model;
+- the exact calibration command and any deliberate `config.py` changes.
+
+### Explain
+
+1. Why does each of the four observables add information to the joint objective?
+2. Why are repeated measurements summarized rather than treated as equally independent
+   curve points?
+3. Which fitted quantities are effective measurement/device parameters rather than unique
+   material constants?
+4. Where does the residual show systematic model–experiment mismatch?
+
+---
+
+## Task 5 — Identifiability, limitations, and reproducibility (15 points)
+
+### Goal
+
+Decide which fitted values are supported by the data and communicate the limits of the
+model and experiment.
+
+### Run
+
+Task 4 creates `results/joint_identifiability.png`, `results/joint_fitted_params.json`, and
+`results/joint_fit_metadata.json`. If they are missing, rerun:
+
+```bash
+python scripts/run_calibration.py --joint --sample YOUR_SAMPLE_ID
+```
+
+### Submit
+
+- `results/joint_identifiability.png`;
+- a one-page four-step decision record that distinguishes fitted values, local covariance
+  diagnostics, correlation, bounds, residual mismatch, and the model–data adequacy result:
+  1. **Observe:** cite the strongest block-level residual pattern;
+  2. **Verify:** document two relevant measurement-adequacy checks, such as sampling,
+     repeatability, polarity/area, or dark-data coverage;
+  3. **Test one:** state and test one single-factor hypothesis, predicting the direction
+     in which its change should move the named residual;
+  4. **Decide:** state whether the evidence supports a physical parameter interpretation,
+     only a workflow demonstration, or remeasurement;
+- at least two model limitations and one measurement limitation relevant to your result;
+- enough commands, filenames, parameter changes, and software information for another
+  student to reproduce your figures.
+
+### Explain
+
+1. Does each fitted parameter have sufficient local sensitivity and a defensible
+   covariance scale?
+2. What does a large-magnitude parameter correlation imply?
+3. What should be concluded if a parameter reaches a bound or has a local covariance scale
+   comparable with its value?
+4. What additional independent measurement would best reduce the ambiguity, and why?
+
+---
+
+## Final submission checklist
+
+- [ ] All figures have readable axes, units, legends, and captions.
+- [ ] Raw I–V and processed J–V are named correctly and traceable to each other.
+- [ ] Experimental area, temperature, illumination, wiring, units, and signs are recorded.
+- [ ] Every changed `config.py` value is reported.
+- [ ] Calibration plots include residual or multi-observable checks, not only a fitted curve.
+- [ ] Experimental efficiency is omitted unless irradiance was independently measured.
+- [ ] Synthetic data are labeled as synthetic and are not presented as measurements.
+- [ ] Conclusions distinguish model evidence from assumptions and limitations.

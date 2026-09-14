@@ -1,0 +1,21 @@
+# Raw experimental data
+
+Keep original instrument exports here without editing. The bundled
+`keithley/` directory contains the native Keithley 2636B files used to produce
+the standardized Cell #3/#4 tables in `data/processed/`.
+
+Keep each new measurement session in a separate subdirectory such as `group01/`.
+That prevents one illuminated area or polarity transform from being applied to another
+group's files; use a unique numeric sample ID in the native filenames.
+
+Keep all repeated zero-current voltage readings rather than replacing them with one
+value. The converter records their median, sample standard deviation, and repeat count
+so students can distinguish a central value from measurement repeatability.
+
+Generated teaching data is not raw data; it belongs in `data/synthetic/`.
+
+`power.jpg` is an informal source note containing optical-power readings. It is
+retained only as raw supporting evidence: the image does not record beam area or
+profile, detector calibration, measurement plane, or a mapping to a specific cell
+and J–V sweep. Do not convert its milliwatt values to irradiance or use them as a
+`photon_flux` calibration input unless that missing metadata is recovered.

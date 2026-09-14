@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.uvcache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Instructor-only presentation files
+docs/*.pptx
+instructor_materials/
+
+# Local environments and editor/OS files
+.conda/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# The checked baseline in results/ is intentionally shared because the slide deck
+# links to it. Ignore only optional local fits and disposable audit artifacts.
+results/fit_plot.png
+results/identifiability.png
+results/fitted_params.json
+results/fit_metadata.json
+results/_audit*
+results/*.tmp
+results/prepared_data_preview.png

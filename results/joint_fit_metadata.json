@@ -1,0 +1,191 @@
+{
+  "schema_version": 2,
+  "mode": "joint",
+  "data_file": "data/processed/light_iv_sample3.csv",
+  "data_hash_method": "sha256-lf-normalized-v1",
+  "data_sha256": "df5a3868f5f8a1894c2a34603f20ae12c71d169c5b24deb068ba23632126e372",
+  "command": "python scripts/run_calibration.py --joint --sample 3",
+  "command_argv": [
+    "python",
+    "scripts/run_calibration.py",
+    "--joint",
+    "--sample",
+    "3"
+  ],
+  "residual_mode": "absolute",
+  "model_params": {
+    "thickness": 0.025,
+    "emitter_depth": 5e-05,
+    "emitter_doping": 1e+19,
+    "base_doping": 1e+17,
+    "electron_mobility": 1417.0,
+    "hole_mobility": 471.0,
+    "electron_lifetime": 1e-05,
+    "hole_lifetime": 1e-05,
+    "auger_n": 2.8e-31,
+    "auger_p": 9.9e-32,
+    "front_srv": 10000.0,
+    "back_srv": 1000000.0,
+    "photon_flux": 1.0,
+    "front_reflectance": 0.0,
+    "temperature": 300.0,
+    "series_resistance": 0.0,
+    "shunt_resistance": 0.0
+  },
+  "simulation_config": {
+    "quiet": true,
+    "voltages": {
+      "start": 0.0,
+      "stop": 0.64,
+      "step": 0.02
+    },
+    "light_ramp_steps": 8,
+    "bias_max_step": 0.05,
+    "dead_layer": 2e-05,
+    "mesh": {
+      "top": 2e-07,
+      "junction": 2e-07,
+      "bulk": 0.0001,
+      "surface": 1e-06
+    }
+  },
+  "fit_configuration": {
+    "method": "least_squares",
+    "diff_step": 0.001,
+    "parameters": {
+      "electron_lifetime": {
+        "value": 1e-05,
+        "min": 1e-09,
+        "max": 0.001,
+        "vary": false
+      },
+      "hole_lifetime": {
+        "value": 1e-05,
+        "min": 1e-09,
+        "max": 0.001,
+        "vary": false
+      },
+      "front_srv": {
+        "value": 10000.0,
+        "min": 100.0,
+        "max": 10000000.0,
+        "vary": false
+      },
+      "back_srv": {
+        "value": 1000000.0,
+        "min": 100.0,
+        "max": 10000000.0,
+        "vary": false
+      },
+      "photon_flux": {
+        "value": 1.0,
+        "min": 0.1,
+        "max": 2.0,
+        "vary": true
+      },
+      "series_resistance": {
+        "value": 1.0,
+        "min": 0.0,
+        "max": 20.0,
+        "vary": true
+      },
+      "shunt_resistance": {
+        "value": 0.0,
+        "min": 0.0,
+        "max": 5000.0,
+        "vary": false
+      }
+    }
+  },
+  "software_versions": {
+    "python": "3.12.13",
+    "devsim": "2.10.1",
+    "lmfit": "1.3.4",
+    "numpy": "2.1.3"
+  },
+  "optimizer_diagnostics": {
+    "success": true,
+    "message": "`xtol` termination condition is satisfied.",
+    "nfev": 35,
+    "sum_squared_scaled_residuals": 31.653018207587927,
+    "lmfit_redchi_internal": 1.1304649359852832,
+    "interpretation": "Internal optimizer diagnostics, not a statistical goodness-of-fit test. For joint mode use joint_objective.normalized_block_score."
+  },
+  "covariance_scaling": "Unscaled local Jacobian covariance using the stated discrepancy scales",
+  "covariance": {
+    "variable_names": [
+      "photon_flux",
+      "series_resistance"
+    ],
+    "matrix": [
+      [
+        0.0002048513086361499,
+        0.003442476193938204
+      ],
+      [
+        0.0034424761939382035,
+        1.6779087485812132
+      ]
+    ]
+  },
+  "sample": "3",
+  "datasets": {
+    "light_iv": "data/processed/light_iv_sample3.csv",
+    "dark_iv": "data/processed/dark_iv_sample3.csv",
+    "ishort_summary": "data/processed/ishort_summary.csv",
+    "voc_summary": "data/processed/voc_summary.csv"
+  },
+  "weights": {
+    "light_iv": 1.0,
+    "dark_iv": 0.35,
+    "light_ishort": 0.5,
+    "light_voc": 0.25
+  },
+  "iv_sigma_fraction": 0.025,
+  "ishort_sigma_floor_A_cm2": 0.0005,
+  "voc_sigma_V": 0.01,
+  "joint_objective": {
+    "definition": "self_consistent_terminal_prediction",
+    "normalized_block_score": 15.072865813137108,
+    "active_weight_sum": 2.1,
+    "quality_warning_threshold": 4.0,
+    "quality_gate_passed": false,
+    "blocks": {
+      "light_iv": {
+        "weight": 1.0,
+        "residual_count": 13,
+        "normalized_rms": 4.9789931188836665,
+        "weighted_squared_contribution": 24.7903724778909,
+        "objective_share": 0.7831914263376029
+      },
+      "dark_iv": {
+        "weight": 0.35,
+        "residual_count": 15,
+        "normalized_rms": 2.1367633542867366,
+        "weighted_squared_contribution": 1.598015171277947,
+        "objective_share": 0.050485396394043314
+      },
+      "light_ishort": {
+        "weight": 0.5,
+        "residual_count": 1,
+        "normalized_rms": 0.5958271279774656,
+        "weighted_squared_contribution": 0.1775049832169376,
+        "objective_share": 0.0056078375228807015
+      },
+      "light_voc": {
+        "weight": 0.25,
+        "residual_count": 1,
+        "normalized_rms": 4.510931422756122,
+        "weighted_squared_contribution": 5.087125575202142,
+        "objective_share": 0.1607153397454732
+      }
+    },
+    "interpretation": "Weighted mean squared self-consistent terminal discrepancy across active observable blocks; not a statistical reduced chi-square"
+  },
+  "dataset_sha256": {
+    "light_iv": "df5a3868f5f8a1894c2a34603f20ae12c71d169c5b24deb068ba23632126e372",
+    "dark_iv": "3ca759565cebb30c1ab09139b6843c350dd6c0288a901c18f452a8f35cec17ba",
+    "ishort_summary": "668ac3ab67f535926a795a2a43388222808a6c8960d078807947498a7ca0057c",
+    "voc_summary": "0ae15e03b94192aaac1d1b6caf0e9615acd63648fa9a495f51a305473bd7d5cd"
+  }
+}

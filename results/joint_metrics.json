@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "sample": "3",
+  "light_iv_points": 13,
+  "dark_iv_points": 15,
+  "light_iv_rmse_A_cm2": 0.0016958371289164467,
+  "dark_iv_rmse_A_cm2": 0.00036266581996659427,
+  "light_ishort_measured_A_cm2": 0.0134864665567874,
+  "light_ishort_simulated_A_cm2": 0.013784531280493569,
+  "light_ishort_error_A_cm2": 0.00029806472370616857,
+  "light_voc_measured_V": 0.643770933151245,
+  "light_voc_simulated_V": 0.5964260032705959,
+  "light_voc_error_V": -0.04734492988064909,
+  "dark_zero_current_offset_V": 0.2284016609191895,
+  "dark_ishort_diagnostic_A_cm2": 3.4171984370914285e-05,
+  "joint_objective": {
+    "definition": "self_consistent_terminal_prediction",
+    "normalized_block_score": 15.072865813137108,
+    "active_weight_sum": 2.1,
+    "quality_warning_threshold": 4.0,
+    "quality_gate_passed": false,
+    "blocks": {
+      "light_iv": {
+        "weight": 1.0,
+        "residual_count": 13,
+        "normalized_rms": 4.9789931188836665,
+        "weighted_squared_contribution": 24.7903724778909,
+        "objective_share": 0.7831914263376029
+      },
+      "dark_iv": {
+        "weight": 0.35,
+        "residual_count": 15,
+        "normalized_rms": 2.1367633542867366,
+        "weighted_squared_contribution": 1.598015171277947,
+        "objective_share": 0.050485396394043314
+      },
+      "light_ishort": {
+        "weight": 0.5,
+        "residual_count": 1,
+        "normalized_rms": 0.5958271279774656,
+        "weighted_squared_contribution": 0.1775049832169376,
+        "objective_share": 0.0056078375228807015
+      },
+      "light_voc": {
+        "weight": 0.25,
+        "residual_count": 1,
+        "normalized_rms": 4.510931422756122,
+        "weighted_squared_contribution": 5.087125575202142,
+        "objective_share": 0.1607153397454732
+      }
+    },
+    "interpretation": "Weighted mean squared self-consistent terminal discrepancy across active observable blocks; not a statistical reduced chi-square"
+  }
+}

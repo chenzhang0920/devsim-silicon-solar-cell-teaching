@@ -1,0 +1,50 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Python and DEVSIM checks
+    # DEVSIM 2.10.1 can reject floating-point exceptions raised internally by
+    # sparse LU factorization on hosted x86_64 runners. Its ARM build leaves
+    # those hardware checks disabled, so the physical tests use Linux ARM64.
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Create Conda environment
+        uses: conda-incubator/setup-miniconda@v4
+        with:
+          miniforge-version: latest
+          activate-environment: devsim_solar
+          environment-file: environment.yml
+
+      - name: Verify DEVSIM import
+        run: python -c "import platform, devsim; print('Architecture:', platform.machine()); print('DEVSIM:', devsim.__version__); print('Direct solver:', devsim.get_parameter(name='direct_solver'))"
+
+      - name: Run fast tests
+        run: python -m pytest tests -q
+
+      - name: Run DEVSIM integration tests
+        run: python -m pytest tests -m slow -q
+
+      - name: Validate the slide build plan and checked assets
+        run: |
+          python scripts/build_slides.py --dry-run
+          python scripts/build_slides.py --check

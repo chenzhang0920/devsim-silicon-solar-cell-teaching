@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use or adapt this teaching project, please cite it as below."
+title: "DEVSIM Silicon Solar Cell: A Teaching Project for Semiconductor Simulation"
+type: software
+repository-code: "https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching"
+url: "https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching"
+authors:
+  - family-names: "CHEN"
+    given-names: "Zhang"
+    email: "zchen758@connect.hkust-gz.edu.cn"
+abstract: >-
+  A reproducible undergraduate teaching project for learning semiconductor
+  device simulation, visualization, experimental-data preparation, and
+  parameter calibration with a one-dimensional p+-on-n silicon solar cell in
+  DEVSIM.
+keywords:
+  - DEVSIM
+  - silicon solar cell
+  - semiconductor simulation
+  - parameter calibration
+  - undergraduate teaching
+license: MIT
