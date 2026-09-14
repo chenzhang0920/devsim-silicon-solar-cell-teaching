@@ -44,7 +44,7 @@ jobs:
       - name: Run DEVSIM integration tests
         run: python -m pytest tests -m slow -q
 
-      - name: Validate the slide build plan and checked assets
+      - name: Validate the documented aggregate runner and checked assets
         run: |
-          python scripts/build_slides.py --dry-run
-          python scripts/build_slides.py --check
+          bash scripts/run_all.sh full --dry-run
+          bash scripts/run_all.sh check

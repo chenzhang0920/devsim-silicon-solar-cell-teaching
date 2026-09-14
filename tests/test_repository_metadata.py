@@ -39,7 +39,8 @@ def test_ci_uses_the_canonical_environment_and_both_test_groups():
     assert "activate-environment: devsim_solar" in workflow
     assert "python -m pytest tests -q" in workflow
     assert "python -m pytest tests -m slow -q" in workflow
-    assert "python scripts/build_slides.py --dry-run" in workflow
+    assert "bash scripts/run_all.sh full --dry-run" in workflow
+    assert "bash scripts/run_all.sh check" in workflow
     assert "  - defaults\n" not in environment
     assert "  - mkl" not in environment
     assert "pytest-cov" not in environment
