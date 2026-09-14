@@ -48,6 +48,16 @@ def test_ci_uses_the_canonical_environment_and_both_test_groups():
         assert upper_bound in environment
 
 
+def test_pages_deploys_every_main_branch_update():
+    """Keep the published student site aligned after ordinary or rewritten pushes."""
+    workflow = (ROOT / ".github" / "workflows" / "pages.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "branches: [main]" in workflow
+    assert "    paths:" not in workflow
+    assert "actions/deploy-pages@" in workflow
+
+
 def test_fit_and_plot_commands_have_distinct_responsibilities():
     run_source = (ROOT / "scripts" / "run_calibration.py").read_text(encoding="utf-8")
     plot_source = (ROOT / "scripts" / "plot_fit.py").read_text(encoding="utf-8")

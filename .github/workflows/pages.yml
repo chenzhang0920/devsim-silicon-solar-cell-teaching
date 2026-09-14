@@ -3,11 +3,6 @@ name: course website
 on:
   push:
     branches: [main]
-    paths:
-      - "index.html"
-      - "docs/**"
-      - "results/**"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
