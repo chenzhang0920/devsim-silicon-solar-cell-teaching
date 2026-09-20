@@ -53,25 +53,24 @@ case.
 
 ```bash
 # 1. Preview the complete pipeline; this does not change files.
-bash scripts/run_all.sh full --dry-run
+python scripts/run_all.py full --dry-run
 
 # 2. Run only the stage currently being studied.
-bash scripts/run_all.sh simulation
-bash scripts/run_all.sh eqe
-bash scripts/run_all.sh sweep
-bash scripts/run_all.sh calibration
+python scripts/run_all.py simulation
+python scripts/run_all.py eqe
+python scripts/run_all.py sweep
+python scripts/run_all.py calibration
 
 # 3. Refresh the executed Notebook and verify slide assets.
-bash scripts/run_all.sh notebook
-bash scripts/run_all.sh check
+python scripts/run_all.py notebook
+python scripts/run_all.py check
 ```
 
 For a single complete rebuild, replace those focused commands with
-`bash scripts/run_all.sh full`. The runner prints the active project root and Python
+`python scripts/run_all.py full`. The runner prints the active project root and Python
 interpreter, then names each substep and generated file. Run
-`bash scripts/run_all.sh help` at any time for the profile list. On Windows, use Git Bash
-or WSL for the Bash runner; the individual `python scripts/...` commands under each task
-also work directly in an activated PowerShell environment.
+`python scripts/run_all.py help` at any time for the profile list. The same commands work
+in Windows PowerShell, macOS Terminal, and Linux after activating the environment.
 
 The commands above use the checked processed Cell #3 data. For a new experimental bundle,
 insert the following two steps after confirming sample identity, wiring polarity, units,
@@ -79,8 +78,8 @@ and illuminated area:
 
 ```bash
 # Replace 12.0 with the measured illuminated area in cm².
-bash scripts/run_all.sh keithley --area 12.0
-bash scripts/run_all.sh joint --sample YOUR_SAMPLE_ID
+python scripts/run_all.py keithley --area 12.0
+python scripts/run_all.py joint --sample YOUR_SAMPLE_ID
 ```
 
 Do not run the conversion merely to rebuild the supplied example: `full` deliberately

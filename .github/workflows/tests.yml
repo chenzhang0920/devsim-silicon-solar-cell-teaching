@@ -46,5 +46,5 @@ jobs:
 
       - name: Validate the documented aggregate runner and checked assets
         run: |
-          bash scripts/run_all.sh full --dry-run
-          bash scripts/run_all.sh check
+          python scripts/run_all.py full --dry-run
+          python scripts/run_all.py check

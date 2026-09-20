@@ -163,9 +163,9 @@ def test_notebook_uses_portable_setup_and_the_configured_reporting_grid():
 
     setup_notes = _cell_source("setup-notes")
     assert "python -m jupyter lab notebooks/tutorial.ipynb" in setup_notes
-    assert "bash scripts/run_all.sh help" in setup_notes
-    assert "bash scripts/run_all.sh notebook --dry-run" in setup_notes
-    assert "bash scripts/run_all.sh full --dry-run" in setup_notes
+    assert "python scripts/run_all.py help" in setup_notes
+    assert "python scripts/run_all.py notebook --dry-run" in setup_notes
+    assert "python scripts/run_all.py full --dry-run" in setup_notes
     assert "Restart Kernel and Run All Cells" in setup_notes
     assert "import devsim" in code
     assert 'print("Project root detected; repository imports enabled.")' in code

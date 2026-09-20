@@ -11,7 +11,7 @@ Regenerate it from the project root with:
 python scripts/make_demo_data.py
 ```
 
-The `full`, `calibration`, and `synthetic` profiles of `scripts/run_all.sh` also
+The `full`, `calibration`, and `synthetic` profiles of `scripts/run_all.py` also
 regenerate this table before using it, so it remains synchronized with `config.py`.
 The default output is `iv.csv`, and synthetic outputs are deliberately restricted to
 this directory. EQE is calculated directly by `scripts/plot_eqe.py`;

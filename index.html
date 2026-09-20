@@ -848,21 +848,21 @@
         <div class="workflow-runner">
           <h3>Run the same workflow from the repository root</h3>
           <pre><code># 1. Preview the complete plan; change nothing.
-bash scripts/run_all.sh full --dry-run
+python scripts/run_all.py full --dry-run
 
 # 2. Learn interactively or rebuild the core physics outputs.
-bash scripts/run_all.sh simulation
+python scripts/run_all.py simulation
 python -m jupyter lab notebooks/tutorial.ipynb
 
 # 3. New measurements only: confirm area, polarity, and units.
-bash scripts/run_all.sh keithley --area 12.0
+python scripts/run_all.py keithley --area 12.0
 
 # 4. Fit one processed sample.
-bash scripts/run_all.sh joint --sample 3
+python scripts/run_all.py joint --sample 3
 
 # 5. Rebuild everything and validate the teaching assets.
-bash scripts/run_all.sh full
-bash scripts/run_all.sh check</code></pre>
+python scripts/run_all.py full
+python scripts/run_all.py check</code></pre>
           <p>Use the Notebook to pause after each mechanism and figure. Replace <code>12.0</code> and <code>3</code> with the recorded illuminated area (cm²) and sample ID when processing new measurements; skip step 3 when using the supplied processed data.</p>
         </div>
       </div>

@@ -117,23 +117,23 @@ The checked Notebook already contains outputs, so it can also be
 embed every output without opening Jupyter interactively, run:
 
 ```bash
-bash scripts/run_all.sh notebook --dry-run
-bash scripts/run_all.sh notebook
+python scripts/run_all.py notebook --dry-run
+python scripts/run_all.py notebook
 ```
 
 #### Route B — reproducible command line (recommended for rebuilding results)
 
-The aggregate runner works in Linux/macOS terminals, WSL, and Git Bash on Windows:
+The same Python runner works in Windows PowerShell, macOS Terminal, and Linux shells:
 
 ```bash
 # Show every planned step without changing files.
-bash scripts/run_all.sh full --dry-run
+python scripts/run_all.py full --dry-run
 
 # Rebuild all checked figures and calibration artifacts, then execute the Notebook.
-bash scripts/run_all.sh full
+python scripts/run_all.py full
 
 # Confirm that every classroom-slide asset is present.
-bash scripts/run_all.sh check
+python scripts/run_all.py check
 ```
 
 `full` runs the deterministic synthetic example, forward simulation and figures,
@@ -145,21 +145,20 @@ student must wait for during every edit.
 
 | Purpose | Command | Main result |
 |---|---|---|
-| Preview the complete pipeline | `bash scripts/run_all.sh full --dry-run` | ordered plan; no files changed |
-| Fast smoke run | `bash scripts/run_all.sh quick` | fast forward-model figures; slow fitting/EQE skipped |
-| Device physics | `bash scripts/run_all.sh simulation` | J–V, resistance, profiles, bands, and model map |
-| Spectral response | `bash scripts/run_all.sh eqe` | `results/eqe.png` |
-| Standard sensitivity study | `bash scripts/run_all.sh sweep` | `results/sweep.png` |
-| Calibration lesson | `bash scripts/run_all.sh calibration` | Cell #3 joint-fit and optimization figures |
-| One processed sample | `bash scripts/run_all.sh joint --sample 3` | fitted parameters, metrics, provenance, and fit figures |
-| Refresh Notebook outputs | `bash scripts/run_all.sh notebook` | executed `notebooks/tutorial.ipynb` |
-| Validate slide assets | `bash scripts/run_all.sh check` | pass/fail asset report |
+| Preview the complete pipeline | `python scripts/run_all.py full --dry-run` | ordered plan; no files changed |
+| Fast smoke run | `python scripts/run_all.py quick` | fast forward-model figures; slow fitting/EQE skipped |
+| Device physics | `python scripts/run_all.py simulation` | J–V, resistance, profiles, bands, and model map |
+| Spectral response | `python scripts/run_all.py eqe` | `results/eqe.png` |
+| Standard sensitivity study | `python scripts/run_all.py sweep` | `results/sweep.png` |
+| Calibration lesson | `python scripts/run_all.py calibration` | Cell #3 joint-fit and optimization figures |
+| One processed sample | `python scripts/run_all.py joint --sample 3` | fitted parameters, metrics, provenance, and fit figures |
+| Refresh Notebook outputs | `python scripts/run_all.py notebook` | executed `notebooks/tutorial.ipynb` |
+| Validate slide assets | `python scripts/run_all.py check` | pass/fail asset report |
 
-Run `bash scripts/run_all.sh help` for the same guide in the terminal. Each profile prints
+Run `python scripts/run_all.py help` for the same guide in the terminal. Each profile prints
 its project root, Python interpreter, ordered substeps, generated files, and completion
-status. On Windows PowerShell, open Git Bash for `run_all.sh`; the individual
-`python scripts/...` commands in the [Student Lab Guide](docs/lab_guide.md) remain valid in
-PowerShell after activating the environment.
+status. No Bash, WSL, or platform-specific wrapper is required; activate the environment
+and use the same command on Windows, macOS, or Linux.
 
 ### 4. Process a new measurement bundle
 
@@ -170,10 +169,10 @@ For a complete Keithley bundle using the documented 3 cm × 4 cm illuminated are
 ```bash
 # 1. Preserve the raw exports in data/raw/keithley/.
 # 2. Convert current to current density and build the processed summaries.
-bash scripts/run_all.sh keithley --area 12.0
+python scripts/run_all.py keithley --area 12.0
 
 # 3. Fit that sample only after checking signs, units, coverage, and repeatability.
-bash scripts/run_all.sh joint --sample YOUR_SAMPLE_ID
+python scripts/run_all.py joint --sample YOUR_SAMPLE_ID
 ```
 
 Use `--prune` during conversion only when the raw directory is a complete replacement
