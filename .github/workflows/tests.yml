@@ -44,7 +44,7 @@ jobs:
       - name: Run DEVSIM integration tests
         run: python -m pytest tests -m slow -q
 
-      - name: Validate the documented aggregate runner and checked assets
+      - name: Validate the documented runner and generated results
         run: |
           python scripts/run_all.py full --dry-run
           python scripts/run_all.py check

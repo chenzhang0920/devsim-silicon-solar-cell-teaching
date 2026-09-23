@@ -18,8 +18,8 @@ Run these commands from the repository root:
 ```bash
 python -m pytest tests -q
 python -m pytest tests -m slow -q
-python scripts/build_slides.py --dry-run
-python scripts/build_slides.py --check
+python scripts/build_results.py --dry-run
+python scripts/build_results.py --check
 ```
 
 If a change intentionally alters figures or notebook outputs, rebuild and inspect

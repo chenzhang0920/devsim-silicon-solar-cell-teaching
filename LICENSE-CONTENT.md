@@ -16,7 +16,6 @@ SPDX identifier: `CC-BY-4.0`
 CC BY 4.0 applies to:
 
 - `README.md`, `CONTRIBUTING.md`, and the teaching documents under `docs/`;
-- the HTML slide content in `docs/lab_slides.html`;
 - original checked/generated figures and calibration records under `results/`;
 - the narrative text and rendered outputs in `notebooks/tutorial.ipynb`;
 - the shareable experimental, processed and synthetic data under `data/`.

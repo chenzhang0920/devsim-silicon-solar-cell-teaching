@@ -55,14 +55,9 @@ Student entry points:
 - [Before the Lab: Software and Setup](docs/setup.md) — Miniforge, VS Code, and a run check;
 - [Student Lab Guide](docs/lab_guide.md) — what to run, submit, and explain;
 - [Experiment Protocol](docs/experiment_protocol.md) — measurement and metadata rules;
-- [Student Slides](docs/lab_slides.html) — browser slides for the two lab sessions;
 - [DEVSIM Manual (v2.10.0)](https://zenodo.org/records/17328734) — the
   authoritative command and API reference for the simulator.
   This project pins the compatible DEVSIM 2.10.1 runtime used for validation.
-
-Open the [classroom slides online](https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/docs/lab_slides.html),
-or open `docs/lab_slides.html` after cloning or downloading the repository. Use the arrow
-keys or Space to present it; printing from the browser produces a 16:9 PDF handout.
 
 ## 🎯 Learning outcomes
 
@@ -134,7 +129,7 @@ python scripts/run_all.py full --dry-run
 # Rebuild all checked figures and calibration artifacts, then execute the Notebook.
 python scripts/run_all.py full
 
-# Confirm that every classroom-slide asset is present.
+# Confirm that all expected generated results are present.
 python scripts/run_all.py check
 ```
 
@@ -155,7 +150,7 @@ student must wait for during every edit.
 | Calibration lesson | `python scripts/run_all.py calibration` | Cell #3 joint-fit and optimization figures |
 | One processed sample | `python scripts/run_all.py joint --sample 3` | fitted parameters, metrics, provenance, and fit figures |
 | Refresh Notebook outputs | `python scripts/run_all.py notebook` | executed `notebooks/tutorial.ipynb` |
-| Validate slide assets | `python scripts/run_all.py check` | pass/fail asset report |
+| Validate generated results | `python scripts/run_all.py check` | pass/fail result report |
 
 Run `python scripts/run_all.py help` for the same guide in the terminal. Each profile prints
 its project root, Python interpreter, ordered substeps, generated files, and completion
@@ -417,7 +412,7 @@ data/raw/                 immutable historical or student instrument exports
 data/processed/           standardized measured J–V data and summary observables
 data/synthetic/           model-generated J–V smoke-test data
 notebooks/tutorial.ipynb  executable student lesson with embedded outputs
-docs/                     lab guide, experiment protocol, rubric, and classroom slides
+docs/                     setup guide, lab guide, experiment protocol, and rubric
 results/                  checked, reproducible outputs used by the teaching materials
 tests/                    automated checks and DEVSIM physics tests
 ```
@@ -454,12 +449,12 @@ table, residual, or metadata record.
 
 ## 🛠 Verification and help
 
-Run the automated checks, DEVSIM integration tests, and slide-asset check:
+Run the automated checks, DEVSIM integration tests, and result check:
 
 ```bash
 python -m pytest tests -q
 python -m pytest tests -m slow -q
-python scripts/build_slides.py --check
+python scripts/build_results.py --check
 ```
 
 | Problem | First check |

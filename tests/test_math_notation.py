@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_web_materials_use_pinned_mathjax_and_tex_notation():
-    pages = [ROOT / "index.html", ROOT / "docs" / "lab_slides.html"]
+    pages = [ROOT / "index.html"]
     for page in pages:
         html = page.read_text(encoding="utf-8")
         assert "mathjax@3.2.2/es5/tex-chtml.js" in html

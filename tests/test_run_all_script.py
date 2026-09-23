@@ -29,7 +29,7 @@ def test_run_all_script_declares_supported_profiles():
         assert profile in text
     assert "subprocess.run" in text
     assert "sys.executable" in text
-    assert "scripts/build_slides.py" in text
+    assert "scripts/build_results.py" in text
     assert "run_notebook" in text
     assert "--ExecutePreprocessor.record_timing=False" in text
     assert "--ClearMetadataPreprocessor.enabled=True" in text

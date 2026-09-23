@@ -1,17 +1,13 @@
-"""Build reproducible teaching assets and validate the HTML slide deck."""
+"""Build and validate the reproducible teaching results."""
 from __future__ import annotations
 
 import argparse
-import re
 import subprocess
 import sys
 import time
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SLIDES = PROJECT_ROOT / "docs" / "lab_slides.html"
-
-
 STEPS = [
     ("spectrum",     "scripts/plot_spectrum.py",   [],                     ["results/spectrum.png"],    False),
     ("demo-data",    "scripts/make_demo_data.py",  [],                     ["data/synthetic/iv.csv"],   False),
@@ -98,44 +94,14 @@ def _run_step(name, script, args, products) -> bool:
     return True
 
 
-def _check_slides() -> list[str]:
-    """Return missing or undeclared local assets referenced by the slide deck."""
-    if not _is_nonempty_file(SLIDES):
-        print(f"Slide deck not found or empty: {SLIDES}")
-        return [str(SLIDES)]
-    text = SLIDES.read_text(encoding="utf-8")
-    refs = sorted(set(re.findall(r'src="\.\./results/([^"]+)"', text)))
-    local_refs = sorted({
-        ref
-        for ref in re.findall(r'src="([^"]+)"', text)
-        if not ref.startswith(("../results/", "http://", "https://", "data:"))
-    })
-    declared = {
-        Path(product).name
-        for _, _, _, products, _ in STEPS
-        for product in products
-        if Path(product).parent.as_posix() == "results"
-    }
-    print(f"\n-- Slide asset validation ({SLIDES.name}, {len(refs)} results/ files, "
-          f"{len(local_refs)} local files) --")
-    problems = []
-    for ref in local_refs:
-        exists = _is_nonempty_file(SLIDES.parent / ref)
-        if not exists:
-            problems.append(f"missing:{ref}")
-        print(f"  {'[OK]' if exists else '[MISSING]'}  {ref}")
-    for ref in refs:
-        exists = _is_nonempty_file(PROJECT_ROOT / "results" / ref)
-        is_declared = ref in declared
-        if not exists:
-            problems.append(f"missing:{ref}")
-        if not is_declared:
-
-            problems.append(f"undeclared:{ref}")
-        status = "[OK]" if exists and is_declared else \
-            "[MISSING]" if not exists else "[UNDECLARED]"
-        print(f"  {status}  {ref}")
-    return problems
+def _check_results() -> list[str]:
+    """Return missing or empty outputs declared by the build steps."""
+    products = sorted({product for _, _, _, outputs, _ in STEPS for product in outputs})
+    missing = [product for product in products if not _is_nonempty_file(PROJECT_ROOT / product)]
+    print(f"\n-- Result validation ({len(products)} expected files) --")
+    for product in products:
+        print(f"  {'[MISSING]' if product in missing else '[OK]'}  {product}")
+    return missing
 
 
 def main() -> None:
@@ -151,13 +117,13 @@ def main() -> None:
     ap.add_argument("--skip", action="append", choices=step_names, default=None,
                     help="Skip this named step; may be repeated")
     ap.add_argument("--check", action="store_true",
-                    help="Validate slide assets without generating them")
+                    help="Validate expected results without generating them")
     ap.add_argument("--dry-run", action="store_true",
                     help="Print the build plan without executing it")
     args = ap.parse_args()
 
     if args.check:
-        if _check_slides():
+        if _check_results():
             raise SystemExit(1)
         return
 
@@ -189,16 +155,15 @@ def main() -> None:
             missing_produced.append(p)
         print(f"  {'[OK]' if ok else '[MISSING]'}  {p}")
 
-    missing = _check_slides()
+    missing = _check_results()
     full_build = only is None and not skip and not args.skip_slow
     print(f"\nTotal time: {time.perf_counter() - t_all:.0f}s; failed steps: none")
     if missing:
         level = "ERROR" if full_build else "NOTE"
-        print(f"[{level}] {len(missing)} slide assets are still missing; "
+        print(f"[{level}] {len(missing)} expected results are still missing; "
               "run the corresponding scripts or remove --skip-slow")
     else:
-        print("[OK] All slide assets are available; the deck is ready for printing or PDF export")
-
+        print("[OK] All expected results are available")
 
     if missing_produced or (full_build and missing):
         raise SystemExit(1)

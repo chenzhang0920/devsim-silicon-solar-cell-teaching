@@ -63,7 +63,7 @@ python scripts/run_all.py eqe
 python scripts/run_all.py sweep
 python scripts/run_all.py calibration
 
-# 3. Refresh the executed Notebook and verify slide assets.
+# 3. Refresh the executed Notebook and verify generated results.
 python scripts/run_all.py notebook
 python scripts/run_all.py check
 ```

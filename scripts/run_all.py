@@ -26,7 +26,7 @@ Recommended first run:
      Replace 12.0 with the recorded illuminated area in cm^2.
   5. Refit one processed measurement bundle:
        python scripts/run_all.py joint --sample 3
-  6. Check that all classroom-slide assets exist:
+  6. Check that all expected results exist:
        python scripts/run_all.py check
 
 One-command reproducible rebuild:
@@ -42,7 +42,7 @@ Profiles:
   eqe             Wavelength-dependent EQE calculation and figure.
   synthetic       Deterministic synthetic J-V smoke-test table.
   notebook        Execute notebooks/tutorial.ipynb in place and embed fresh outputs.
-  check           Validate every local and generated classroom-slide asset.
+  check           Validate the expected generated result files.
   keithley        Convert Keithley exports using explicitly supplied metadata.
 
 The full profile intentionally does not convert raw experimental files because
@@ -112,23 +112,23 @@ def main() -> None:
 
     if profile in {"full", "all"}:
         announce("Rebuild all checked figures and calibration artifacts")
-        run_python("scripts/build_slides.py", *arguments)
+        run_python("scripts/build_results.py", *arguments)
         run_notebook(["--dry-run"] if "--dry-run" in arguments else [])
     elif profile == "quick":
         announce("Rebuild the fast forward-model outputs")
-        run_python("scripts/build_slides.py", "--skip-slow", *arguments)
+        run_python("scripts/build_results.py", "--skip-slow", *arguments)
     elif profile in {"simulation", "sim"}:
         announce("Rebuild the core simulation and device-physics figures")
         selected = ("demo-data", "sim", "iv", "resistance", "profiles", "band", "model")
         only = [value for name in selected for value in ("--only", name)]
-        run_python("scripts/build_slides.py", *only, *arguments)
+        run_python("scripts/build_results.py", *only, *arguments)
     elif profile == "sweep":
         announce("Run the standard hole-lifetime sensitivity sweep")
-        run_python("scripts/build_slides.py", "--only", "sweep", *arguments)
+        run_python("scripts/build_results.py", "--only", "sweep", *arguments)
     elif profile in {"calibration", "calibrate"}:
         announce("Rebuild the Cell #3 calibration and optimization demonstration")
         run_python(
-            "scripts/build_slides.py",
+            "scripts/build_results.py",
             "--only", "demo-data",
             "--only", "joint",
             "--only", "optimization",
@@ -139,15 +139,15 @@ def main() -> None:
         run_python("scripts/run_calibration.py", "--joint", *arguments)
     elif profile == "eqe":
         announce("Rebuild the wavelength-dependent EQE result")
-        run_python("scripts/build_slides.py", "--only", "eqe", *arguments)
+        run_python("scripts/build_results.py", "--only", "eqe", *arguments)
     elif profile == "synthetic":
         announce("Regenerate the deterministic synthetic J-V table")
-        run_python("scripts/build_slides.py", "--only", "demo-data", *arguments)
+        run_python("scripts/build_results.py", "--only", "demo-data", *arguments)
     elif profile == "notebook":
         run_notebook(arguments)
     elif profile == "check":
-        announce("Validate classroom-slide assets")
-        run_python("scripts/build_slides.py", "--check", *arguments)
+        announce("Validate generated results")
+        run_python("scripts/build_results.py", "--check", *arguments)
     elif profile == "keithley":
         announce("Convert Keithley exports into processed measurement tables")
         run_python("scripts/prepare_keithley.py", *arguments)
