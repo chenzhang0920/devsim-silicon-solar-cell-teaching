@@ -52,6 +52,7 @@ Student entry points:
 
 - [Course Website](https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/) — the visual landing page for students;
 - [Tutorial Notebook](notebooks/tutorial.ipynb) — the guided, executable lesson;
+- [Before the Lab: Software and Setup](docs/setup.md) — Miniforge, VS Code, and a run check;
 - [Student Lab Guide](docs/lab_guide.md) — what to run, submit, and explain;
 - [Experiment Protocol](docs/experiment_protocol.md) — measurement and metadata rules;
 - [Student Slides](docs/lab_slides.html) — browser slides for the two lab sessions;
@@ -82,7 +83,8 @@ After completing the project, students should be able to:
 ## 🚀 Quick start
 
 Run every command below from the repository root. Conda is recommended because
-DEVSIM includes native libraries.
+DEVSIM includes native libraries. If you have not installed Miniforge or selected a
+Notebook kernel before, follow the [step-by-step setup guide](docs/setup.md) first.
 
 ### 1. Install and verify the environment
 

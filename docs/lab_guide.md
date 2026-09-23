@@ -17,7 +17,9 @@ residuals.
 
 ## Before you begin
 
-Create the environment and verify that the project imports correctly:
+Complete the [software and setup guide](setup.md) before the first lab. It covers
+Miniforge installation, VS Code's Python interpreter and Notebook kernel, and a
+simulation run check. Then verify that the project imports correctly:
 
 ```bash
 conda env create -f environment.yml
