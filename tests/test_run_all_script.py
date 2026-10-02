@@ -46,7 +46,7 @@ def test_run_all_script_declares_supported_profiles():
     assert "Python command:" in text
     assert "Runtime:" in text
     assert "Run the standard hole-lifetime sensitivity sweep" in text
-    assert "Windows PowerShell, macOS Terminal, and Linux shells" in text
+    assert "supported Windows x86-64, Linux x86-64/aarch64, and Apple Silicon macOS systems" in text
 
 
 def test_run_all_help_does_not_require_devsim():
@@ -59,4 +59,4 @@ def test_run_all_help_does_not_require_devsim():
     )
 
     assert "Usage: python scripts/run_all.py" in result.stdout
-    assert "Windows PowerShell, macOS Terminal, and Linux shells" in result.stdout
+    assert "supported Windows x86-64, Linux x86-64/aarch64, and Apple Silicon macOS systems" in result.stdout

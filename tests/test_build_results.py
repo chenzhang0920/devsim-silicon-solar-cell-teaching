@@ -43,7 +43,7 @@ def test_build_order_keeps_data_before_figures_and_calibration():
 
 def test_website_uses_available_student_entry_points():
     html = (ROOT / "index.html").read_text(encoding="utf-8")
-    assert "Student slides" not in html
+    assert "docs/lab_slides.html" not in html
     for entry in (
         "notebooks/tutorial.ipynb",
         "docs/setup.md",

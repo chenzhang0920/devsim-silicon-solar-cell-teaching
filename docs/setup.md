@@ -7,10 +7,12 @@ environment download; it should not be left until the 30-minute hands-on session
 ## 1. Install the tools
 
 1. Install [Miniforge](https://conda-forge.org/download/) for your operating system and
-   processor. On macOS, choose **Apple Silicon (arm64)** or **Intel (x86_64)** to match
-   your Mac. Windows users can open **Miniforge Prompt** from the Start menu; macOS and
-   Linux users can use their terminal. An existing working Conda installation is also
-   sufficient.
+   processor. The pinned DEVSIM 2.10.1 environment is validated on **Windows x86-64**,
+   **Linux x86-64 or aarch64**, and **macOS 14+ Apple Silicon (arm64)**. Intel macOS is
+   not supported by this pinned wheel; use a supported Windows/Linux/Apple Silicon
+   machine or contact the TA about a remote environment. Windows users can open
+   **Miniforge Prompt** from the Start menu; macOS and Linux users can use their terminal.
+   An existing working Conda installation is also sufficient on a supported platform.
 2. Install [Visual Studio Code](https://code.visualstudio.com/download) as the recommended
    editor. In its Extensions view, install **Python** and **Jupyter** by Microsoft. An
    editor you already know is fine if it can edit Python and CSV files and run the Notebook.
@@ -34,6 +36,7 @@ Run the following commands **from the folder containing `environment.yml`**:
 ```text
 conda env create -f environment.yml
 conda activate devsim_solar
+python -c "import platform; print(platform.system(), platform.machine())"
 python -c "import devsim; print('DEVSIM:', devsim.__version__)"
 python scripts/run_all.py full --dry-run
 ```
@@ -83,8 +86,9 @@ Edit only parameters you can justify from the device or measurement record. Afte
 - **VS Code uses a different Python:** select the interpreter for `config.py` and the
   Notebook kernel separately, then open a new terminal.
 - **Environment creation or DEVSIM installation fails:** keep the complete error message
-  and tell the TA your operating system and processor type. Do not install a different
-  DEVSIM version into the environment without checking compatibility.
+  and tell the TA your operating system and processor type. Intel macOS requires a
+  supported computer or remote environment for this pinned release. Do not install a
+  different DEVSIM version into the environment without checking compatibility.
 
 Official references: [Miniforge installation](https://conda-forge.org/download/),
 [Conda environment creation](https://docs.conda.io/projects/conda/en/stable/commands/env/create.html),

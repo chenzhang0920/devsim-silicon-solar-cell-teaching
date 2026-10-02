@@ -72,7 +72,8 @@ For a single complete rebuild, replace those focused commands with
 `python scripts/run_all.py full`. The runner prints the active project root and Python
 interpreter, then names each substep and generated file. Run
 `python scripts/run_all.py help` at any time for the profile list. The same commands work
-in Windows PowerShell, macOS Terminal, and Linux after activating the environment.
+in Windows PowerShell, Linux terminals, and supported Apple Silicon macOS terminals after
+activating the environment.
 
 The commands above use the checked processed Cell #3 data. For a new experimental bundle,
 insert the following two steps after confirming sample identity, wiring polarity, units,

@@ -59,6 +59,9 @@ Student entry points:
   authoritative command and API reference for the simulator.
   This project pins the compatible DEVSIM 2.10.1 runtime used for validation.
 
+Classroom presentation slides are distributed separately by the TA. This repository
+contains the executable Notebook and written lab documents needed for the assessed work.
+
 ## 🎯 Learning outcomes
 
 After completing the project, students should be able to:
@@ -120,7 +123,8 @@ python scripts/run_all.py notebook
 
 #### Route B — reproducible command line (recommended for rebuilding results)
 
-The same Python runner works in Windows PowerShell, macOS Terminal, and Linux shells:
+The same Python runner works on the supported Windows x86-64, Linux x86-64/aarch64,
+and macOS Apple Silicon platforms:
 
 ```bash
 # Show every planned step without changing files.
@@ -155,7 +159,7 @@ student must wait for during every edit.
 Run `python scripts/run_all.py help` for the same guide in the terminal. Each profile prints
 its project root, Python interpreter, ordered substeps, generated files, and completion
 status. No Bash, WSL, or platform-specific wrapper is required; activate the environment
-and use the same command on Windows, macOS, or Linux.
+and use the same command on a supported Windows, Linux, or Apple Silicon macOS system.
 
 ### 4. Process a new measurement bundle
 
@@ -425,7 +429,7 @@ The intended reading order is:
 4. model or calibration internals only when the lesson asks for them.
 
 The compact artifact index in [`results/README.md`](results/README.md) separates assessed
-outputs from instructor-support figures. Optional light-only fits may create additional
+outputs from supplementary teaching figures. Optional light-only fits may create additional
 local `fit_*` files; they are not part of the checked baseline because the joint workflow
 is the canonical assessed calibration.
 

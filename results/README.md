@@ -14,9 +14,9 @@ generated the artifact.
 | Joint measured-data calibration | `joint_observables.png`, `joint_metrics.json`, `joint_fitted_params.json`, `joint_fit_metadata.json` |
 | Model–data adequacy and identifiability | `joint_identifiability.png` |
 
-## Instructor-support artifacts
+## Supplementary teaching artifacts
 
-`spectrum.png` and `resistance.png` isolate two mechanisms used in the classroom slides.
+`spectrum.png` and `resistance.png` isolate two mechanisms used in the teaching materials.
 `optimization.png` and `optimization.gif` show a bounded fit to explicitly synthetic data.
 
 The optional light-only command `python scripts/run_calibration.py [CSV]` creates local
@@ -24,6 +24,6 @@ The optional light-only command `python scripts/run_calibration.py [CSV]` create
 Those files are intentionally not part of the checked repository baseline: the assessed
 calibration uses the joint workflow described in the lab guide.
 
-Rebuild the complete checked baseline with `bash scripts/run_all.sh full`, or follow the
+Rebuild the complete checked baseline with `python scripts/run_all.py full`, or follow the
 individual commands in `docs/lab_guide.md`. Never relabel a file in this directory as a
 measurement.

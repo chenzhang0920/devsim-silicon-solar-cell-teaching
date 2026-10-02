@@ -25,7 +25,6 @@ TEACHING_TEXT_SUFFIXES = {
     ".json",
     ".md",
     ".py",
-    ".sh",
     ".txt",
     ".yaml",
     ".yml",
@@ -35,7 +34,6 @@ TEACHING_TEXT_SUFFIXES = {
 def test_executable_source_contains_no_literal_cjk_text():
     files = [ROOT / "config.py", ROOT / "environment.yml", ROOT / "pytest.ini"]
     files.extend(path for directory in SOURCE_DIRS for path in directory.rglob("*.py"))
-    files.extend((ROOT / "scripts").rglob("*.sh"))
     offenders = [
         str(path.relative_to(ROOT))
         for path in files

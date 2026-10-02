@@ -16,7 +16,3 @@ indent_size = 2
 
 [*.{md,ipynb}]
 trim_trailing_whitespace = false
-
-[*.sh]
-indent_style = space
-indent_size = 4

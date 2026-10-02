@@ -31,8 +31,10 @@ venv/
 .DS_Store
 Thumbs.db
 
-# The checked baseline in results/ is intentionally shared because the slide deck
-# links to it. Ignore only optional local fits and disposable audit artifacts.
+# The checked baseline in results/ is intentionally shared because the Notebook,
+# website, and lab guide use it. Ignore optional local fits, private comparison
+# runs, and disposable audit artifacts.
+results/crosslight_*/
 results/fit_plot.png
 results/identifiability.png
 results/fitted_params.json

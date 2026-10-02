@@ -51,8 +51,8 @@ data first with the keithley profile or scripts/prepare_data.py. Full always
 rebuilds the canonical Cell #3 example; use joint --sample ID for another cell.
 
 The model parameters are always read from config.py. Run this command with the
-Python interpreter from the devsim_solar environment. The same commands work in
-Windows PowerShell, macOS Terminal, and Linux shells.
+Python interpreter from the devsim_solar environment. The same commands work on
+supported Windows x86-64, Linux x86-64/aarch64, and Apple Silicon macOS systems.
 """
 
 

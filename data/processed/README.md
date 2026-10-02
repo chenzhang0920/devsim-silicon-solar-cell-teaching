@@ -9,7 +9,7 @@ normalization area. That area is experimental metadata rather than a DEVSIM devi
 parameter.
 
 Keithley J-V conversions retain the lesson's modeled forward-bias interval,
-`0 <= V <= --v-max` (0.72 V by default). Reverse-bias measurements remain in the raw
+`0 ≤ V ≤ V_max` (the command-line option is `--v-max`, 0.72 V by default). Reverse-bias measurements remain in the raw
 exports and are not silently claimed as part of these processed calibration curves.
 
 The `*_ishort_sample*.csv` files preserve the repeated near-zero-bias samples

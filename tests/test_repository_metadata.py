@@ -126,7 +126,6 @@ def test_repository_text_and_binary_rules_cover_portable_entry_points():
     attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
     editorconfig = (ROOT / ".editorconfig").read_text(encoding="utf-8")
     gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
-    assert "*.sh text eol=lf" in attributes
     assert "*.ipynb text eol=lf" in attributes
     assert "*.png binary" in attributes
     assert "data/raw/**/*.csv -text -whitespace" in attributes
