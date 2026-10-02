@@ -121,6 +121,12 @@ python scripts/run_all.py notebook --dry-run
 python scripts/run_all.py notebook
 ```
 
+The Notebook is a fixed, fully rendered Cell #3 reference lesson so that every student
+can inspect the same forward solve and calibration chain. It does not take a sample ID;
+after processing your assigned measurement bundle, run the corresponding sample with
+`python scripts/run_all.py joint --sample YOUR_SAMPLE_ID` and use those generated files
+for your report.
+
 #### Route B — reproducible command line (recommended for rebuilding results)
 
 The same Python runner works on the supported Windows x86-64, Linux x86-64/aarch64,

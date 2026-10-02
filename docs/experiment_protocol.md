@@ -14,7 +14,9 @@ J = \frac{I}{A_{\mathrm{illum}}},
 $$
 
 where $A_{\mathrm{illum}}$ is the illuminated active area in $\mathrm{cm^2}$;
-the corresponding configuration field is `cell_area_cm2`.
+record the value in the measurement metadata and pass it to the conversion command
+with `--area` (for example, `--area 12.0`). It is not a device-model parameter in
+`config.py` because the area belongs to the individual experiment.
 
 Two measurement branches are defined:
 

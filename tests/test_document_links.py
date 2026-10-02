@@ -30,3 +30,10 @@ def test_all_markdown_local_links_resolve():
                 broken.append(f"{document.relative_to(ROOT)} -> {raw_target}")
 
     assert not broken, "Broken local documentation links:\n" + "\n".join(broken)
+
+
+def test_experiment_area_is_documented_as_measurement_metadata():
+    protocol = (ROOT / "docs" / "experiment_protocol.md").read_text(encoding="utf-8")
+    assert "pass it to the conversion command" in protocol
+    assert "`--area`" in protocol
+    assert "configuration field is `cell_area_cm2`" not in protocol

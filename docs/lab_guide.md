@@ -37,7 +37,10 @@ for the course workflow and validated configuration.
 ## Choose how to run the project
 
 Use the Notebook when learning the sequence and the command-line runner when rebuilding
-known outputs. Both use the same `config.py` and Python model.
+known outputs or changing the assigned sample. Both use the same `config.py` and Python
+model. The checked Notebook is intentionally a fixed Cell #3 reference lesson; it does
+not accept a sample ID. Process your own measurement bundle first, then run its sample
+from the command line and use those generated files for the report.
 
 ### Interactive teaching route
 
