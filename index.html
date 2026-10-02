@@ -3,8 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="MICS3090 teaching project: learn semiconductor device simulation, measurement processing, and calibration with a p+-on-n silicon solar cell in DEVSIM.">
+  <meta name="description" content="MICS3090 teaching project: learn semiconductor device simulation, measurement processing, and calibration with a p⁺-on-n silicon solar cell in DEVSIM.">
   <meta name="theme-color" content="#003b71">
+  <meta name="color-scheme" content="light">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DEVSIM Silicon Solar Cell | MICS3090">
+  <meta property="og:description" content="A guided undergraduate laboratory connecting silicon solar-cell physics, DEVSIM simulation, measurements, and calibration.">
+  <meta property="og:image" content="https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/docs/logo1_HKUSTGZ.png">
+  <meta property="og:url" content="https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/">
   <link rel="icon" type="image/png" href="docs/logo1_HKUSTGZ.png">
   <link rel="canonical" href="https://chenzhang0920.github.io/devsim-silicon-solar-cell-teaching/">
   <title>DEVSIM Silicon Solar Cell | MICS3090</title>
@@ -39,6 +45,7 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
+      overflow-x: hidden;
       color: var(--ink);
       background: var(--paper);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -107,7 +114,20 @@
     .button:hover, .button:focus-visible { border-color: var(--orange); color: var(--orange); background: white; }
     .button.primary:hover, .button.primary:focus-visible { color: white; background: var(--orange); }
     .hero-note { max-width: 760px; margin: 1.25rem 0 0; color: var(--muted); font-size: 1rem; }
+    .hero-note + .hero-note { margin-top: .4rem; }
     .hero-note strong { color: var(--ink); }
+    .hero-path {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem;
+      max-width: 820px; margin: 2rem 0 0; padding-top: 1rem;
+      border-top: 1px solid var(--line);
+    }
+    .hero-path div { min-width: 0; }
+    .hero-path span {
+      display: block; margin-bottom: .2rem; color: var(--gold);
+      font-size: .78rem; font-weight: 850; letter-spacing: .12em;
+    }
+    .hero-path strong { display: block; color: var(--ink); font-size: .98rem; }
+    .hero-path small { display: block; margin-top: .15rem; color: var(--muted); font-size: .88rem; line-height: 1.4; }
 
     .device-card {
       width: 100%; margin-inline: auto; padding: .5rem 0; background: transparent;
@@ -261,7 +281,7 @@
     .equation span { display: block; }
     .equation.compact { font-size: 1.14rem; }
     mjx-container { color: inherit; }
-    mjx-container[display="true"] { margin: .35em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    mjx-container[display="true"] { max-width: 100%; margin: .35em 0 !important; overflow-x: auto; overflow-y: hidden; }
     .math-inline { white-space: nowrap; }
     .equation-card p { margin-top: .75rem; margin-bottom: 0; color: var(--muted); }
     .physics-check {
@@ -363,6 +383,7 @@
       .hero-grid, .scope-grid { grid-template-columns: 1fr; }
       .device-card { width: min(460px, 100%); }
       .fact-grid, .steps { grid-template-columns: 1fr 1fr; }
+      .hero-path { grid-template-columns: 1fr 1fr; }
       .model-ledger, .model-overview, .boundary-grid, .io-grid, .assumption-grid, .sanity-grid { grid-template-columns: 1fr; }
       .core-system { grid-template-columns: minmax(0, 1fr); }
       .coupling-path { grid-template-columns: 1fr 1fr; gap: .8rem; }
@@ -384,6 +405,7 @@
       .hero { padding: 3.5rem 0 4rem; }
       .hero-grid { gap: 2.5rem; }
       .fact-grid, .steps, .coupling-path, .operating-points { grid-template-columns: 1fr; }
+      .hero-path { grid-template-columns: 1fr 1fr; gap: .9rem; }
       .fact { border-right: 0; border-bottom: 1px solid var(--line); }
       .fact:last-child { border-bottom: 0; }
       section { padding: 4.2rem 0; }
@@ -434,6 +456,13 @@
             <a class="button" href="https://github.com/chenzhang0920/devsim-silicon-solar-cell-teaching/blob/main/docs/lab_guide.md">Read the lab guide</a>
           </div>
           <p class="hero-note"><strong>Recommended path:</strong> follow the Notebook, then use the lab guide with your own measurements.</p>
+          <p class="hero-note"><strong>Assessment:</strong> Cell #3 is an illustrative example; reported values and conclusions must come from your own experiment.</p>
+          <div class="hero-path" aria-label="Recommended study sequence">
+            <div><span>01</span><strong>Understand</strong><small>structure and equations</small></div>
+            <div><span>02</span><strong>Run</strong><small>the reference model</small></div>
+            <div><span>03</span><strong>Measure</strong><small>your own cell</small></div>
+            <div><span>04</span><strong>Explain</strong><small>residuals and limits</small></div>
+          </div>
         </div>
         <aside class="device-card">
           <svg class="device-circuit" viewBox="0 0 460 365" role="img" aria-labelledby="device-circuit-title device-circuit-desc">
@@ -509,7 +538,7 @@
             <span>\(\boldsymbol{u}(x)=[\psi(x),n(x),p(x)]^{\mathsf T}=\mathcal{S}(\boldsymbol{\theta}_{\mathrm{device}};V_{\mathrm j},s)\)</span>
             <span>\(J_{\mathrm{device}}=-[J_n(0)+J_p(0)]\;\longrightarrow\;\{V_{\mathrm{term}},J\}=\mathcal{T}(J_{\mathrm{device}};R_{\mathrm s},R_{\mathrm{sh}})\)</span>
           </span>
-          Here S is the coupled DEVSIM drift–diffusion solve and T is the explicit per-unit-area terminal mapping. This separation prevents circuit parameters from being mistaken for material physics.
+          Here \(\mathcal{S}\) is the coupled DEVSIM drift–diffusion solve and \(\mathcal{T}\) is the explicit per-unit-area terminal mapping. This separation prevents circuit parameters from being mistaken for material physics.
         </div>
 
         <div class="model-ledger" aria-label="Model implementation layers">
@@ -536,7 +565,7 @@
           </div>
           <p class="model-note"><strong>Use these estimates as checks, not measurements:</strong> they explain why the junction is strongly one-sided. The nominal \(10^{19}\ \mathrm{cm^{-3}}\) emitter is also where the omitted degeneracy and band-gap-narrowing physics matter most.</p>
           <ul class="assumption-grid" aria-label="Model assumptions">
-            <li><strong>Steady state and isothermal:</strong> no time derivatives; T = 300 K throughout.</li>
+            <li><strong>Steady state and isothermal:</strong> no time derivatives; \(T=300\ \mathrm{K}\) throughout.</li>
             <li><strong>One dimensional:</strong> lateral current spreading, fingers, busbars, and edge leakage are omitted.</li>
             <li><strong>Semiconductor statistics:</strong> Boltzmann statistics, complete dopant ionization, and DEVSIM’s 300 K silicon constants.</li>
             <li><strong>Transport:</strong> constant low-field mobilities with the Einstein relation; no field- or doping-dependent mobility.</li>
@@ -806,7 +835,7 @@
                 <div class="operating-point"><strong>Short circuit</strong><span>\(V_{\mathrm{term}}=0\); \(J_{\mathrm{sc}}\) tests photocarrier collection.</span></div>
                 <div class="operating-point"><strong>Open circuit</strong><span>\(J=0\); \(V_{\mathrm{oc}}\) reflects generation–recombination balance.</span></div>
                 <div class="operating-point"><strong>Maximum power</strong><span>Maximize \(VJ\); \(R_{\mathrm s}\) and \(R_{\mathrm{sh}}\) strongly affect fill factor.</span></div>
-                <div class="operating-point"><strong>Spectral response</strong><span>\(\displaystyle J_{\mathrm{sc,EQE}}=q\int\Phi_{\mathrm{inc}}(\lambda)\mathrm{EQE}(\lambda)\,\mathrm d\lambda\).</span></div>
+                <div class="operating-point"><strong>Spectral response</strong><span>\(\displaystyle J_{\mathrm{sc}}^{\mathrm{EQE}}=q\int\Phi_{\mathrm{inc}}(\lambda)\mathrm{EQE}(\lambda)\,\mathrm d\lambda\).</span></div>
               </div>
             </div>
           </article>
@@ -892,18 +921,18 @@ python scripts/run_all.py check</code></pre>
           <h2>Interpret more than a single fitted curve</h2>
           <p>Internal fields, spectral response, multiple electrical observables, and residual structure tell different parts of the story.</p>
         </div>
-        <p class="result-status"><strong>Your analysis:</strong> calculate the score for the assigned dataset, identify the dominant residual block, and decide what the measurements support. Numerical convergence alone does not validate fitted parameters.</p>
+        <p class="result-status"><strong>Reference figures:</strong> these bundled plots use the illustrative Cell #3 dataset. For assessment, regenerate the same views from your own measurements; calculate the score, identify the dominant residual block, and decide what your data support. Numerical convergence alone does not validate fitted parameters.</p>
         <div class="gallery">
           <figure class="figure-profiles">
-            <a class="figure-link" href="results/profiles.png" aria-label="Open the internal device profiles at full size"><img src="results/profiles.png" alt="Doping, electric field, carrier, and optical-generation profiles across the solar cell"></a>
+            <a class="figure-link" href="results/profiles.png" aria-label="Open the internal device profiles at full size"><img src="results/profiles.png" alt="Doping, electric field, carrier, and optical-generation profiles across the solar cell" loading="lazy" decoding="async"></a>
             <figcaption><strong>Inside the device</strong>Relate structure and equations to fields, carriers, recombination, and generation.<br><a class="figure-open" href="results/profiles.png">Open full-size figure →</a></figcaption>
           </figure>
           <figure class="figure-eqe">
-            <a class="figure-link" href="results/eqe.png" aria-label="Open the modeled EQE figure at full size"><img src="results/eqe.png" alt="Modeled external quantum efficiency and single-pass absorption reference"></a>
+            <a class="figure-link" href="results/eqe.png" aria-label="Open the modeled EQE figure at full size"><img src="results/eqe.png" alt="Modeled external quantum efficiency and single-pass absorption reference" loading="lazy" decoding="async"></a>
             <figcaption><strong>Across wavelength</strong>Separate electrical collection from the single-pass optical absorption reference.<br><a class="figure-open" href="results/eqe.png">Open full-size figure →</a></figcaption>
           </figure>
           <figure class="figure-calibration">
-            <a class="figure-link" href="results/iv_plot.png" aria-label="Open the terminal current-voltage plot at full size"><img src="results/iv_plot.png" alt="Simulated terminal current density and solar-cell operating points"></a>
+            <a class="figure-link" href="results/iv_plot.png" aria-label="Open the terminal current-voltage plot at full size"><img src="results/iv_plot.png" alt="Simulated terminal current density and solar-cell operating points" loading="lazy" decoding="async"></a>
             <figcaption><strong>At the terminals</strong>Use \(J_{\mathrm{sc}}\), \(V_{\mathrm{oc}}\), the maximum-power point, and curve shape to connect the internal solution to measurable behavior.<br><a class="figure-open" href="results/iv_plot.png">Open full-size figure →</a></figcaption>
           </figure>
         </div>
