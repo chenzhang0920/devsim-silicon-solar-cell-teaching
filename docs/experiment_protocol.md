@@ -10,20 +10,22 @@ simulation compares voltage with current density, so data preparation converts i
 processed **J–V curve**:
 
 $$
-J = \frac{I}{A_{\mathrm{illum}}},
+J = \frac{I}{A_{\mathrm{cell}}},
 $$
 
-where $A_{\mathrm{illum}}$ is the illuminated active area in $\mathrm{cm^2}$;
-record the value in the measurement metadata and pass it to the conversion command
+where $A_{\mathrm{cell}}$ is the active area of the solar cell in $\mathrm{cm^2}$.
+When the entire active area is illuminated, this equals the illuminated active area. Use the
+same cell area for both light and dark I–V measurements. Record the value in the
+measurement metadata and pass it to the conversion command
 with `--area` (for example, `--area 12.0`). It is not a device-model parameter in
 `config.py` because the area belongs to the individual experiment.
 
 Two measurement branches are defined:
 
-| Branch | Required measurements | Supports |
-|---|---|---|
-| Core | illuminated I–V sweep plus area and experimental metadata | J–V metrics and an instructor-authorized light-only fit |
-| Joint calibration | core branch plus dark I–V, repeated illuminated short-circuit current, and illuminated open-circuit voltage | the recommended multi-observable calibration |
+| Branch            | Required measurements                                                                                        | Supports                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| Core              | illuminated I–V sweep plus area and experimental metadata                                                   | J–V metrics and an instructor-authorized light-only fit |
+| Joint calibration | core branch plus dark I–V, repeated illuminated short-circuit current, and illuminated open-circuit voltage | the recommended multi-observable calibration             |
 
 Dark short-circuit and dark zero-current-voltage measurements may also be recorded as
 leakage and instrument-offset diagnostics. The dark zero-current voltage is not a
@@ -38,21 +40,21 @@ Use the equipment assigned by the laboratory. A typical setup contains:
 - a solar simulator or stable lamp;
 - a source-measure unit (SMU), such as a Keithley instrument;
 - two-wire or four-wire leads, as provided;
-- a ruler or calipers for illuminated-area measurement;
+- a ruler or calipers for cell-area measurement;
 - a thermometer or temperature sensor;
 - a calibrated reference cell or irradiance meter if efficiency will be reported.
 
 Record the following before measuring:
 
-| Field | Record |
-|---|---|
-| sample identifier | device label used in filenames and report |
-| illuminated area | cm² and how it was determined |
-| temperature | value, unit, and sensor location |
-| illumination | lamp/source, setting, warm-up time, filter, and geometry |
-| wiring | two-wire or four-wire; terminal assignment |
-| instrument | model and relevant range/compliance/integration settings |
-| sweep | start, stop, step size, direction, delay, and repeat count |
+| Field             | Record                                                     |
+| ----------------- | ---------------------------------------------------------- |
+| sample identifier | device label used in filenames and report                  |
+| active cell area  | cm² and how it was determined                             |
+| temperature       | value, unit, and sensor location                           |
+| illumination      | lamp/source, setting, warm-up time, filter, and geometry   |
+| wiring            | two-wire or four-wire; terminal assignment                 |
+| instrument        | model and relevant range/compliance/integration settings   |
+| sweep             | start, stop, step size, direction, delay, and repeat count |
 
 Four-wire sensing reduces lead-voltage error but does not automatically remove every
 contact or device-series-resistance contribution. If two-wire sensing is used, state it
@@ -79,7 +81,8 @@ SMU HI/LO terminals were connected.
 2. Connect the SMU in the assigned two-wire or four-wire configuration.
 3. Set a conservative current compliance and output range approved for the sample.
 4. Allow the light source and measurement electronics to stabilize.
-5. Measure or verify the illuminated active area and record the temperature.
+5. Measure or verify the active cell area, confirm uniform illumination of that area,
+   and record the temperature.
 6. If efficiency is required, measure irradiance at the cell plane with a calibrated
    reference. Record the value in W/cm² and the measurement method.
 
@@ -247,12 +250,12 @@ python scripts/run_calibration.py data/processed/measured_iv.csv
 
 ## 9. Measurement checklist
 
-- [ ] Sample identifier and illuminated area recorded.
+- [ ] Sample identifier and active cell area recorded.
 - [ ] Temperature, illumination, wiring, instrument settings, and sweep settings recorded.
 - [ ] Raw instrument files preserved unchanged.
 - [ ] Core illuminated I–V sweep contains short circuit, knee, and zero crossing.
 - [ ] Dark I–V, at least three illuminated short-circuit readings, and at least two
-      illuminated zero-current voltage readings collected for joint calibration.
+  illuminated zero-current voltage readings collected for joint calibration.
 - [ ] Processed J–V units and signs checked against the raw wiring convention.
 - [ ] Irradiance measured independently if efficiency will be reported.
 - [ ] Synthetic examples kept separate from experimental data.
